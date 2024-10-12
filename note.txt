@@ -1,0 +1,13 @@
+
+    const bodyFormData = new FormData();
+    bodyFormData.append('name', cattle.name);
+    bodyFormData.append('status', cattle.status);
+    bodyFormData.append('gender', cattle.gender);
+    bodyFormData.append('type', cattle.tyoe); // sapi pedaging, sapi peternak, sapi perah, dan lain-lainnya
+    bodyFormData.append('birth_date', cattle.birth_date);
+    bodyFormData.append('birth_weight', cattle.birth_weight);
+    bodyFormData.append('birth_height', cattle.birth_height);
+    bodyFormData.append('iot_devices', cattle.iot_devices);
+    bodyFormData.append('last_vaccination', cattle.last_vaccination);
+
+    className={"lg:max-w-screen-lg overflow-y-scroll max-h-screen"}

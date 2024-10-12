@@ -107,6 +107,7 @@ export default function Home() {
       cell: ({ row }) => <div className="lowercase">{row.getValue("address")}</div>,
     },
 
+    
     {
       accessorKey: 'id',
       header: 'Actions',
@@ -195,7 +196,7 @@ export default function Home() {
   }
 
   const createFarm = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); 
 
     Swal.fire({
       title: 'Loading...',
