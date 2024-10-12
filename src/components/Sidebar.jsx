@@ -1,19 +1,24 @@
 'use client';
-
-import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+
 
 export function Sidebar() {
+    const [activePage, setActivePage] = useState('');
     const router = useRouter();
-    const { pathname } = router;
-    console.log(pathname) // Dapatkan pathname dari router
+    const pathname = usePathname()
+
+    useEffect(() => {
+        setActivePage(pathname || 'dashboard');
+        console.log(pathname)
+    }, [pathname]);
 
     return (
         <div className="sidebar-menu">
             <ul className="menu">
                 <li className="sidebar-title">Menu</li>
-                <li className={`sidebar-item ${pathname == "/admin" ? "active" : ""}`}>
+                <li className={`sidebar-item ${pathname === "/admin" ? "active" : ""}`}>
                     <Link href="/admin" className="sidebar-link">
                         <i className="bi bi-grid-fill" />
                         <span>Dashboard</span>
@@ -45,8 +50,8 @@ export function Sidebar() {
                         <span>Cattle</span>
                     </Link>
                 </li>
-                <li className={`sidebar-item ${pathname === "/admin/devices" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/admin/devices">
+                <li className={`sidebar-item ${pathname === "/admin/device" ? "active" : ""}`}>
+                    <Link className="sidebar-link" href="/admin/device">
                         <i className="bi bi-grid-fill" />
                         <span>Devices</span>
                     </Link>
