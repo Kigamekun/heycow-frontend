@@ -42,12 +42,12 @@ import Swal from "sweetalert2"
 
 
 export default function cattle() {
-
+  
   const [sorting, setSorting] = React.useState([])
   const [columnFilters, setColumnFilters] = React.useState(
     []
   )
-  const [error, setError] = useState(false);
+  // const [error, setError] = useState(false);
   const [columnVisibility, setColumnVisibility] =
     React.useState({
       image: false,
@@ -167,7 +167,33 @@ export default function cattle() {
       cell: ({ row }) => <div className="lowercase">{row.getValue("type")}</div>,
     },
 
-    
+    {
+      accessorKey: "farm.address",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+           Adrress
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => {
+
+        if (row.original.farm != null) {
+            return <div className="lowercase">{row.original.farm.address}</div>
+        }
+        else {
+            
+            return <div className="lowercase">-</div>
+        }
+
+      },
+
+    },  
+
     {
       accessorKey: "birth_date",
       header: ({ column }) => {
@@ -276,18 +302,17 @@ export default function cattle() {
     name: "",
     address: "",
     breed_id: "" ,
-    breed : "",
     type : "",
     status : "",
     birth_date : "",
     birth_weight : "",
     birth_height : "",
     iot_device_id : "",
-    iot_device: "",
     last_vaccination : ""
 
 
 });
+
 
 
 
@@ -329,6 +354,16 @@ const [breedsData, setBreedsData] = React.useState(
     //   setError(false);
     // }
   
+  }
+
+  
+
+  const handleSelectChage = (event) => {
+    const name = event.target.name;
+    const {value} = event.target.selectedOptions[0];
+    console.log(value);
+    setCattle({ ...cattle, [name]: value });
+
   }
 
   const [open, setOpen] = React.useState(false)
@@ -450,6 +485,11 @@ const [breedsData, setBreedsData] = React.useState(
   // Membuat cattle data
   const createCattle = async (e) => {
     e.preventDefault();
+    // Validate form data
+    // if (!cattle.name || !cattle.breed_id || !cattle.status || !cattle.gender || !cattle.type || !cattle.birth_date || !cattle.birth_weight || !cattle.birth_height || !cattle.iot_device_id || !cattle.last_vaccination) {
+    //   setError(true);
+    //   return;
+    // }
 
     Swal.fire({
       title: 'Loading...',
@@ -462,14 +502,14 @@ const [breedsData, setBreedsData] = React.useState(
 
     const bodyFormData = new FormData();
     bodyFormData.append('name', cattle.name);
-    bodyFormData.append('breed', cattle.breed_id);
+    bodyFormData.append('breed_id', cattle.breed_id);
     bodyFormData.append('status', cattle.status);
     bodyFormData.append('gender', cattle.gender);
     bodyFormData.append('type', cattle.type);
     bodyFormData.append('birth_date', cattle.birth_date);
     bodyFormData.append('birth_weight', cattle.birth_weight);
     bodyFormData.append('birth_height', cattle.birth_height);
-    bodyFormData.append('iot_device', cattle.iot_device_id);
+    bodyFormData.append('iot_device_id', cattle.iot_device_id);
     bodyFormData.append('last_vaccination', cattle.last_vaccination);
 
     try {
@@ -492,7 +532,6 @@ const [breedsData, setBreedsData] = React.useState(
         id: 0,
         name: "",
         breed_id: "" ,
-        // breed : "",
         gender : "",
         type : "",
         status : "",
@@ -500,7 +539,6 @@ const [breedsData, setBreedsData] = React.useState(
         birth_weight : "",
         birth_height : "",
         iot_device_id : "",
-        // iot_device : "",
         last_vaccination : ""
       });
 
@@ -531,13 +569,23 @@ const [breedsData, setBreedsData] = React.useState(
 
   
   const editCattle = async (id) => {
-    let fr = cattleData.find((f) => f.id === id);
-    console.log(fr)
-    if (fr) {
+    let ct = cattleData.find((f) => f.id === id );
+    console.log(ct)
+    if (ct) {
       setCattle({
-        id: fr.id,
-        name: fr.name,
-        address: fr.address,
+        id : ct.id,
+        name: ct.name,
+        breed_id: ct.breed_id ,
+        gender : ct.gender,
+        type : ct.type,
+        status : ct.status,
+        birth_date : ct.birth_date,
+        birth_weight : ct.birth_weight,
+        birth_height : ct.birth_height,
+        iot_device_id : ct.iot_device_id,
+        last_vaccination : ct.last_vaccination
+
+      
       });
       setOpen(true);
     }
@@ -548,7 +596,7 @@ const [breedsData, setBreedsData] = React.useState(
       id: 0,
             name: "",
             breed_id: "" ,
-            breed : "",
+
             gender : "",
             type : "",
             status : "",
@@ -556,7 +604,7 @@ const [breedsData, setBreedsData] = React.useState(
             birth_weight : "",
             birth_height : "",
             iot_device_id : "",
-            iot_device : "",
+            
             last_vaccination : ""
     });
     setOpen(true);
@@ -578,21 +626,29 @@ const [breedsData, setBreedsData] = React.useState(
     var bodyFormData = new FormData();
 
     bodyFormData.append('name', cattle.name);
-    bodyFormData.append('breed', cattle.breed.name);
+    bodyFormData.append('breed_id', cattle.breed_id);
     bodyFormData.append('status', cattle.status);
     bodyFormData.append('gender', cattle.gender);
     bodyFormData.append('type', cattle.type);
     bodyFormData.append('birth_date', cattle.birth_date);
     bodyFormData.append('birth_weight', cattle.birth_weight);
     bodyFormData.append('birth_height', cattle.birth_height);
-    bodyFormData.append('iot_device', cattle.iot_device.serial_number);
+    bodyFormData.append('iot_device_id', cattle.iot_device_id);
     bodyFormData.append('last_vaccination', cattle.last_vaccination);
 
     var res = await axios.put(
       `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${cattle.id}`,
       {
         name: cattle.name,
-        address: cattle.address,
+        breed_id: cattle.breed_id ,
+        gender : cattle.gender,
+        type : cattle.type,
+        status : cattle.status,
+        birth_date : cattle.birth_date,
+        birth_weight : cattle.birth_weight,
+        birth_height : cattle.birth_height,
+        iot_device_id : cattle.iot_device_id,
+        last_vaccination : cattle.last_vaccination
 
       },
       {
@@ -602,7 +658,7 @@ const [breedsData, setBreedsData] = React.useState(
 
         },
       },
-      console.log(res.data)  // Tambahkan ini untuk melihat data yang diterima dari API
+     
     )
       .then(function (response) {
         getCattleData();
@@ -610,7 +666,6 @@ const [breedsData, setBreedsData] = React.useState(
             id: 0,
             name: "",
             breed_id: "" ,
-            breed : "",
             gender : "",
             type : "",
             status : "",
@@ -618,7 +673,6 @@ const [breedsData, setBreedsData] = React.useState(
             birth_weight : "",
             birth_height : "",
             iot_device_id : "",
-            serial_number : "",
             last_vaccination : ""
 
         })
@@ -755,9 +809,8 @@ const [breedsData, setBreedsData] = React.useState(
                         <div>
                           <label className="mt-5 input-bordered w-full">
                             <select
-                              name="breed"
-                              value={cattle.breed_id}
-                              onChange={handleInputChange}
+                              name="breed_id"
+                              onChange={handleSelectChage}
                               className="input input-bordered w-full mt-1"
                             >
                               <option value="">Breed</option>
@@ -766,31 +819,23 @@ const [breedsData, setBreedsData] = React.useState(
                               ))}
                             </select>
                           </label>
-                          {error && <p className="text-red-500">Please select a breed.</p>}
                         </div>
 
 
-                        {/* <input
-                          className="input input-bordered w-full mt-5"
-                          value={cattle.status}
-                          type="select"
-                          name="status"
-                          placeholder="status"
-                          onChange={handleInputChange}
-                        /> */}
-                    <label className="mt-5 input-bordered w-full">
-                        <select
-                            name="status"
-                            value={cattle.status}
-                            onChange={handleInputChange}
-                            className="input input-bordered w-full mt-1"
-                        >
-                            <option value="">Pilih Status Sapimu</option>
-                            <option value="Sehat">Sehat</option>
-                            <option value="Sakit">Sakit</option>
-                            <option value="Mati">Mati</option>
-                        </select>
-                    </label>
+                       
+                      <label className="mt-5 input-bordered w-full">
+                          <select
+                              name="status"
+                              // value={cattle.status}
+                              onChange={handleSelectChage}
+                              className="input input-bordered w-full mt-1"
+                          >
+                              <option value="">Pilih Status Sapimu</option>
+                              <option value="sehat">Sehat</option>
+                              <option value="sakit">Sakit</option>
+                              <option value="mati">Mati</option>
+                          </select>
+                      </label>
                        
                         {/* <div className="mt-5 input-bordered w-full ">
                             <label>
@@ -846,8 +891,8 @@ const [breedsData, setBreedsData] = React.useState(
                         <label className="mt-5 input-bordered w-full">
                             <select
                                 name="type"
-                                value={cattle.type}
-                                onChange={handleInputChange}
+                                // value={cattle.type}
+                                onChange={handleSelectChage}
                                 className="input input-bordered w-full mt-1"
                             >
                                 <option value="">Pilih Jenis Sapimu</option>
@@ -908,16 +953,15 @@ const [breedsData, setBreedsData] = React.useState(
 
                         <label className="mt-5 input-bordered w-full">
                             <select
-                                name="iot_device"
-                                value={cattle.iot_device.serial_number}
-                                onChange={handleInputChange}
+                                name="iot_device_id"
+                                onChange={handleSelectChage}
                                 className="input input-bordered w-full mt-1"
                             >
                                 <option value="">iot device</option>
 
                                 {
                                     IotDeviceData && IotDeviceData.map((b) => {
-                                        return <option key={b.id} value={b.id}>{b.name}</option>
+                                        return <option key={b.id} value={b.id}>{b.serial_number}</option>
                                     })
                                 }
                                 {/* <option value="sehat">Sehat</option>

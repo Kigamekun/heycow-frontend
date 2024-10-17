@@ -369,9 +369,7 @@ export default function Home() {
     getFarmData();
   }, []);
 
-  return (<></>
-
-  )
+  return (<></>)
 }
 
 
