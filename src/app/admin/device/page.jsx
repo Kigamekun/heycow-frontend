@@ -190,7 +190,7 @@ export default function Home() {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices`, {
       headers: {
         'content-type': 'text/json',
-        'Authorization': `Bearer 4|iWxmrEiTEsbGE37izKHXMfHg4t1tVWwemFpzgWBd4e83e9a3`,
+        'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
       }
     })
       .then(function (response) {
@@ -244,7 +244,7 @@ export default function Home() {
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer 4|iWxmrEiTEsbGE37izKHXMfHg4t1tVWwemFpzgWBd4e83e9a3`,
+            'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
           }
         }
       );
@@ -339,7 +339,7 @@ export default function Home() {
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer 4|iWxmrEiTEsbGE37izKHXMfHg4t1tVWwemFpzgWBd4e83e9a3`,
+          'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
 
         },
       }
@@ -405,7 +405,7 @@ export default function Home() {
             `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices/${id}`,
             {
               headers: {
-                'Authorization': `Bearer 4|iWxmrEiTEsbGE37izKHXMfHg4t1tVWwemFpzgWBd4e83e9a3`,
+                'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
               }
             }
           );

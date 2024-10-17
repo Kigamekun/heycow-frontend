@@ -1,5 +1,5 @@
 'use client'
-
+import { useState } from 'react';
 import * as React from "react"
 import { useRef } from "react"
 import { Button } from "@/components/ui/button"
@@ -47,6 +47,7 @@ export default function cattle() {
   const [columnFilters, setColumnFilters] = React.useState(
     []
   )
+  const [error, setError] = useState(false);
   const [columnVisibility, setColumnVisibility] =
     React.useState({
       image: false,
@@ -89,6 +90,32 @@ export default function cattle() {
           </div>
         </div>
       ),
+    },
+
+    {
+      accessorKey: "breed.name",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Jenis Sapi
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => {
+
+        if (row.original.breed != null) {
+            return <div className="lowercase">{row.original.breed.name}</div>
+        }
+        else {
+            
+            return <div className="lowercase">-</div>
+        }
+
+      },
     },
 
     {
@@ -255,7 +282,9 @@ export default function cattle() {
     birth_date : "",
     birth_weight : "",
     birth_height : "",
-    iot_device_id : ""
+    iot_device_id : "",
+    iot_device: "",
+    last_vaccination : ""
 
 
 });
@@ -294,17 +323,23 @@ const [breedsData, setBreedsData] = React.useState(
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setCattle({ ...cattle, [name]: value });
+    // if (name === 'breed' && value === '') {
+    //   setError(true);
+    // } else {
+    //   setError(false);
+    // }
+  
   }
 
   const [open, setOpen] = React.useState(false)
 
 
   // Breed Data
-  const getBreedData = async () => {
+  const getBreedsData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/breeds`, {
       headers: {
         'content-type': 'text/json',
-        'Authorization': `Bearer 4|iWxmrEiTEsbGE37izKHXMfHg4t1tVWwemFpzgWBd4e83e9a3`,
+        'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
       }
     })
       .then(function (response) {
@@ -338,12 +373,12 @@ const [breedsData, setBreedsData] = React.useState(
 
 
 
-  // Iot Data
+  // mengambil Iot Data
   const getIotDeviceData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices`, {
       headers: {
         'content-type': 'text/json',
-        'Authorization': `Bearer 4|iWxmrEiTEsbGE37izKHXMfHg4t1tVWwemFpzgWBd4e83e9a3`,
+        'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
       }
     })
       .then(function (response) {
@@ -374,12 +409,12 @@ const [breedsData, setBreedsData] = React.useState(
       })
   }
   
-// cattle Data
+// mengambil semua cattle Data
   const getCattleData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle`, {
       headers: {
         'content-type': 'text/json',
-        'Authorization': `Bearer 4|iWxmrEiTEsbGE37izKHXMfHg4t1tVWwemFpzgWBd4e83e9a3`,
+        'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
       }
     })
       .then(function (response) {
@@ -410,6 +445,9 @@ const [breedsData, setBreedsData] = React.useState(
       })
   }
 
+
+
+  // Membuat cattle data
   const createCattle = async (e) => {
     e.preventDefault();
 
@@ -424,14 +462,14 @@ const [breedsData, setBreedsData] = React.useState(
 
     const bodyFormData = new FormData();
     bodyFormData.append('name', cattle.name);
-    bodyFormData.append('status', cattle.breed_id);
+    bodyFormData.append('breed', cattle.breed_id);
     bodyFormData.append('status', cattle.status);
     bodyFormData.append('gender', cattle.gender);
     bodyFormData.append('type', cattle.type);
     bodyFormData.append('birth_date', cattle.birth_date);
     bodyFormData.append('birth_weight', cattle.birth_weight);
     bodyFormData.append('birth_height', cattle.birth_height);
-    bodyFormData.append('iot_devices', cattle.iot_devices);
+    bodyFormData.append('iot_device', cattle.iot_device_id);
     bodyFormData.append('last_vaccination', cattle.last_vaccination);
 
     try {
@@ -441,11 +479,11 @@ const [breedsData, setBreedsData] = React.useState(
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer 4|iWxmrEiTEsbGE37izKHXMfHg4t1tVWwemFpzgWBd4e83e9a3`,
+            'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
           }
         }
       );
-
+      console.log(res.data) ;
       // Refresh cattle data
       getCattleData();
 
@@ -454,7 +492,7 @@ const [breedsData, setBreedsData] = React.useState(
         id: 0,
         name: "",
         breed_id: "" ,
-        breed : "",
+        // breed : "",
         gender : "",
         type : "",
         status : "",
@@ -462,6 +500,7 @@ const [breedsData, setBreedsData] = React.useState(
         birth_weight : "",
         birth_height : "",
         iot_device_id : "",
+        // iot_device : "",
         last_vaccination : ""
       });
 
@@ -469,6 +508,7 @@ const [breedsData, setBreedsData] = React.useState(
 
       Swal.close();
     } catch (error) {
+      console.error('Error:', error.response);  // Log error lengkap dari response
       if (error.response && error.response.status === 401) {
         Swal.fire({
           icon: 'error',
@@ -489,6 +529,7 @@ const [breedsData, setBreedsData] = React.useState(
     }
   };
 
+  
   const editCattle = async (id) => {
     let fr = cattleData.find((f) => f.id === id);
     console.log(fr)
@@ -502,6 +543,24 @@ const [breedsData, setBreedsData] = React.useState(
     }
   }
 
+  const createData = async () => {
+    setCattle({
+      id: 0,
+            name: "",
+            breed_id: "" ,
+            breed : "",
+            gender : "",
+            type : "",
+            status : "",
+            birth_date : "",
+            birth_weight : "",
+            birth_height : "",
+            iot_device_id : "",
+            iot_device : "",
+            last_vaccination : ""
+    });
+    setOpen(true);
+  }
 
   const updateCattle = async (e) => {
 
@@ -519,14 +578,14 @@ const [breedsData, setBreedsData] = React.useState(
     var bodyFormData = new FormData();
 
     bodyFormData.append('name', cattle.name);
-    bodyFormData.append('status', cattle.breed_id);
+    bodyFormData.append('breed', cattle.breed.name);
     bodyFormData.append('status', cattle.status);
     bodyFormData.append('gender', cattle.gender);
     bodyFormData.append('type', cattle.type);
     bodyFormData.append('birth_date', cattle.birth_date);
     bodyFormData.append('birth_weight', cattle.birth_weight);
     bodyFormData.append('birth_height', cattle.birth_height);
-    bodyFormData.append('iot_devices', cattle.iot_devices);
+    bodyFormData.append('iot_device', cattle.iot_device.serial_number);
     bodyFormData.append('last_vaccination', cattle.last_vaccination);
 
     var res = await axios.put(
@@ -539,10 +598,11 @@ const [breedsData, setBreedsData] = React.useState(
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer 4|iWxmrEiTEsbGE37izKHXMfHg4t1tVWwemFpzgWBd4e83e9a3`,
+          'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
 
         },
-      }
+      },
+      console.log(res.data)  // Tambahkan ini untuk melihat data yang diterima dari API
     )
       .then(function (response) {
         getCattleData();
@@ -558,6 +618,7 @@ const [breedsData, setBreedsData] = React.useState(
             birth_weight : "",
             birth_height : "",
             iot_device_id : "",
+            serial_number : "",
             last_vaccination : ""
 
         })
@@ -613,7 +674,7 @@ const [breedsData, setBreedsData] = React.useState(
             `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${id}`,
             {
               headers: {
-                'Authorization': `Bearer 4|iWxmrEiTEsbGE37izKHXMfHg4t1tVWwemFpzgWBd4e83e9a3`,
+                'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
               }
             }
           );
@@ -632,7 +693,7 @@ const [breedsData, setBreedsData] = React.useState(
 
   React.useEffect(() => {
     getCattleData();
-    getBreedData();
+    getBreedsData();
     getIotDeviceData();
 
   }, []);
@@ -646,18 +707,18 @@ const [breedsData, setBreedsData] = React.useState(
       </header>
       <div className="card">
         <div className="card-body">
-          <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex justify-content-between align-items-left">
             <h3>Cattle</h3>
             <div>
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="outline">Create Cattle</Button>
+                  <Button variant="outline" onClick={createData}>Create Cattle</Button>
                 </DialogTrigger>
 
                 {/* Add a ref to the dialog */}
                 <DialogContent  className={"lg:max-w-[200px]-lg overflow-y-scroll max-h-screen"} >
                   <DialogHeader>
-                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogTitle>{cattle.id != 0 ? 'Update' :'Create'} Cattle</DialogTitle>
                     <DialogDescription>
                       <form method="dialog" onSubmit={cattle.id != 0 ? updateCattle : createCattle}>
                         <input
@@ -669,12 +730,13 @@ const [breedsData, setBreedsData] = React.useState(
                           onChange={handleInputChange}
                         />
 
-                        <label className="mt-5 input-bordered w-full">
+                        {/* <label className="mt-5 input-bordered w-full">
                             <select
-                                name="status"
+                                name="breed"
                                 value={cattle.breed_id}
                                 onChange={handleInputChange}
                                 className="input input-bordered w-full mt-1"
+                                placeholder="Breed"
                             >
                                 <option value="">Breed</option>
 
@@ -682,12 +744,32 @@ const [breedsData, setBreedsData] = React.useState(
                                     breedsData && breedsData.map((b) => {
                                         return <option key={b.id} value={b.id}>{b.name}</option>
                                     })
+
                                 }
-                                {/* <option value="sehat">Sehat</option>
-                                <option value="sakit">Sakit</option>
-                                <option value="mati">Mati</option> */}
+                      
                             </select>
-                        </label>
+                        </label> */}
+
+
+  
+                        <div>
+                          <label className="mt-5 input-bordered w-full">
+                            <select
+                              name="breed"
+                              value={cattle.breed_id}
+                              onChange={handleInputChange}
+                              className="input input-bordered w-full mt-1"
+                            >
+                              <option value="">Breed</option>
+                              {breedsData && breedsData.map((b) => (
+                                <option key={b.id} value={b.id}>{b.name}</option>
+                              ))}
+                            </select>
+                          </label>
+                          {error && <p className="text-red-500">Please select a breed.</p>}
+                        </div>
+
+
                         {/* <input
                           className="input input-bordered w-full mt-5"
                           value={cattle.status}
@@ -735,11 +817,11 @@ const [breedsData, setBreedsData] = React.useState(
                                 <input
                                 type="radio"
                                 name="gender"
-                                value="pejantan"
-                                checked={cattle.gender === 'pejantan'}
+                                value="jantan"
+                                checked={cattle.gender === 'jantan'}
                                 onChange={handleInputChange}
                                 />
-                                Pejantan
+                                Jantan
                             </label>
                             <label>
                                 <input
@@ -807,14 +889,31 @@ const [breedsData, setBreedsData] = React.useState(
                           placeholder="iot_devices"
                           onChange={handleInputChange}
                         /> */}
-                        <label className="mt-5 input-bordered w-full">
+                        {/* <label className="mt-5 input-bordered w-full">
                             <select
                                 name="status"
-                                value={cattle.iot_devices}
+                                value={cattle.iot_device_id}
                                 onChange={handleInputChange}
                                 className="input input-bordered w-full mt-1"
                             >
-                                <option value="">Breed</option>
+                                <option value="">IoT Device</option>
+
+                                {
+                                    IotDeviceData && IotDeviceData.map((b) => {
+                                        return <option key={b.id} value={b.id}>{b.name}</option>
+                                    })
+                                }
+                            </select>
+                        </label> */}
+
+                        <label className="mt-5 input-bordered w-full">
+                            <select
+                                name="iot_device"
+                                value={cattle.iot_device.serial_number}
+                                onChange={handleInputChange}
+                                className="input input-bordered w-full mt-1"
+                            >
+                                <option value="">iot device</option>
 
                                 {
                                     IotDeviceData && IotDeviceData.map((b) => {
@@ -826,16 +925,34 @@ const [breedsData, setBreedsData] = React.useState(
                                 <option value="mati">Mati</option> */}
                             </select>
                         </label>
-                        <input
-                          className="input input-bordered w-full mt-5"
-                          value={cattle.last_vaccination}
-                          type="date"
-                          name="last_vaccination"
-                          placeholder="last_vaccination"
-                          onChange={handleInputChange}
-                        />
+                 
+                        <div className="flex flex-col items-start mt-5">
+                          <label htmlFor="last_vaccination" className="w-full">Last Vaccination</label>
+                          <input
+                            className="input input-bordered w-full"
+                            id="last_vaccination"
+                            value={cattle.last_vaccination}
+                            type="date"
+                            name="last_vaccination"
+                            placeholder="last_vaccination"
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        
+                        {/* <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }} className='mt-5'>
+                          <label htmlFor="last_vaccination" className="form-label">Last Vaccination</label>
+                          <input
+                            className="input input-bordered w-full"
+                            id="last_vaccination"
+                            value={cattle.last_vaccination}
+                            type="date"
+                            name="last_vaccination"
+                            placeholder="last_vaccination"
+                            onChange={handleInputChange}
+                          />
+                        </div> */}
                         <div className="mt-5 flex justify-end gap-3">
-                          <button type="submit" className="btn">Create</button>
+                          <button type="submit" className="btn">{cattle.id != 0 ? 'Update' :'Create'} Cattle</button>
                         </div>
                       </form>
                     </DialogDescription>
