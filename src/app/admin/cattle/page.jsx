@@ -168,7 +168,7 @@ export default function cattle() {
     },
 
     {
-      accessorKey: "farm.address",
+      accessorKey: "farm.name",
       header: ({ column }) => {
         return (
           <Button
@@ -183,7 +183,7 @@ export default function cattle() {
       cell: ({ row }) => {
 
         if (row.original.farm != null) {
-            return <div className="lowercase">{row.original.farm.address}</div>
+            return <div className="lowercase">{row.original.farm.name}</div>
         }
         else {
             
@@ -300,7 +300,7 @@ export default function cattle() {
   const [cattle, setCattle] = React.useState({
     id: 0,
     name: "",
-    address: "",
+    farm: "",
     breed_id: "" ,
     type : "",
     status : "",
@@ -322,6 +322,10 @@ const [IotDeviceData, setIotDeviceData] = React.useState(
 
 const [breedsData, setBreedsData] = React.useState(
  []
+);
+
+const [farmData, setFarmData] = React.useState(
+  []
 );
 
 
@@ -405,7 +409,41 @@ const [breedsData, setBreedsData] = React.useState(
       })
   }
   
+  // mengambil farm data
+  const getFarmData = async () => {
+    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
+      headers: {
+        'content-type': 'text/json',
+        'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
+      }
+    })
+      .then(function (response) {
+        if (response.data.data != undefined) {
+          setFarmData(response.data.data);
+        console.log(response.data.data);
+        }
+      }).catch(function (error) {
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          })
 
+          logout()
+
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'error terjadi',
+            text: 'mohon coba lagi nanti.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      })
+  }
 
 
   // mengambil Iot Data
@@ -485,11 +523,6 @@ const [breedsData, setBreedsData] = React.useState(
   // Membuat cattle data
   const createCattle = async (e) => {
     e.preventDefault();
-    // Validate form data
-    // if (!cattle.name || !cattle.breed_id || !cattle.status || !cattle.gender || !cattle.type || !cattle.birth_date || !cattle.birth_weight || !cattle.birth_height || !cattle.iot_device_id || !cattle.last_vaccination) {
-    //   setError(true);
-    //   return;
-    // }
 
     Swal.fire({
       title: 'Loading...',
@@ -506,6 +539,7 @@ const [breedsData, setBreedsData] = React.useState(
     bodyFormData.append('status', cattle.status);
     bodyFormData.append('gender', cattle.gender);
     bodyFormData.append('type', cattle.type);
+    bodyFormData.append('farm', cattle.farm);
     bodyFormData.append('birth_date', cattle.birth_date);
     bodyFormData.append('birth_weight', cattle.birth_weight);
     bodyFormData.append('birth_height', cattle.birth_height);
@@ -534,6 +568,7 @@ const [breedsData, setBreedsData] = React.useState(
         breed_id: "" ,
         gender : "",
         type : "",
+        farm : "",
         status : "",
         birth_date : "",
         birth_weight : "",
@@ -579,6 +614,7 @@ const [breedsData, setBreedsData] = React.useState(
         gender : ct.gender,
         type : ct.type,
         status : ct.status,
+        farm : ct.farm,
         birth_date : ct.birth_date,
         birth_weight : ct.birth_weight,
         birth_height : ct.birth_height,
@@ -596,15 +632,15 @@ const [breedsData, setBreedsData] = React.useState(
       id: 0,
             name: "",
             breed_id: "" ,
-
+            farm : "",
             gender : "",
             type : "",
             status : "",
+            farm : " ",
             birth_date : "",
             birth_weight : "",
             birth_height : "",
             iot_device_id : "",
-            
             last_vaccination : ""
     });
     setOpen(true);
@@ -630,6 +666,7 @@ const [breedsData, setBreedsData] = React.useState(
     bodyFormData.append('status', cattle.status);
     bodyFormData.append('gender', cattle.gender);
     bodyFormData.append('type', cattle.type);
+    bodyFormData.append('farm', cattle.farm);
     bodyFormData.append('birth_date', cattle.birth_date);
     bodyFormData.append('birth_weight', cattle.birth_weight);
     bodyFormData.append('birth_height', cattle.birth_height);
@@ -643,6 +680,7 @@ const [breedsData, setBreedsData] = React.useState(
         breed_id: cattle.breed_id ,
         gender : cattle.gender,
         type : cattle.type,
+        farm : cattle.farm,
         status : cattle.status,
         birth_date : cattle.birth_date,
         birth_weight : cattle.birth_weight,
@@ -669,6 +707,7 @@ const [breedsData, setBreedsData] = React.useState(
             gender : "",
             type : "",
             status : "",
+            farm : "",
             birth_date : "",
             birth_weight : "",
             birth_height : "",
@@ -748,6 +787,7 @@ const [breedsData, setBreedsData] = React.useState(
   React.useEffect(() => {
     getCattleData();
     getBreedsData();
+    getFarmData();
     getIotDeviceData();
 
   }, []);
@@ -784,28 +824,7 @@ const [breedsData, setBreedsData] = React.useState(
                           onChange={handleInputChange}
                         />
 
-                        {/* <label className="mt-5 input-bordered w-full">
-                            <select
-                                name="breed"
-                                value={cattle.breed_id}
-                                onChange={handleInputChange}
-                                className="input input-bordered w-full mt-1"
-                                placeholder="Breed"
-                            >
-                                <option value="">Breed</option>
 
-                                {
-                                    breedsData && breedsData.map((b) => {
-                                        return <option key={b.id} value={b.id}>{b.name}</option>
-                                    })
-
-                                }
-                      
-                            </select>
-                        </label> */}
-
-
-  
                         <div>
                           <label className="mt-5 input-bordered w-full">
                             <select
@@ -820,43 +839,21 @@ const [breedsData, setBreedsData] = React.useState(
                             </select>
                           </label>
                         </div>
-
-
                        
-                      <label className="mt-5 input-bordered w-full">
-                          <select
-                              name="status"
-                              // value={cattle.status}
-                              onChange={handleSelectChage}
-                              className="input input-bordered w-full mt-1"
-                          >
-                              <option value="">Pilih Status Sapimu</option>
-                              <option value="sehat">Sehat</option>
-                              <option value="sakit">Sakit</option>
-                              <option value="mati">Mati</option>
-                          </select>
-                      </label>
+                        <label className="mt-5 input-bordered w-full">
+                            <select
+                                name="status"
+                                // value={cattle.status}
+                                onChange={handleSelectChage}
+                                className="input input-bordered w-full mt-1"
+                            >
+                                <option value="">Pilih Status Sapimu</option>
+                                <option value="sehat">Sehat</option>
+                                <option value="sakit">Sakit</option>
+                                <option value="mati">Mati</option>
+                            </select>
+                        </label>
                        
-                        {/* <div className="mt-5 input-bordered w-full ">
-                            <label>
-                                Status:
-                                <select name="status" value={cattle.status} onChange={handleInputChange}>
-                                    <option value="status1">Status 1</option>
-                                    <option value="status2">Status 2</option>
-                                    <option value="status3">Status 3</option>
-                                </select>
-                            </label>
-                        </div> */}
-
-                        {/* <input
-                          className="input input-bordered w-full mt-5"
-                          value={cattle.gender}
-                          type="text"
-                          name="gender"
-                          placeholder="gender"
-                          onChange={handleInputChange}
-                        /> */}
-
                         <div className="mt-5 input-bordered w-full flex justify-start gap-3     ">
                             <label>
                                 <input
@@ -879,14 +876,6 @@ const [breedsData, setBreedsData] = React.useState(
                                 Betina
                             </label>
                         </div>
-                        {/* <input
-                          className="input input-bordered w-full mt-5"
-                          value={cattle.type}
-                          type="text"
-                          name="type"
-                          placeholder="type"
-                          onChange={handleInputChange}
-                        /> */}
 
                         <label className="mt-5 input-bordered w-full">
                             <select
@@ -897,10 +886,25 @@ const [breedsData, setBreedsData] = React.useState(
                             >
                                 <option value="">Pilih Jenis Sapimu</option>
                                 <option value="pedaging">Sapi Pedaging</option>
-                                <option value="peternak">Sapi Peternak</option>
+                                <option value="peranakan">Sapi Peternak</option>
                                 <option value="perah">Sapi Perah</option>
                             </select>
                         </label>
+
+                        <div>
+                          <label className="mt-5 input-bordered w-full">
+                            <select
+                              name="farm"
+                              onChange={handleSelectChage}
+                              className="input input-bordered w-full mt-1"
+                            >
+                              <option value="">Pilih nama farm mu</option>
+                              {farmData && farmData.map((b) => (
+                                <option key={b.id} value={b.id}>{b.name}</option>
+                              ))}
+                            </select>
+                          </label>
+                        </div>
 
                         <input
                           className="input input-bordered w-full mt-5"
@@ -926,30 +930,6 @@ const [breedsData, setBreedsData] = React.useState(
                           placeholder="birth_height"
                           onChange={handleInputChange}
                         />
-                        {/* <input
-                          className="input input-bordered w-full mt-5"
-                          value={cattle.iot_devices}
-                          type="text"
-                          name="iot_devices"
-                          placeholder="iot_devices"
-                          onChange={handleInputChange}
-                        /> */}
-                        {/* <label className="mt-5 input-bordered w-full">
-                            <select
-                                name="status"
-                                value={cattle.iot_device_id}
-                                onChange={handleInputChange}
-                                className="input input-bordered w-full mt-1"
-                            >
-                                <option value="">IoT Device</option>
-
-                                {
-                                    IotDeviceData && IotDeviceData.map((b) => {
-                                        return <option key={b.id} value={b.id}>{b.name}</option>
-                                    })
-                                }
-                            </select>
-                        </label> */}
 
                         <label className="mt-5 input-bordered w-full">
                             <select
@@ -964,9 +944,7 @@ const [breedsData, setBreedsData] = React.useState(
                                         return <option key={b.id} value={b.id}>{b.serial_number}</option>
                                     })
                                 }
-                                {/* <option value="sehat">Sehat</option>
-                                <option value="sakit">Sakit</option>
-                                <option value="mati">Mati</option> */}
+                                
                             </select>
                         </label>
                  
@@ -983,18 +961,6 @@ const [breedsData, setBreedsData] = React.useState(
                           />
                         </div>
                         
-                        {/* <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }} className='mt-5'>
-                          <label htmlFor="last_vaccination" className="form-label">Last Vaccination</label>
-                          <input
-                            className="input input-bordered w-full"
-                            id="last_vaccination"
-                            value={cattle.last_vaccination}
-                            type="date"
-                            name="last_vaccination"
-                            placeholder="last_vaccination"
-                            onChange={handleInputChange}
-                          />
-                        </div> */}
                         <div className="mt-5 flex justify-end gap-3">
                           <button type="submit" className="btn">{cattle.id != 0 ? 'Update' :'Create'} Cattle</button>
                         </div>
