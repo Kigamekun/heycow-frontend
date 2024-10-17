@@ -2,12 +2,36 @@
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
+import { useAuth } from '@/lib/hooks/auth';
 
+import Swal from "sweetalert2"
 
 export function Sidebar() {
     const [activePage, setActivePage] = useState('');
     const router = useRouter();
     const pathname = usePathname()
+
+    const { user, logout } = useAuth({ middleware: 'user' })
+
+
+    const onClickLogout = () => {
+        Swal.fire({
+            title: "Anda yakin?",
+            text: "Anda akan logout!",
+            icon: "warning",
+            showCancelButton: true,
+            // confirmButtonColor: "#6A9944",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Confirm",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                logout(); // Execute the logout function
+            } else {
+                Swal.fire("Cancelled", "Logout cancelled", "error");
+            }
+        });
+    };
 
     useEffect(() => {
         setActivePage(pathname || 'dashboard');
@@ -62,6 +86,22 @@ export function Sidebar() {
                         <span>History</span>
                     </Link>
                 </li>
+                <li className={`sidebar-item ${pathname === "/admin/report" ? "active" : ""}`}>
+                    <Link className="sidebar-link" href="/admin/report">
+                        <i className="bi bi-grid-fill" />
+                        <span>Report</span>
+                    </Link>
+                </li>
+
+                <button>
+                    <li className="sidebar-item">
+                        <a className="sidebar-link" onClick={onClickLogout}>
+                            <i className="bi bi-box-arrow-right" />
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </button>
+
             </ul>
         </div>
     );

@@ -23,9 +23,9 @@ export const useAuth = ({
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             },
-            withCredentials: true 
+            withCredentials: true
         })
-        .then(res => res.data.data)
+        .then(res => res.data)
         .catch(error => {
             if (error.response.status !== 409) throw error;
             router.push('/verify-email');
@@ -57,7 +57,7 @@ export const useAuth = ({
         });
 
         try {
-            await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/register`, props)
+            await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/auth/register`, props)
                 .then(function (response) {
                     setStatus('success');
                     loadingSwal.close();
@@ -87,7 +87,6 @@ export const useAuth = ({
     }) => {
         setErrors([]);
         setStatus(null);
-
         const loadingSwal = Swal.fire({
             title: 'Loading...',
             allowOutsideClick: false,
@@ -95,13 +94,12 @@ export const useAuth = ({
                 Swal.showLoading();
             }
         });
-
         try {
-            await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/login`, props)
+            await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/auth/login`, props)
                 .then(function (response) {
-                    const token = response.data.data;
-                    localStorage.setItem('token', token);
-                    console.log('Token:', token);
+                    const token = response.data;
+                    localStorage.setItem('token', token.access_token);
+                    localStorage.setItem('user', JSON.stringify(token.user));
                     setStatus('success');
                     loadingSwal.close();
                     const loggedInUser = {
@@ -112,6 +110,14 @@ export const useAuth = ({
                 })
                 .catch(function (error) {
                     console.log('Error:', error);
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Credential is wrong',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+
                 });
 
         } catch (error) {
@@ -154,14 +160,28 @@ export const useAuth = ({
 
     const logout = async () => {
         localStorage.removeItem('token');
-        window.location.pathname = '/auth/login';
+        localStorage.removeItem('user');
+        window.location.pathname = '/login';
     };
 
     useEffect(() => {
-        if (middleware === 'guest' && redirectIfAuthenticated && user) {
-            handleRedirect();
+
+        if (middleware === 'admin'  && user) {
+            if (user.role !== 'admin') {
+                router.push('/peternak');
+            }
         }
-        if ((middleware === 'auth' || middleware === 'user') && user) {}
+
+
+        if (middleware === 'guest' && redirectIfAuthenticated && user) {
+            console.log('User:', user);
+            if (user.role === 'admin') {
+                router.push('/admin');
+            } else {
+                router.push('/peternak');
+            }
+        }
+        if ((middleware === 'admin' || middleware === 'peternak') && user) {}
     }, [user, error]);
 
     return {

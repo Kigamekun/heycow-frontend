@@ -20,6 +20,7 @@ import {
 } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
 
+import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 
 import { Input } from "@/components/ui/input"
 import {
@@ -36,18 +37,21 @@ import Swal from "sweetalert2"
 
 export default function Home() {
 
+
+  const { user, logout } = useAuth({ middleware: 'admin' })
+
+
   const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState(
-    []
-  )
+  const [columnFilters, setColumnFilters] = React.useState([])
   const [columnVisibility, setColumnVisibility] =
     React.useState({
       image: false,
-
     })
+
   const [rowSelection, setRowSelection] = React.useState({})
 
   const [farmData, setFarmData] = React.useState([]);
+
   const columns = [
     {
       accessorKey: "no",
@@ -111,6 +115,7 @@ export default function Home() {
       ),
     }
   ];
+
   const [farm, setFarm] = React.useState({
     id: 0,
     name: '',
@@ -145,19 +150,11 @@ export default function Home() {
 
   const [open, setOpen] = React.useState(false)
 
-
-
-
-
-
-
-  
-
   const getFarmData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
       headers: {
         'content-type': 'text/json',
-        'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
       }
     })
       .then(function (response) {
@@ -210,7 +207,7 @@ export default function Home() {
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           }
         }
       );
@@ -300,7 +297,7 @@ export default function Home() {
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
 
         },
       }
@@ -365,7 +362,7 @@ export default function Home() {
             `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms/${id}`,
             {
               headers: {
-                'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
               }
             }
           );
@@ -398,20 +395,20 @@ export default function Home() {
           <div className="d-flex justify-content-between align-items-center">
             <h3>Farm</h3>
             <div>
-            <Button variant="outline" onClick={createData}>Create Farm</Button>
+              <Button variant="outline" onClick={createData}>Create Farm</Button>
 
 
               <Dialog open={open} onOpenChange={setOpen}>
-               
+
 
                 {/* Add a ref to the dialog */}
                 <DialogContent >
                   <DialogHeader>
-                    <DialogTitle className="mb-4">{farm.id != 0 ? 'Update' :'Create'} Farm</DialogTitle>
+                    <DialogTitle className="mb-4">{farm.id != 0 ? 'Update' : 'Create'} Farm</DialogTitle>
                     <DialogDescription>
                       <form method="dialog" onSubmit={farm.id != 0 ? updateFarm : createFarm}>
                         <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4" 
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={farm.name}
                           type="text"
                           name="name"
@@ -419,7 +416,7 @@ export default function Home() {
                           onChange={handleInputChange}
                         />
                         <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4" 
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={farm.address}
                           type="text"
                           name="address"
@@ -427,7 +424,7 @@ export default function Home() {
                           onChange={handleInputChange}
                         />
                         <div className="flex justify-end gap-3 mb-3">
-                          <button type="submit" className="btn btn-primary">{farm.id != 0 ? 'Update' :'Create'}</button>
+                          <button type="submit" className="btn btn-primary">{farm.id != 0 ? 'Update' : 'Create'}</button>
                         </div>
                       </form>
                     </DialogDescription>
