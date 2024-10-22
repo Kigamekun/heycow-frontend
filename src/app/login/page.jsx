@@ -84,7 +84,7 @@ export default function Page() {
                             </button> */}
                             <button type="submit" className="bg-[#20A577] rounded-xl font-bold text-xl text-white h-[3rem] w-full">
                                 Login
-                            </button>
+                            </button> 
                             {/* <div className="divider text-red-200">atau</div> */}
                             <div className="text-center">
                                <p className="font-bold text-lg"> Belum punya akun?{" "}</p>

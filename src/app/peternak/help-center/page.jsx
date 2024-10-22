@@ -5,8 +5,8 @@
 import { useRef } from "react";
 import { Editor } from '@tinymce/tinymce-react';
 
-import Uppy from "@uppy/core";
-import Dashboard from "@uppy/dashboard";
+// import Uppy from "@uppy/core";
+// import Dashboard from "@uppy/dashboard";
 import { useEffect } from "react";
 
 import {
@@ -38,8 +38,8 @@ import Swal from "sweetalert2"
 
 
 export default function Home() {
-  const { user, logout } = useAuth({ middleware: 'admin' })
-  new Uppy().use(Dashboard, { inline: true, target: '#uppy-dashboard' });
+  const { user, logout } = useAuth({ middleware: 'cattleman' })
+//   new Uppy().use(Dashboard, { inline: true, target: '#uppy-dashboard' });
     const editorRef = useRef();
   return (
     <>
@@ -55,11 +55,11 @@ export default function Home() {
                     <form>
                         <div className="mb-3">
                             <label htmlFor="name" className="form-label">Name</label>
-                            <input type="text" className="form-control" id="name" placeholder="Name" />
+                            <Input type="text" className="form-control" id="name" placeholder="Name" />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="email" className="form-label">Email</label>
-                            <input type="email" className="form-control" id="email" placeholder="Email" />
+                            <Input type="email" className="form-control" id="email" placeholder="Email" />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="subject" className="form-label">Jenis Masalah</label>
@@ -72,7 +72,7 @@ export default function Home() {
                         </div>
                         <div className="mb-3">
                             <label htmlFor="image" className="form-label">Lampirkan Bukti</label>
-                            <Dashboard id="uppy-dashboard" />
+                            {/* <Dashboard id="uppy-dashboard" /> */}
                         </div>
                         <div className="mb-3">
                             <label htmlFor="message" className="form-label">Message</label>

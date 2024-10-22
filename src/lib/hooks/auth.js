@@ -59,9 +59,17 @@ export const useAuth = ({
         try {
             await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/auth/register`, props)
                 .then(function (response) {
+                    const token = response.data;
+                    localStorage.setItem('token', token.access_token);
+                    localStorage.setItem('user', JSON.stringify(token.user));
                     setStatus('success');
                     loadingSwal.close();
-                    router.push('/auth/login');
+                    // router.push('/peternak');
+                    const registeredInUser = {
+                        token
+                    };
+                    mutate(registeredInUser);
+                    handleRedirect();
                 })
                 .catch(function (error) {
                     console.log('Error:', error);

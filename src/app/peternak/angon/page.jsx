@@ -21,7 +21,7 @@ import Swal from "sweetalert2"
 
 
 export default function Home() {
-  const { user, logout } = useAuth({ middleware: 'admin' })
+  const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' })
 
 
   return (

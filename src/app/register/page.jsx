@@ -1,35 +1,86 @@
 /* eslint-disable @next/next/no-sync-scripts */
 'use client';
 
-import { useAuth } from "@/lib/hooks/auth";
 import Image from "next/image";
+import { useAuth } from "@/lib/hooks/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Input } from "@/components/ui/input"
-
-import { MailIcon } from "lucide-react";
-
+import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default function Page() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('')
+    const [password, setPassword] = useState('');
 
     const router = useRouter();
 
-    const [errors, setErrors] = useState([])
-    const [status, setStatus] = useState(null)
-
+    const [errors, setErrors] = useState([]);
+    const [status, setStatus] = useState(null);
     const { register } = useAuth({
         middleware: 'guest',
         redirectIfAuthenticated: '/home',
     })
+    // const handleRegister = async (event) => {
+     
+    //     // register({
+    //     //     name,
+    //     //     email,
+    //     //     address,
+    //     //     password,
+    //     //     confirmPassword,
+    //     //     setErrors,
+    //     //     setStatus,
+    //     // });
+        
+    //     // try {
+    //     //     console.log('Address before sending:', address); // Tambahkan log ini
+
+    //     //     const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/auth/register`, {
+    //     //         name,
+    //     //         email,
+    //     //         address,
+    //     //         password,
+    //     //         confirmPassword,
+    //     //     }, {
+    //     //         headers: {
+    //     //             'Content-Type': 'application/json',
+    //     //         },
+    //     //     });
+
+    //     //     if (response.status === 200) {
+    //     //         // Simpan user data dari response
+    //     //         const data = response.data.data;
+    
+    //     //         // Simpan user data ke local storage
+    //     //         localStorage.setItem('data', JSON.stringify(data));
+    
+    //     //         Swal.fire({
+    //     //             title: 'Registration successful',
+    //     //             text: 'You have successfully registered!',
+    //     //             icon: 'success',
+    //     //             confirmButtonText: 'Ok'
+    //     //         });
+                
+    //     //         setStatus('Registration successful');
+    //     //         router.push('/peternak');
+    //     //     } else {
+    //     //         throw new Error('Registration failed');
+    //     //     }
+    
+
+            
+    //     // } catch (error) {
+    //     //     setErrors([error.message]);
+    //     // }
+    // };
+
     const submitHandler = async (event) => {
-        event.preventDefault()
+        event.preventDefault();
         register({
             name,
             email,
@@ -38,34 +89,9 @@ export default function Page() {
             confirmPassword,
             setErrors,
             setStatus,
-        })
-    }
-    const handleRegister = async () => {
-        try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/Auth/register`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name,
-                    email,
-                    address,
-                    password,
-                    confirmPassword,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Registration failed');
-            }
-
-            const data = await response.json();
-            setStatus('Registration successful');
-            router.push('/home');
-        } catch (error) {
-            setErrors([error.message]);
-        }
+        });
     };
+
     return (
         <>
             <main className="my-0 mx-auto min-h-full max-w-screen-sm">
@@ -79,8 +105,8 @@ export default function Page() {
                 </div>
                 <div className="card shadow-xl p-6">
                     <div className="p-3 text-center">
-                        <h1 className="card-title text-black">Sign in</h1>
-                        <p>Welcome to Future Farmer, enjoy our app!</p>
+                        <h1 className="card-title text-black">Create an Account</h1>
+                        <p>Welcome Future Farmer, enjoy our app!</p>
                     </div>
                     
                     <div className="card-body mx-4">
@@ -127,10 +153,10 @@ export default function Page() {
                                 Register
                             </button>
                             <div className="text-center">
-                               <p className="font-bold text-lg"> Belum punya akun?{" "}</p>
+                               <p className="font-bold text-lg"> Sudah punya akun?{" "}</p>
                                 <p className="font-bold text-lg">
-                                    <Link href="/auth/register" className="text-[#20A577]">
-                                        Sign Up!
+                                    <Link href="/login" className="text-[#20A577]">
+                                        Sign in!
                                     </Link>
                                     {" "}Atau kembali sebagai <Link href="/home" className="text-[#20A577]">
                                         Tamu

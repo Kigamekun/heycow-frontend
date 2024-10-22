@@ -21,7 +21,7 @@ import Swal from "sweetalert2"
 
 
 export default function Home() {
-  const { user, logout } = useAuth({ middleware: 'admin' })
+  const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' })
 
 
   return (
@@ -34,7 +34,7 @@ export default function Home() {
         <div className="container d-flex justify-center ">
             <div className="card w-[500px]">
             <div className="card-body image dan profile d-flex gap-4">
-                <img src="https://i.pinimg.com/control/564x/01/19/1f/01191fd3ece2dcd44122ff6d88149abc.jpg" alt="cow" />
+                <img src="https://i.pinimg.com/control/564x/01/19/1f/01191fd3ece2dcd44122ff6d88149abc.jpg" width={180} alt="cow" />
                 <div className="d-flex flex-col grid grid-rows-3 gap-3">
                     <h4 className="text-black font-bold">Mulyono</h4>
                     <p className="text-r">Ciomas, Bogor Regency, Jawa Barat</p>
