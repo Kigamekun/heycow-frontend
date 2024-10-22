@@ -3,6 +3,7 @@ import { useState } from 'react';
 import * as React from "react"
 import { useRef } from "react"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 import {
   Dialog,
   DialogContent,
@@ -42,7 +43,7 @@ import Swal from "sweetalert2"
 
 
 export default function cattle() {
-  
+  const { user, logout } = useAuth({ middleware: 'admin' })
   const [sorting, setSorting] = React.useState([])
   const [columnFilters, setColumnFilters] = React.useState(
     []
@@ -81,7 +82,7 @@ export default function cattle() {
           <div>
 
           </div>
-          <div className="flex flex-col justify-center">
+          <div className="flex text-center flex-col justify-center">
             <h6 className="mb-0 text-sm leading-normal dark:text-white">
               {row.getValue("name")}
             </h6>
@@ -314,8 +315,6 @@ export default function cattle() {
 });
 
 
-
-
 const [IotDeviceData, setIotDeviceData] = React.useState(
  []
 );
@@ -350,19 +349,16 @@ const [farmData, setFarmData] = React.useState(
 
 
   const handleInputChange = (event) => {
+
     const { name, value } = event.target;
     setCattle({ ...cattle, [name]: value });
-    // if (name === 'breed' && value === '') {
-    //   setError(true);
-    // } else {
-    //   setError(false);
-    // }
   
   }
 
   
 
-  const handleSelectChage = (event) => {
+  const handleSelectChange = (event) => {
+    
     const name = event.target.name;
     const {value} = event.target.selectedOptions[0];
     console.log(value);
@@ -378,7 +374,7 @@ const [farmData, setFarmData] = React.useState(
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/breeds`, {
       headers: {
         'content-type': 'text/json',
-        'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
       }
     })
       .then(function (response) {
@@ -414,7 +410,7 @@ const [farmData, setFarmData] = React.useState(
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
       headers: {
         'content-type': 'text/json',
-        'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
       }
     })
       .then(function (response) {
@@ -451,7 +447,7 @@ const [farmData, setFarmData] = React.useState(
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices`, {
       headers: {
         'content-type': 'text/json',
-        'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
       }
     })
       .then(function (response) {
@@ -487,7 +483,7 @@ const [farmData, setFarmData] = React.useState(
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle`, {
       headers: {
         'content-type': 'text/json',
-        'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
       }
     })
       .then(function (response) {
@@ -553,7 +549,7 @@ const [farmData, setFarmData] = React.useState(
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           }
         }
       );
@@ -692,7 +688,7 @@ const [farmData, setFarmData] = React.useState(
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
 
         },
       },
@@ -767,7 +763,7 @@ const [farmData, setFarmData] = React.useState(
             `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${id}`,
             {
               headers: {
-                'Authorization': `Bearer 7|BCr1usIvBIKTbtXrI8fQElNE8OowER8ZJf0UgBpk1f075e6c`,
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
               }
             }
           );
@@ -829,7 +825,7 @@ const [farmData, setFarmData] = React.useState(
                           <label className="mt-5 input-bordered w-full">
                             <select
                               name="breed_id"
-                              onChange={handleSelectChage}
+                              onChange={handleSelectChange}
                               className="input input-bordered w-full mt-1"
                             >
                               <option value="">Breed</option>
@@ -844,7 +840,7 @@ const [farmData, setFarmData] = React.useState(
                             <select
                                 name="status"
                                 // value={cattle.status}
-                                onChange={handleSelectChage}
+                                onChange={handleSelectChange}
                                 className="input input-bordered w-full mt-1"
                             >
                                 <option value="">Pilih Status Sapimu</option>
@@ -881,7 +877,7 @@ const [farmData, setFarmData] = React.useState(
                             <select
                                 name="type"
                                 // value={cattle.type}
-                                onChange={handleSelectChage}
+                                onChange={handleSelectChange}
                                 className="input input-bordered w-full mt-1"
                             >
                                 <option value="">Pilih Jenis Sapimu</option>
@@ -895,7 +891,7 @@ const [farmData, setFarmData] = React.useState(
                           <label className="mt-5 input-bordered w-full">
                             <select
                               name="farm"
-                              onChange={handleSelectChage}
+                              onChange={handleSelectChange}
                               className="input input-bordered w-full mt-1"
                             >
                               <option value="">Pilih nama farm mu</option>
@@ -934,7 +930,7 @@ const [farmData, setFarmData] = React.useState(
                         <label className="mt-5 input-bordered w-full">
                             <select
                                 name="iot_device_id"
-                                onChange={handleSelectChage}
+                                onChange={handleSelectChange}
                                 className="input input-bordered w-full mt-1"
                             >
                                 <option value="">iot device</option>

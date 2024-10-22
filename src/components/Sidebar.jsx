@@ -11,7 +11,7 @@ export function Sidebar() {
     const router = useRouter();
     const pathname = usePathname()
 
-    const { user, logout } = useAuth({ middleware: 'user' })
+    const { user, logout } = useAuth({ middleware: 'admin' })
 
 
     const onClickLogout = () => {

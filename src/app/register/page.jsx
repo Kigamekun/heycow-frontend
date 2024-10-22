@@ -10,9 +10,12 @@ import { Input } from "@/components/ui/input"
 import { MailIcon } from "lucide-react";
 
 import Link from "next/link";
+import axios from "axios";
 
 export default function Page() {
-
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [name, setName] = useState('');
+    const [address, setAddress] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('')
 
@@ -21,24 +24,51 @@ export default function Page() {
     const [errors, setErrors] = useState([])
     const [status, setStatus] = useState(null)
 
-    const { login } = useAuth({
+    const { register } = useAuth({
         middleware: 'guest',
         redirectIfAuthenticated: '/home',
     })
     const submitHandler = async (event) => {
         event.preventDefault()
-        login({
+        register({
+            name,
             email,
+            address,
             password,
+            confirmPassword,
             setErrors,
             setStatus,
         })
     }
+    const handleRegister = async () => {
+        try {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/Auth/register`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    address,
+                    password,
+                    confirmPassword,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Registration failed');
+            }
+
+            const data = await response.json();
+            setStatus('Registration successful');
+            router.push('/home');
+        } catch (error) {
+            setErrors([error.message]);
+        }
+    };
     return (
         <>
             <main className="my-0 mx-auto min-h-full max-w-screen-sm">
-
-
                 <div className="d-flex justify-center">
                     <Image
                         src="/path/to/your/image.jpg"
@@ -56,54 +86,61 @@ export default function Page() {
                     <div className="card-body mx-4">
                         <form onSubmit={submitHandler} action="" className="space-y-6">
                             <div>
-                                <label htmlFor="email"><h5>Email</h5></label>       
+                                <label htmlFor="name"><h5>Username<span className="text-red-500">*</span></h5></label>
+                                <Input type="text" id="name"
+                                className="input input-bordered w-full h-[50px]" onChange={(event) => setName(event.target.value)}
+                                placeholder="Masukkan Nama Anda" />
+                            </div>
+                            
+                            <div>
+                                <label htmlFor="email"><h5>Email<span className="text-red-500">*</span></h5></label>       
                                 <Input type="text" 
                                     id="email"
                                     className="input input-bordered w-full h-[50px] " onChange={(event) => setEmail(event.target.value)}
-                                    
                                     placeholder="Masukan Email Anda" 
-                                
                                 />
                             </div>
                             
-                        
+                            <div>
+                                <label htmlFor="address"><h5>Address<span className="text-red-500">*</span></h5></label>
+                                <Input type="text" id="address"
+                                className="input input-bordered w-full h-[50px]" onChange={(event) => setAddress(event.target.value)}
+                                placeholder="Masukkan Alamat Anda" />
+                            </div>
 
                             <div>
-                            <label htmlFor="password"><h5>Password</h5></label>
-                                <Input type="password"
+                                <label htmlFor="password"><h5>Password<span className="text-red-500">*</span></h5></label>
+                                <Input type="password" id="password"
                                 className="input input-bordered w-full h-[50px]" onChange={(event) => setPassword(event.target.value)}
                                 placeholder="Masukkan Password Anda" />
                             </div>
 
+                            <div>
+                                <label htmlFor="confirmPassword"><h5>Confirm Your Password<span className="text-red-500">*</span></h5></label>
+                                <Input type="password" id="confirmPassword"
+                                className="input input-bordered w-full h-[50px]" onChange={(event) => setConfirmPassword(event.target.value)}
+                                placeholder="Konfirmasi Password Anda" />
+                            </div>
+
                             <br />
-                            {/* <button
-                                type="submit"
-                                className="w-[350px] h-[] justify-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-                            >
-                                Login
-                            </button> */}
                             <button type="submit" className="bg-[#20A577] rounded-xl font-bold text-xl text-white h-[3rem] w-full">
-                                Login
+                                Register
                             </button>
-                            {/* <div className="divider text-red-200">atau</div> */}
                             <div className="text-center">
                                <p className="font-bold text-lg"> Belum punya akun?{" "}</p>
                                 <p className="font-bold text-lg">
-
-                                    <Link href="/register" className="text-[#20A577]">
+                                    <Link href="/auth/register" className="text-[#20A577]">
                                         Sign Up!
                                     </Link>
                                     {" "}Atau kembali sebagai <Link href="/home" className="text-[#20A577]">
                                         Tamu
                                     </Link>
                                 </p>
-                                
                             </div>
                         </form>
                     </div>
-                    
-                </div>
                 
+                </div>
             </main>
         </>
     );
