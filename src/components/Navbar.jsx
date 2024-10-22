@@ -11,6 +11,7 @@ export function Navbar() {
     const [activePage, setActivePage] = useState('');
     const router = useRouter();
     const pathname = usePathname()
+    const [userAvatar, setUserAvatar] = useState(null)
 
     const { user, logout } = useAuth({ middleware: 'cattleman' })
 
@@ -33,7 +34,16 @@ export function Navbar() {
     //     });
     // };
 
+    const fetchUserImage = async () => {
+        try {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`); // Replace with your API endpoint
+          setUserImage(response.data.avatar); // Adjust according to your API response structure
+        } catch (error) {
+          console.error('Error fetching user image:', error);
+        }
+    };
     useEffect(() => {
+        fetchUserImage()
         setActivePage(pathname || 'dashboard');
         console.log(pathname)
     }, [pathname]);
@@ -54,7 +64,7 @@ export function Navbar() {
                             <p >{user ? user.role : 'Role'}</p>
                         </div>
                         <div className="profile-image ml-3">
-                            <img src="https://i.pinimg.com/control/564x/cc/5d/48/cc5d489e2acc9d119c33027454570f89.jpg"alt="Profile" className="rounded-full w-[60px] h-15 mb-3" />
+                            <img src={userAvatar || "https://i.pinimg.com/control/564x/cc/5d/48/cc5d489e2acc9d119c33027454570f89.jpg"} alt="Profile" className="rounded-full w-[60px] h-15 mb-3" />
                         </div>
                     </div>
                 </div>
