@@ -52,6 +52,8 @@ export default function Home() {
 
   const [farmData, setFarmData] = React.useState([]);
 
+  const [userData, setUserData] = React.useState([]);
+
   const columns = [
     {
       accessorKey: "no",
@@ -88,21 +90,47 @@ export default function Home() {
       ),
     },
 
+    
     {
-      accessorKey: "address",
+      accessorKey: "users.address",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Address
-            <ArrowUpDown className="w-4 h-4 ml-2" />
+            Jenis Sapi
+            <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("address")}</div>,
+      cell: ({ row }) => {
+
+        if (row.original.breed != null) {
+            return <div className="lowercase">{row.original.users.address}</div>
+        }
+        else {
+            
+            return <div className="lowercase">-</div>
+        }
+
+      },
     },
+    // {
+    //   accessorKey: "address",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    //       >
+    //         Address
+    //         <ArrowUpDown className="w-4 h-4 ml-2" />
+    //       </Button>
+    //     )
+    //   },
+    //   cell: ({ row }) => <div className="lowercase">{row.getValue("address")}</div>,
+    // },
 
     {
       accessorKey: 'id',
@@ -150,6 +178,43 @@ export default function Home() {
 
   const [open, setOpen] = React.useState(false)
 
+
+  
+  const getUserData = async () => {
+    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
+      headers: {
+        'content-type': 'text/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      }
+    })
+      .then(function (response) {
+        if (response.data.data != undefined) {
+          setUserData(response.data.data);
+        }
+      }).catch(function (error) {
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          })
+
+          logout()
+
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'error terjadi',
+            text: 'mohon coba lagi nanti.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      })
+  }
+
+  
   const getFarmData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
       headers: {
@@ -214,7 +279,7 @@ export default function Home() {
 
       // Refresh farm data
       getFarmData();
-
+      getUserData();
       // Reset form fields
       setFarm({
         id: 0,

@@ -158,7 +158,7 @@ export default function Page() {
                                     <Link href="/login" className="text-[#20A577]">
                                         Sign in!
                                     </Link>
-                                    {" "}Atau kembali sebagai <Link href="/home" className="text-[#20A577]">
+                                    {" "}Atau kembali sebagai <Link href="/" className="text-[#20A577]">
                                         Tamu
                                     </Link>
                                 </p>

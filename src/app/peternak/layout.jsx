@@ -21,8 +21,29 @@ export default function RootLayout({ children }) {
 
     return (
         <main>
-            <div id="app" className="d-flex">
-                <div id="sidebarXnavbar" className="d-flex bg-emerald-600 justify-between" >
+            <div id="app" >
+                <div id="sidebar" className="d-flex justify-between bg-emerald-50">
+                        <Navbar className="fixed"/>
+                        <div className="sidebar-wrapper active overflow-hidden bg-emerald-600">
+                            <div className="sidebar-header bg-emerald-600 " >
+                                <div className="d-flex justify-content-between align-items-center bg-emerald-600">
+                                    <div className="logo bg-emerald-600">
+                                        <a href="index.html">
+                                        </a>
+                                    </div>
+                                    <div className="sidebar-toggler x bg-emerald-600">
+                                        <a href="#" className="sidebar-hide d-xl-none d-block">
+                                            <i className="bi bi-x bi-middle" />
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <Sidebar />
+                        </div>
+                        {/* <Navbar /> */}
+                    </div>
+                
+                {/* <div id="sidebarXnavbar" className="d-flex bg-emerald-600 justify-between" >
                     <div id="sidebar" className="bg-emerald-600">
                         <div className="sidebar-wrapper active bg-emerald-600">
                             <div className="sidebar-header position-relative bg-emerald-600">
@@ -40,17 +61,19 @@ export default function RootLayout({ children }) {
                             </div>
                             <Sidebar />
                         </div>
-                        
+                        <Navbar/>
                     </div>
                 
-                </div>
-                <div id="navbar" className="bg-white" style={{ position: 'fixed', width: '100%', zIndex: 1000 }}>
-                    <Navbar />
                 </div>
                 <div id="main" className="flex-grow-1" style={{ marginTop: '80px' }}>
                     {children}
                 </div>
+            </div> */}
+                <div id="main" className="flex-grow-1" style={{ marginTop: '80px' }}>
+                    {children}
+                </div>
             </div>
+            
         </main>
     );
 }

@@ -39,7 +39,7 @@ export function Sidebar() {
     }, [pathname]);
 
     return (
-        <div className="sidebar-menu">
+        <div className="sidebar-menu h-full overflow-x-hidden" style={{zIndex: 600}}>
             <ul className="menu">
                 <li className="sidebar-title">Menu</li>
                 <li className={`sidebar-item ${pathname === "/admin" ? "active" : ""}`}>

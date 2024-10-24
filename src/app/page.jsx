@@ -1,536 +1,149 @@
 'use client'
-
-import * as React from "react"
-import { useRef } from "react"
-import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
-
-
-import { Input } from "@/components/ui/input"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import axios from "axios"
-import { useRouter } from "next/navigation"
-import Swal from "sweetalert2"
-
+import Head from 'next/head';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/globals.css';
 
 export default function Home() {
-
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState(
-    []
-  )
-  const [columnVisibility, setColumnVisibility] =
-    React.useState({
-      image: false,
-
-    })
-  const [rowSelection, setRowSelection] = React.useState({})
-
-  const [farmData, setFarmData] = React.useState([]);
-  const columns = [
-    {
-      accessorKey: "no",
-      header: "No",
-      cell: ({ row }) => row.index + 1, // Display row index, starting from 1
-    },
-    {
-      accessorKey: "name",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => (
-
-        <div className="flex px-2 py-1">
-          <div>
-
-          </div>
-          <div className="flex flex-col justify-center">
-            <h6 className="mb-0 text-sm leading-normal dark:text-white">
-              {row.getValue("name")}
-            </h6>
-            <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
-            </p>
-          </div>
-        </div>
-      ),
-    },
-
-    {
-      accessorKey: "address",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            address
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("address")}</div>,
-    },
-
-    
-    {
-      accessorKey: 'id',
-      header: 'Actions',
-      cell: info => (
-        <div>
-          <button className="btn btn-warning text-white text-xs" onClick={() => editFarm(Number(info.getValue()))}>Edit</button>
-          <button className="btn btn-danger text-xs ml-2" onClick={() => deleteFarm(Number(info.getValue()))}>Delete</button>
-        </div>
-      ),
-    }
-  ];
-  const [farm, setFarm] = React.useState({
-    id: 0,
-    name: '',
-    address: '',
-  });
-
-
-  const table = useReactTable({
-    data: farmData,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
-  })
-
-
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFarm({ ...farm, [name]: value });
-  }
-
-  const [open, setOpen] = React.useState(false)
-
-
-
-
-
-
-
-  
-
-  const getFarmData = async () => {
-    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
-      headers: {
-        'content-type': 'text/json',
-        'Authorization': `Bearer 4|iWxmrEiTEsbGE37izKHXMfHg4t1tVWwemFpzgWBd4e83e9a3`,
-      }
-    })
-      .then(function (response) {
-        if (response.data.data != undefined) {
-          setFarmData(response.data.data);
-        }
-      }).catch(function (error) {
-        if (error.response && error.response.status === 401) {
-          Swal.fire({
-            icon: 'error',
-            title: error.response.data.message,
-            showConfirmButton: false,
-            timer: 1500
-          })
-
-          logout()
-
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'error terjadi',
-            text: 'mohon coba lagi nanti.',
-            showConfirmButton: false,
-            timer: 1500
-          });
-        }
-      })
-  }
-
-  const createFarm = async (e) => {
-    e.preventDefault(); 
-
-    Swal.fire({
-      title: 'Loading...',
-      text: 'Mohon tunggu sebentar...',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
-
-    const bodyFormData = new FormData();
-    bodyFormData.append('name', farm.name);
-    bodyFormData.append('address', farm.address);
-
-    try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`,
-        bodyFormData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer 4|iWxmrEiTEsbGE37izKHXMfHg4t1tVWwemFpzgWBd4e83e9a3`,
-          }
-        }
-      );
-
-      // Refresh farm data
-      getFarmData();
-
-      // Reset form fields
-      setFarm({
-        id: 0,
-        name: '',
-        address: '',
-      });
-
-      setOpen(false);
-
-      Swal.close();
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        Swal.fire({
-          icon: 'error',
-          title: error.response.data.message,
-          showConfirmButton: false,
-          timer: 1500
-        });
-        logout();
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error terjadi',
-          text: 'Mohon coba lagi nanti.',
-          showConfirmButton: false,
-          timer: 1500
-        });
-      }
-    }
-  };
-
-  const editFarm = async (id) => {
-    let fr = farmData.find((f) => f.id === id);
-    console.log(fr)
-    if (fr) {
-      setFarm({
-        id: fr.id,
-        name: fr.name,
-        address: fr.address,
-      });
-      setOpen(true);
-    }
-  }
-
-
-  const updateFarm = async (e) => {
-
-
-    e.preventDefault();
-    Swal.fire({
-      title: 'Loading...',
-
-      text: 'Mohon tunggu sebentar...',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
-    var bodyFormData = new FormData();
-
-    bodyFormData.append('name', farm.name);
-    bodyFormData.append('address', farm.address);
-
-    var res = await axios.put(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms/${farm.id}`,
-      {
-        name: farm.name,
-        address: farm.address,
-
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer 4|iWxmrEiTEsbGE37izKHXMfHg4t1tVWwemFpzgWBd4e83e9a3`,
-
-        },
-      }
-    )
-      .then(function (response) {
-        getFarmData();
-        setFarm({
-          id: 0,
-          name: '',
-          address: '',
-
-        })
-        Swal.close()
-
-        setOpen(false);
-
-      }).catch(function (error) {
-        if (error.response && error.response.status === 401) {
-          Swal.fire({
-            icon: 'error',
-            title: error.response.data.message,
-            showConfirmButton: false,
-            timer: 1500
-          })
-
-          logout()
-
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'error terjadi',
-            text: 'mohon coba lagi nanti.',
-            showConfirmButton: false,
-            timer: 1500
-          });
-        }
-      })
-  }
-
-  const deleteFarm = async (id) => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: 'Loading...',
-          text: 'Mohon tunggu sebentar...',
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          }
-        });
-
-        try {
-          await axios.delete(
-            `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms/${id}`,
-            {
-              headers: {
-                'Authorization': `Bearer 4|iWxmrEiTEsbGE37izKHXMfHg4t1tVWwemFpzgWBd4e83e9a3`,
-              }
-            }
-          );
-          await getFarmData();
-          Swal.fire(
-            'Deleted!',
-            'Your farm has been deleted.',
-            'success'
-          );
-        } catch (error) {
-
-        }
-      }
-    });
-  };
-
-  React.useEffect(() => {
-    getFarmData();
-  }, []);
-
   return (
     <>
-      <header className="mb-3">
-        <a href="#" className="burger-btn d-block d-xl-none">
-          <i className="bi bi-justify fs-3" />
-        </a>
+      <header>
+        <title>HeyCow! Landing Page</title>
+        <meta name="description" content="HeyCow! Landing Page" />
+        <link rel="icon" href="/favicon.ico" />
+        {/* You can link any external CSS or JS libraries here */}
       </header>
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center">
-            <h3>Farms</h3>
-            <div>
-              <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="outline">Create Farm</Button>
-                </DialogTrigger>
 
-                {/* Add a ref to the dialog */}
-                <DialogContent >
-                  <DialogHeader>
-                    <DialogTitle>Are you absolutely sure?</DialogTitle>
-                    <DialogDescription>
-                      <form method="dialog" onSubmit={farm.id != 0 ? updateFarm : createFarm}>
-                        <input
-                          className="input input-bordered w-full mt-5"
-                          value={farm.name}
-                          type="text"
-                          name="name"
-                          placeholder="Name"
-                          onChange={handleInputChange}
-                        />
-                        <input
-                          className="input input-bordered w-full mt-5"
-                          value={farm.address}
-                          type="text"
-                          name="address"
-                          placeholder="Address"
-                          onChange={handleInputChange}
-                        />
-                        <div className="mt-5 flex justify-end gap-3">
-                          <button type="submit" className="btn">Create</button>
-                        </div>
-                      </form>
-                    </DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
+      {/* Navbar Section */}
+      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <div className="container header">
+          <a className="navbar-brand" href="/login">HeyCow! (Kalo mau login disini aja)</a>
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav ml-auto">
+              <li className="nav-item"><a className="nav-link" href="#about">About</a></li>
+              <li className="nav-item"><a className="nav-link" href="#services">Services</a></li>
+              <li className="nav-item"><a className="nav-link" href="#contact">Contact</a></li>
+              <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section id="hero" className="d-flex align-items-center dark-background">
+        <div className="container text-center">
+          <h1>Welcome to HeyCow!</h1>
+          <h2>Managing your livestock has never been easier.</h2>
+          <a href="#about" className="btn-get-started scrollto">Get Started</a>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="about">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-6">
+              <img src="/assets_lp/img/about.jpg" className="img-fluid" alt="About" />
+            </div>
+            <div className="col-lg-6 pt-4 pt-lg-0">
+              <h3>About HeyCow!</h3>
+              <p>HeyCow! is an app designed to simplify cattle management through technology and IoT.</p>
+              <ul>
+                <li><i className="bi bi-check"></i> Cattle health monitoring.</li>
+                <li><i className="bi bi-check"></i> Grazing management services.</li>
+                <li><i className="bi bi-check"></i> IoT device integration for efficiency.</li>
+              </ul>
             </div>
           </div>
-          <br />
-          <div className="flex-auto px-0 pt-0 pb-2">
-            <div className="">
-              <div className="flex items-end w-full py-4" style={{ justifyContent: 'end' }}>
-                <Input
-                  placeholder="Filter Farm..."
-                  value={(table.getColumn("name")?.getFilterValue()) ?? ""}
-                  onChange={(event) =>
-                    table.getColumn("name")?.setFilterValue(event.target.value)
-                  }
-                  className="max-w-sm"
-                />
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section id="services" className="services section-bg">
+        <div className="container">
+          <div className="section-title">
+            <h2>Services</h2>
+            <p>Our services are designed to make cattle farming easier and more efficient.</p>
+          </div>
+          <div className="row">
+            <div className="col-lg-4 col-md-6">
+              <div className="icon-box">
+                <div className="icon"><i className="bi bi-bullseye"></i></div>
+                <h4><a href="">Cattle Tracking</a></h4>
+                <p>Track your cattle in real-time with our advanced IoT solutions.</p>
               </div>
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                      <TableRow key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => {
-                          return (
-                            <TableHead key={header.id}>
-                              {header.isPlaceholder
-                                ? null
-                                : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                            </TableHead>
-                          )
-                        })}
-                      </TableRow>
-                    ))}
-                  </TableHeader>
-                  <TableBody>
-                    {table.getRowModel().rows?.length ? (
-                      table.getRowModel().rows.map((row) => (
-                        <TableRow
-                          key={row.id}
-                          data-state={row.getIsSelected() && "selected"}
-                        >
-                          {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell
-                          colSpan={columns.length}
-                          className="h-24 text-center"
-                        >
-                          No results.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
+            </div>
+            <div className="col-lg-4 col-md-6 mt-4 mt-md-0">
+              <div className="icon-box">
+                <div className="icon"><i className="bi bi-heart-pulse"></i></div>
+                <h4><a href="">Health Monitoring</a></h4>
+                <p>Monitor the health and activity levels of your cattle to ensure well-being.</p>
               </div>
-              <div className="flex items-center justify-end space-x-2 py-4">
-                <div className="flex-1 text-sm text-muted-foreground">
-                  {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                  {table.getFilteredRowModel().rows.length} row(s) selected.
-                </div>
-                <div className="space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                  >
-                    Next
-                  </Button>
-                </div>
+            </div>
+            <div className="col-lg-4 col-md-6 mt-4 mt-lg-0">
+              <div className="icon-box">
+                <div className="icon"><i className="bi bi-box"></i></div>
+                <h4><a href="">Grazing Services</a></h4>
+                <p>Let HeyCow! handle grazing management to optimize productivity.</p>
               </div>
             </div>
           </div>
         </div>
-      </div >
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="contact">
+        <div className="container">
+          <div className="section-title">
+            <h2>Contact</h2>
+            <p>Contact us to get started with HeyCow!</p>
+          </div>
+          <div className="row">
+            <div className="col-lg-4">
+              <div className="info">
+                <div className="address">
+                  <i className="bi bi-geo-alt"></i>
+                  <h4>Location:</h4>
+                  <p>123 HeyCow Street, Cattle Town, Indonesia</p>
+                </div>
+                <div className="email">
+                  <i className="bi bi-envelope"></i>
+                  <h4>Email:</h4>
+                  <p>info@heycow.com</p>
+                </div>
+                <div className="phone">
+                  <i className="bi bi-phone"></i>
+                  <h4>Call:</h4>
+                  <p>+62 1234 5678 90</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-8 mt-5 mt-lg-0">
+              <form action="forms/contact.php" method="post" role="form" className="php-email-form">
+                <div className="row">
+                  <div className="col-md-6 form-group">
+                    <input type="text" name="name" className="form-control" id="name" placeholder="Your Name" required />
+                  </div>
+                  <div className="col-md-6 form-group">
+                    <input type="email" className="form-control" name="email" id="email" placeholder="Your Email" required />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <input type="text" className="form-control" name="subject" id="subject" placeholder="Subject" required />
+                </div>
+                <div className="form-group">
+                  <textarea className="form-control" name="message" rows="5" placeholder="Message" required></textarea>
+                </div>
+                <div className="text-center">
+                  <button type="submit">Send Message</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
     </>
-
-
-  )
+  );
 }
-
-
-
-

@@ -42,7 +42,7 @@ import { useRouter } from "next/navigation"
 import Swal from "sweetalert2"
 
 
-export default function cattle() {
+export default function Cattle() {
   const { user, logout } = useAuth({ middleware: 'admin' })
   const [sorting, setSorting] = React.useState([])
   const [columnFilters, setColumnFilters] = React.useState(

@@ -15,24 +15,6 @@ export function Navbar() {
 
     const { user, logout } = useAuth({ middleware: 'cattleman' })
 
-    // const onClickProfile = () => {
-    //     Swal.fire({
-    //         title: "Anda yakin?",
-    //         text: "Anda akan logout!",
-    //         icon: "warning",
-    //         showCancelButton: true,
-    //         // confirmButtonColor: "#6A9944",
-    //         cancelButtonColor: "#d33",
-    //         confirmButtonText: "Confirm",
-    //         cancelButtonText: "Cancel"
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             logout(); // Execute the logout function
-    //         } else {
-    //             Swal.fire("Cancelled", "Logout cancelled", "error");
-    //         }
-    //     });
-    // };
 
     const fetchUserImage = async () => {
         try {
@@ -50,17 +32,17 @@ export function Navbar() {
 
     
     return (
-        <nav className="header-menu fixed top-0 w-full h-[95px] bg-white px-5 ">
+        <nav className="header-menu  top-0 right-0 h-[95px] w-[1200px] px-2 " style={{zIndex: 500 }}>
             <div className="menu d-flex justify-between mt-3">
                 <div className="header">
                     <Link href="/admin" className="logo">
-                        <img src="/images/logo.png" alt="Logo" />
+                    <img src={userAvatar || "https://i.pinimg.com/control/564x/cc/5d/48/cc5d489e2acc9d119c33027454570f89.jpg"} alt="Profile" className="rounded-full w-[60px] h-15 mb-3" />
                     </Link>
                 </div>
                 <div className="header">
                     <div className="profile d-flex align-items-center">
-                        <div className="profile-info ">
-                            <h4>{user ? user.name : 'Admin'}</h4>
+                        <div className="profile-info">
+                            <h4 >{user ? user.name : 'User'}</h4>
                             <p >{user ? user.role : 'Role'}</p>
                         </div>
                         <div className="profile-image ml-3">

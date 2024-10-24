@@ -19,7 +19,7 @@ import Swal from "sweetalert2"
 
 
 export default function Home() {
-  const { user, logout } = useAuth({ middleware: 'admin' })
+  const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
 
 
   return (
@@ -34,7 +34,7 @@ export default function Home() {
           <div className="align-items-center">
             <h3 className="ml-2 text-emerald-600">Manage Cattle</h3>
 
-            <div className="mt-2 d-flex grid grid-cols-4 gap-4">
+            <div className="mt-2 d-flex grid grid-cols-4 justify-between">
               <div className="card border border-green-500 p-2 m-2">
                 <div className="card-body d-flex justify-between gap-2">
                   <img src="https://via.placeholder.com/80" alt="cow" />

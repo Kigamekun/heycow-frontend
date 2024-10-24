@@ -20,7 +20,7 @@ export function Sidebar() {
             text: "Anda akan logout!",
             icon: "warning",
             showCancelButton: true,
-            // confirmButtonColor: "#6A9944",
+            //  confirmButtonColor: "#6A9944",
             cancelButtonColor: "#d33",
             confirmButtonText: "Confirm",
             cancelButtonText: "Cancel"
@@ -39,58 +39,121 @@ export function Sidebar() {
     }, [pathname]);
 
     return (
-        <div className="sidebar-menu bg-emerald-600 mt-9 fixed top w-[300px] h-full text-white" >
-            <ul className="menu text-white">
-                <li className="sidebar-title text-white">Menu</li>
-                <li className={`sidebar-item ${pathname === "/peternak" ? "active" : ""}`}>
-                    <Link href="/peternak" className="sidebar-link">
-                        <i className="bi bi-grid-fill text-white" />
-                        <span className="text-white">Home</span>
-                    </Link>
-                </li>
-                <li className={`sidebar-item ${pathname === "/peternak/komunitas" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/peternak/about">
-                        <i className="bi bi-grid-fill text-white" />
-                        <span className="text-white">Komunitas</span>
-                    </Link>
-                </li>
-                <li className="sidebar-title text-white">Management</li>
-
-                <li className={`sidebar-item ${pathname === "/peternak/cattle" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/peternak/cattle">
+        <div className="sidebar-menu top-0 left-0 bottom-0 fixed h-full overflow-x-hidden  bg-emerald-600">
+            {/* <ul className="menu">
+                <li className="sidebar-title">Menu</li>
+                <li className={`sidebar-item ${pathname === "/admin" ? "active" : ""}`}>
+                    <Link href="/admin" className="sidebar-link">
                         <i className="bi bi-grid-fill" />
-                        <span className="text-white">Cattle</span>
+                        <span>Dashboard</span>
                     </Link>
                 </li>
-                <li className={`sidebar-item ${pathname === "/peternak/angon" && "/peternak/angon/pengangon" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/peternak/angon">
-                        <i className="bi bi-grid-fill text-white" />
-                        <span className="text-white">Angon</span>
+                <li className={`sidebar-item ${pathname === "/admin/about" ? "active" : ""}`}>
+                    <Link className="sidebar-link" href="/admin/about">
+                        <i className="bi bi-grid-fill" />
+                        <span>About</span>
                     </Link>
                 </li>
-                <li className={`sidebar-item ${pathname === "/peternak/help-center" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/peternak/help-center">
-                        <i className="bi bi-grid-fill text-white" />
-                        <span className="text-white">Help Center</span>
+                <li className="sidebar-title">Management</li>
+                <li className={`sidebar-item ${pathname === "/" ? "active" : ""}`}>
+                    <Link className="sidebar-link" href="/">
+                        <i className="bi bi-person-fill" />
+                        <span>User</span>
                     </Link>
                 </li>
-                <li className={`sidebar-item ${pathname === "/peternak/profile" ? "active" : ""}`}>
-                    <Link className="sidebar-link text-white" href="/peternak/profile">
-                        <i className="bi bi-grid-fill text-white " />
-                        <span className="text-white">Profile</span>
+                <li className="sidebar-title">Farm</li>
+                <li className={`sidebar-item ${pathname === "/admin/farm" ? "active" : ""}`}>
+                    <Link className="sidebar-link" href="/admin/farm">
+                        <i className="bi bi-grid-fill" />
+                        <span>Farm</span>
+                    </Link>
+                </li>
+                <li className={`sidebar-item ${pathname === "/admin/cattle" ? "active" : ""}`}>
+                    <Link className="sidebar-link" href="/admin/cattle">
+                        <i className="bi bi-grid-fill" />
+                        <span>Cattle</span>
+                    </Link>
+                </li>
+                <li className={`sidebar-item ${pathname === "/admin/device" ? "active" : ""}`}>
+                    <Link className="sidebar-link" href="/admin/device">
+                        <i className="bi bi-grid-fill" />
+                        <span>Devices</span>
+                    </Link>
+                </li>
+                <li className={`sidebar-item ${pathname === "/" ? "active" : ""}`}>
+                    <Link className="sidebar-link" href="/">
+                        <i className="bi bi-grid-fill" />
+                        <span>History</span>
+                    </Link>
+                </li>
+                <li className={`sidebar-item ${pathname === "/admin/report" ? "active" : ""}`}>
+                    <Link className="sidebar-link" href="/admin/report">
+                        <i className="bi bi-grid-fill" />
+                        <span>Report</span>
                     </Link>
                 </li>
 
                 <button>
                     <li className="sidebar-item">
                         <a className="sidebar-link" onClick={onClickLogout}>
-                            <i className="bi bi-box-arrow-right text-white" />
-                            <span className="text-white">Logout</span>
+                            <i className="bi bi-box-arrow-right" />
+                            <span>Logout</span>
                         </a>
                     </li>
                 </button>
 
-            </ul>
+            </ul> */}
+             <ul className="menu text-white">
+                 <li className="sidebar-title text-white">Menu</li>
+                 <li className={`sidebar-item ${pathname === "/peternak" ? "active" : ""}`}>
+                     <Link href="/peternak" className="sidebar-link">
+                         <i className="bi bi-grid-fill text-white" />
+                         <span className="text-white">Home</span>
+                     </Link>
+                 </li>
+                 <li className={`sidebar-item ${pathname === "/peternak/komunitas" ? "active" : ""}`}>
+                     <Link className="sidebar-link" href="/peternak/about">
+                         <i className="bi bi-grid-fill text-white" />
+                         <span className="text-white">Komunitas</span>
+                     </Link>
+                 </li>
+                 <li className="sidebar-title text-white">Management</li>
+
+                 <li className={`sidebar-item ${pathname === "/peternak/cattle" ? "active" : ""}`}>
+                     <Link className="sidebar-link" href="/peternak/cattle">
+                         <i className="bi bi-grid-fill text-white"  />
+                         <span className="text-white">Cattle</span>
+                     </Link>
+                 </li>
+                 <li className={`sidebar-item ${pathname === "/peternak/angon" && "/peternak/angon/pengangon" ? "active" : ""}`}>
+                     <Link className="sidebar-link" href="/peternak/angon">
+                         <i className="bi bi-grid-fill text-white" />
+                         <span className="text-white">Angon</span>
+                     </Link>
+                 </li>
+                 <li className={`sidebar-item ${pathname === "/peternak/help-center" ? "active" : ""}`}>
+                     <Link className="sidebar-link" href="/peternak/help-center">
+                         <i className="bi bi-grid-fill text-white" />
+                         <span className="text-white">Help Center</span>
+                     </Link>
+                 </li>
+                 <li className={`sidebar-item ${pathname === "/peternak/profile" ? "active" : ""}`}>
+                     <Link className="sidebar-link text-white" href="/peternak/profile">
+                         <i className="bi bi-grid-fill text-white " />
+                         <span className="text-white">Profile</span>
+                     </Link>
+                 </li>
+
+                 <button>
+                     <li className="sidebar-item">
+                         <a className="sidebar-link" onClick={onClickLogout}>
+                             <i className="bi bi-box-arrow-right text-white" />
+                             <span className="text-white">Logout</span>
+                         </a>
+                     </li>
+                 </button>
+
+             </ul>
         </div>
     );
 }

@@ -22,7 +22,11 @@ export default function Home() {
   const { user, logout } = useAuth({ middleware: 'admin' })
 
 
-  return (<></>)
+  return (
+  <>
+
+  </>
+  )
 }
 
 
