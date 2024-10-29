@@ -23,7 +23,6 @@ export default function RootLayout({ children }) {
         <main>
             <div id="app" >
                 <div id="sidebar" className="d-flex justify-between bg-emerald-50">
-                        <Navbar className="fixed"/>
                         <div className="sidebar-wrapper active overflow-hidden bg-emerald-600">
                             <div className="sidebar-header bg-emerald-600 " >
                                 <div className="d-flex justify-content-between align-items-center bg-emerald-600">
@@ -41,6 +40,7 @@ export default function RootLayout({ children }) {
                             <Sidebar />
                         </div>
                         {/* <Navbar /> */}
+                        <Navbar/>
                     </div>
                 
                 {/* <div id="sidebarXnavbar" className="d-flex bg-emerald-600 justify-between" >

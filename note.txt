@@ -35,7 +35,23 @@ columns: [{
                 ], 
  
  
- 
+  {
+                        data: 'image',
+                        name: 'image'
+                    },
+                    {
+                        data: 'title',
+                        name: 'title'
+                    },
+                    {
+                        data: 'published',
+                        name: 'published'
+                    },
+                    {
+                        data: 'owner',
+                        name: 'owner'
+                    },
+                    
  Form Untuk Image : 
  Dropify JS
 

@@ -48,15 +48,15 @@ export function Sidebar() {
                         <span>Dashboard</span>
                     </Link>
                 </li>
-                <li className={`sidebar-item ${pathname === "/admin/about" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/admin/about">
+                <li className={`sidebar-item ${pathname === "/admin/blog" ? "active" : ""}`}>
+                    <Link className="sidebar-link" href="/admin/blog">
                         <i className="bi bi-grid-fill" />
-                        <span>About</span>
+                        <span>Community</span>
                     </Link>
                 </li>
                 <li className="sidebar-title">Management</li>
-                <li className={`sidebar-item ${pathname === "/" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/">
+                <li className={`sidebar-item ${pathname === "/admin/user" ? "active" : ""}`}>
+                    <Link className="sidebar-link" href="/admin/user">
                         <i className="bi bi-person-fill" />
                         <span>User</span>
                     </Link>
