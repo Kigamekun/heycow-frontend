@@ -52,6 +52,7 @@ export default function RootLayout({ children }) {
     return (
         <main>
             <div id="app"  >
+                <Navbar /> 
                 {/* <div id="sidebar" style={sidebarStyle}>
                     <div className="sidebar-wrapper active">
                         <div className="sidebar-header " >
@@ -94,11 +95,8 @@ export default function RootLayout({ children }) {
                 
                 
             </div>
-            <div id="main" className="relative gap-2">
-                <div id="navbar" style={navbarStyle}>
-                    <Navbar />
-                </div>
-                    {children}  
+            <div id="main" className="mt-24">
+                {children}  
             </div>
         </main>
     );

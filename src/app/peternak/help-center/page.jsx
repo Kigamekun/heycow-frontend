@@ -32,7 +32,7 @@ import { hoshino } from "@/images/hoshino.jpg"
 import { ArrowUpDown, Link } from "lucide-react"
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 
-
+import Script from "next/script";
 import axios from "axios"
 import Swal from "sweetalert2"
 
@@ -43,7 +43,7 @@ export default function Home() {
     const editorRef = useRef();
   return (
     <>
-    
+        
         <h3 className="ml-2 text-emerald-600">Help Center</h3>
         
             {/* Search Bar  */}
@@ -77,7 +77,30 @@ export default function Home() {
                         <div className="mb-3">
                             <label htmlFor="message" className="form-label">Message</label>
                             <Editor  
-                                onInit={ (evt, editor ) => editorRef.current = editor}
+                                apiKey='vbch5as7kp2v4czumq6x79pj95t4gpblp8wb90gijtnke8n4'
+                                init={{
+                                    plugins: [
+                                      // Core editing features
+                                      'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+                                      // Your account includes a free trial of TinyMCE premium features
+                                      // Try the most popular premium features until Nov 13, 2024:
+                                      'checklist', 'mediaembed', 'casechange', 'export', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown',
+                                      // Early access to document converters
+                                      'importword', 'exportword', 'exportpdf'
+                                    ],
+                                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                                    tinycomments_mode: 'embedded',
+                                    tinycomments_author: 'Author name',
+                                    mergetags_list: [
+                                      { value: 'First.Name', title: 'First Name' },
+                                      { value: 'Email', title: 'Email' },
+                                    ],
+                                    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                                    exportpdf_converter_options: { 'format': 'Letter', 'margin_top': '1in', 'margin_right': '1in', 'margin_bottom': '1in', 'margin_left': '1in' },
+                                    exportword_converter_options: { 'document': { 'size': 'Letter' } },
+                                    importword_converter_options: { 'formatting': { 'styles': 'inline', 'resets': 'inline',	'defaults': 'inline', } },
+                                  }}
+                                  initialValue="Masukkan Keluhan Anda"
                             />
                         </div>
                         <button type="submit" className="btn btn-primary">Submit</button>

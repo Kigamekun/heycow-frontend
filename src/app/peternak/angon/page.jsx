@@ -30,12 +30,12 @@ export default function Home() {
     
         {/* Search Bar  */}
       <div className="mt-3">
-        <div className="card-body float-start">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Search..."
-        />
+        <div className="card-body float-start rounded">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search..."
+          />
         </div>
       </div>
       {/* Angon atau farmer section */}

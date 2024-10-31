@@ -10,6 +10,52 @@ import {
   getSortedRowModel,
   useReactTable
 } from "@tanstack/react-table"
+
+import { Input } from "@/components/ui/input"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure
+} from '@nextui-org/modal'
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog"
+
+
+const handleInputChange = (event) => {
+
+  const { name, value } = event.target;
+  setCattle({ ...cattle, [name]: value });
+
+}
+
+
+
+const handleSelectChange = (event) => {
+  
+  const name = event.target.name;
+  const {value} = event.target.selectedOptions[0];
+  console.log(value);
+  setCattle({ ...cattle, [name]: value });
+
+}
 import { ArrowUpDown } from "lucide-react"
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 
@@ -20,7 +66,7 @@ import Swal from "sweetalert2"
 
 export default function Home() {
   const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
-
+  const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
 
   return (
     <>
@@ -32,9 +78,182 @@ export default function Home() {
       <div className="card">
         <div className="card-body">
           <div className="align-items-center">
-            <h3 className="ml-2 text-emerald-600">Manage Cattle</h3>
+            <div className="d-flex justify-between">
+              <h3 className="ml-2 text-emerald-600">Manage Cattle</h3>
+              {/* <button className="btn btn-success rounded rounded-lg mr-2">Add New Cattle</button> */}
+              <Button onClick={onOpen} className="bg-emerald-600 text-md rounded rounded-lg mr-2">Add New Cattle</Button>
+            </div>
+            
+            {/* Section Modal Opened */}
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+              <ModalContent>
+                {(onClose) => (
+                  <>
+                    <ModalHeader className="dialog-title flex flex-col gap-1">
+                      <h5 className="text-black font-bold">Add New Cattle</h5>
+                    </ModalHeader>
+                    <ModalBody>
+                    <form method="dialog">
+                        <input
+                          className="input input-bordered w-full mt-5"
+                          // value={cattle.name}
+                          type="text"
+                          name="name"
+                          placeholder="Name"
+                          onChange={handleInputChange}
+                        />
 
-            <div className="mt-2 d-flex grid grid-cols-4 justify-between">
+
+                        <div>
+                          <label className="mt-5 input-bordered w-full">
+                            <select
+                              name="breed_id"
+                              onChange={handleSelectChange}
+                              className="input input-bordered w-full mt-1"
+                            >
+                              <option value="">Breed</option>
+                              {breedsData && breedsData.map((b) => (
+                                <option key={b.id} value={b.id}>{b.name}</option>
+                              ))}
+                            </select>
+                          </label>
+                        </div>
+                       
+                        <label className="mt-5 input-bordered w-full">
+                            <select
+                                name="status"
+                                // value={cattle.status}
+                                onChange={handleSelectChange}
+                                className="input input-bordered w-full mt-1"
+                            >
+                                <option value="">Pilih Status Sapimu</option>
+                                <option value="sehat">Sehat</option>
+                                <option value="sakit">Sakit</option>
+                                <option value="mati">Mati</option>
+                            </select>
+                        </label>
+                       
+                        <div className="mt-5 input-bordered w-full flex justify-start gap-3     ">
+                            <label>
+                                <input
+                                type="radio"
+                                name="gender"
+                                value="jantan"
+                                checked={cattle.gender === 'jantan'}
+                                onChange={handleInputChange}
+                                />
+                                Jantan
+                            </label>
+                            <label>
+                                <input
+                                type="radio"
+                                name="gender"
+                                value="betina"
+                                checked={cattle.gender === 'betina'}
+                                onChange={handleInputChange}
+                                />
+                                Betina
+                            </label>
+                        </div>
+
+                        <label className="mt-5 input-bordered w-full">
+                            <select
+                                name="type"
+                                // value={cattle.type}
+                                onChange={handleSelectChange}
+                                className="input input-bordered w-full mt-1"
+                            >
+                                <option value="">Pilih Jenis Sapimu</option>
+                                <option value="pedaging">Sapi Pedaging</option>
+                                <option value="peranakan">Sapi Peternak</option>
+                                <option value="perah">Sapi Perah</option>
+                            </select>
+                        </label>
+
+                        <div>
+                          <label className="mt-5 input-bordered w-full">
+                            <select
+                              name="farm"
+                              onChange={handleSelectChange}
+                              className="input input-bordered w-full mt-1"
+                            >
+                              <option value="">Pilih nama farm mu</option>
+                              {farmData && farmData.map((b) => (
+                                <option key={b.id} value={b.id}>{b.name}</option>
+                              ))}
+                            </select>
+                          </label>
+                        </div>
+
+                        <input
+                          className="input input-bordered w-full mt-5"
+                          value={cattle.birth_date}
+                          type="date"
+                          name="birth_date"
+                          placeholder="birth_date"
+                          onChange={handleInputChange}
+                        />
+                        <input
+                          className="input input-bordered w-full mt-5"
+                          value={cattle.birth_weight}
+                          type="text"
+                          name="birth_weight"
+                          placeholder="birth_weight"
+                          onChange={handleInputChange}
+                        />
+                         <input
+                          className="input input-bordered w-full mt-5"
+                          value={cattle.birth_height}
+                          type="text"
+                          name="birth_height"
+                          placeholder="birth_height"
+                          onChange={handleInputChange}
+                        />
+
+                        <label className="mt-5 input-bordered w-full">
+                            <select
+                                name="iot_device_id"
+                                onChange={handleSelectChange}
+                                className="input input-bordered w-full mt-1"
+                            >
+                                <option value="">iot device</option>
+
+                                {
+                                    IotDeviceData && IotDeviceData.map((b) => {
+                                        return <option key={b.id} value={b.id}>{b.serial_number}</option>
+                                    })
+                                }
+                                
+                            </select>
+                        </label>
+                 
+                        <div className="flex flex-col items-start mt-5">
+                          <label htmlFor="last_vaccination" className="w-full">Last Vaccination</label>
+                          <input
+                            className="input input-bordered w-full"
+                            id="last_vaccination"
+                            value={cattle.last_vaccination}
+                            type="date"
+                            name="last_vaccination"
+                            placeholder="last_vaccination"
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        
+                        <div className="mt-5 flex justify-end gap-3">
+                          <button type="submit" className="btn">{cattle.id != 0 ? 'Update' :'Create'} Cattle</button>
+                        </div>
+                      </form>
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button onClick={onClose} className="btn btn-secondary">Close</Button>
+                    </ModalFooter>
+                  </>
+                )}
+              </ModalContent>
+            </Modal>
+
+            <div className="mt-4 d-flex grid grid-cols-4 justify-between">
               <div className="card border border-green-500 p-2 m-2">
                 <div className="card-body d-flex justify-between gap-2">
                   <img src="https://via.placeholder.com/80" alt="cow" />
@@ -50,7 +269,7 @@ export default function Home() {
                 <div className="card-body d-flex justify-between gap-2">
                   <img src="https://via.placeholder.com/80" alt="cow" />
                   <div className="d-flex flex-col ">
-                    <h6 className="text-yellow-400">Sold</h6>
+                    <h6 className="text-yellow-400">Terjual</h6>
                     <p>10</p>
                   </div>
                 </div>
@@ -61,7 +280,17 @@ export default function Home() {
                   <img src="https://via.placeholder.com/80" alt="cow" />
 
                   <div className="d-flex flex-col ">
-                    <h6 className="text-red-600">Dead</h6>
+                    <h6 className="text-red-600">Sakit</h6>
+                    <p>10</p>
+                  </div>
+                </div>
+              </div>
+              <div className="card border border-red-600 p-2 m-2">
+                <div className="card-body d-flex justify-between gap-2">
+                  <img src="https://via.placeholder.com/80" alt="cow" />
+
+                  <div className="d-flex flex-col ">
+                    <h6 className="text-red-600">Mati</h6>
                     <p>10</p>
                   </div>
                 </div>
