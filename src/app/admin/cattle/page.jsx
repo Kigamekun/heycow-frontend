@@ -56,23 +56,23 @@ export default function Cattle() {
     })
   const [rowSelection, setRowSelection] = React.useState({})
   //security by role
-  const alert = () => {
-    Swal.fire({
-      title: "Anda bukan admin!",
-      text: "Anda tidak memiliki akses ke halaman ini!",
-      icon: "error",
-      showCancelButton: false,
-      confirmButtonColor: "#6A9944",
-      confirmButtonText: "OK"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.href = '/peternak'; // Redirect to /peternak
-      }
-    });
-  }
-  if (user !== 'admin') {
-    alert()
-  }
+  // const alert = () => {
+  //   Swal.fire({
+  //     title: "Anda bukan admin!",
+  //     text: "Anda tidak memiliki akses ke halaman ini!",
+  //     icon: "error",
+  //     showCancelButton: false,
+  //     confirmButtonColor: "#6A9944",
+  //     confirmButtonText: "OK"
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       window.location.href = '/peternak'; // Redirect to /peternak
+  //     }
+  //   });
+  // }
+  // if (user !== 'admin') {
+  //   alert()
+  // }
   const [cattleData, setCattleData] = React.useState([]);
   const columns = [
     {
@@ -327,9 +327,7 @@ export default function Cattle() {
     birth_height : "",
     iot_device_id : "",
     last_vaccination : ""
-
-
-});
+  });
 
 
 const [IotDeviceData, setIotDeviceData] = React.useState(
@@ -340,9 +338,7 @@ const [breedsData, setBreedsData] = React.useState(
  []
 );
 
-const [farmData, setFarmData] = React.useState(
-  []
-);
+const [farmData, setFarmData] = React.useState([]);
 
 
   const table = useReactTable({
@@ -423,41 +419,76 @@ const [farmData, setFarmData] = React.useState(
   }
   
   // mengambil farm data
+  // const getFarmData = async () => {
+  //   var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
+  //     headers: {
+  //       'content-type': 'text/json',
+  //       'Authorization': `Bearer ${localStorage.getItem('token')}`,
+  //     }
+  //   })
+  //     .then(function (response) {
+  //       if (response.data.data != undefined) {
+  //         setFarmData(response.data.data);
+  //       console.log(response.data.data);
+  //       }
+  //     }).catch(function (error) {
+  //       if (error.response && error.response.status === 401) {
+  //         Swal.fire({
+  //           icon: 'error',
+  //           title: error.response.data.message,
+  //           showConfirmButton: false,
+  //           timer: 1500
+  //         })
+
+  //         logout()
+
+  //       } else {
+  //         Swal.fire({
+  //           icon: 'error',
+  //           title: 'error terjadi',
+  //           text: 'mohon coba lagi nanti.',
+  //           showConfirmButton: false,
+  //           timer: 1500
+  //         });
+  //       }
+  //     })
+  // }
   const getFarmData = async () => {
-    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
-      headers: {
-        'content-type': 'text/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    try {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
+        headers: {
+          'content-type': 'text/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      });
+      // if (Array.isArray(res.data.data)) {
+      //   setFarmData(res.data.data);
+      //   console.log(res.data.data); // Debugging: log data
+      // } else {
+      //   console.error('Data yang diterima bukan array:', res.data.data);
+      //   setFarmData([]); // Set as empty array if data is not an array
+      // }
+    } catch (error) {
+      console.error('Error:', error);
+      if (error.response && error.response.status === 401) {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500
+        });
+        logout();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error terjadi',
+          text: 'Mohon coba lagi nanti.',
+          showConfirmButton: false,
+          timer: 1500
+        });
       }
-    })
-      .then(function (response) {
-        if (response.data.data != undefined) {
-          setFarmData(response.data.data);
-        console.log(response.data.data);
-        }
-      }).catch(function (error) {
-        if (error.response && error.response.status === 401) {
-          Swal.fire({
-            icon: 'error',
-            title: error.response.data.message,
-            showConfirmButton: false,
-            timer: 1500
-          })
-
-          logout()
-
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'error terjadi',
-            text: 'mohon coba lagi nanti.',
-            showConfirmButton: false,
-            timer: 1500
-          });
-        }
-      })
-  }
-
+    }
+  };
 
   // mengambil Iot Data
   const getIotDeviceData = async () => {
@@ -505,8 +536,8 @@ const [farmData, setFarmData] = React.useState(
     })
       .then(function (response) {
         if (response.data.data != undefined) {
-          setCattleData(response.data.data);
-        console.log(response.data.data);
+          setCattleData(response.data.data.data);
+        console.log(response.data.data.data);
         }
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
@@ -912,9 +943,12 @@ const [farmData, setFarmData] = React.useState(
                               className="input input-bordered w-full mt-1"
                             >
                               <option value="">Pilih nama farm mu</option>
-                              {farmData && farmData.map((b) => (
+                              {/* {farmData && farmData.map((b) => (
                                 <option key={b.id} value={b.id}>{b.name}</option>
-                              ))}
+                              ))} */}
+                                {Array.isArray(farmData) && farmData.map((b) => (
+                                  <option key={b.id} value={b.id}>{b.name}</option>
+                                ))}
                             </select>
                           </label>
                         </div>

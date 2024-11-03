@@ -78,3 +78,178 @@ columns: [{
     bodyFormData.append('last_vaccination', cattle.last_vaccination);
 
     className={"lg:max-w-screen-lg overflow-y-scroll max-h-screen"}
+
+
+     {/* <form method="dialog" onSubmit={cattle.id != 0 ? updateCattle : createCattle}>
+                        <input
+                          className="input input-bordered w-full mt-5"
+                          value={cattle.name}
+                          type="text"
+                          name="name"
+                          placeholder="Name"
+                          onChange={handleInputChange}
+                        />
+
+
+                        <div>
+                          <label className="mt-5 input-bordered w-full">
+                            <select
+                              name="breed_id"
+                              onChange={handleSelectChange}
+                              className="input input-bordered w-full mt-1"
+                            >
+                              <option value="">Breed</option>
+                              {breedsData && breedsData.map((b) => (
+                                <option key={b.id} value={b.id}>{b.name}</option>
+                              ))}
+                            </select>
+                          </label>
+                        </div>
+                       
+                        <label className="mt-5 input-bordered w-full">
+                            <select
+                                name="status"
+                                // value={cattle.status}
+                                onChange={handleSelectChange}
+                                className="input input-bordered w-full mt-1"
+                            >
+                                <option value="">Pilih Status Sapimu</option>
+                                <option value="sehat">Sehat</option>
+                                <option value="sakit">Sakit</option>
+                                <option value="mati">Mati</option>
+                            </select>
+                        </label>
+                       
+                        <div className="mt-5 input-bordered w-full flex justify-start gap-3     ">
+                            <label>
+                                <input
+                                type="radio"
+                                name="gender"
+                                value="jantan"
+                                checked={cattle.gender === 'jantan'}
+                                onChange={handleInputChange}
+                                />
+                                Jantan
+                            </label>
+                            <label>
+                                <input
+                                type="radio"
+                                name="gender"
+                                value="betina"
+                                checked={cattle.gender === 'betina'}
+                                onChange={handleInputChange}
+                                />
+                                Betina
+                            </label>
+                        </div>
+
+                        <label className="mt-5 input-bordered w-full">
+                            <select
+                                name="type"
+                                // value={cattle.type}
+                                onChange={handleSelectChange}
+                                className="input input-bordered w-full mt-1"
+                            >
+                                <option value="">Pilih Jenis Sapimu</option>
+                                <option value="pedaging">Sapi Pedaging</option>
+                                <option value="peranakan">Sapi Peternak</option>
+                                <option value="perah">Sapi Perah</option>
+                            </select>
+                        </label>
+
+                        <div>
+                          <label className="mt-5 input-bordered w-full">
+                            <select
+                              name="farm"
+                              onChange={handleSelectChange}
+                              className="input input-bordered w-full mt-1"
+                            >
+                              <option value="">Pilih nama farm mu</option>
+                              {farmData && farmData.map((b) => (
+                                <option key={b.id} value={b.id}>{b.name}</option>
+                              ))}
+                            </select>
+                          </label>
+                        </div>
+
+                        <input
+                          className="input input-bordered w-full mt-5"
+                          value={cattle.birth_date}
+                          type="date"
+                          name="birth_date"
+                          placeholder="birth_date"
+                          onChange={handleInputChange}
+                        />
+                        <input
+                          className="input input-bordered w-full mt-5"
+                          value={cattle.birth_weight}
+                          type="text"
+                          name="birth_weight"
+                          placeholder="birth_weight"
+                          onChange={handleInputChange}
+                        />
+                         <input
+                          className="input input-bordered w-full mt-5"
+                          value={cattle.birth_height}
+                          type="text"
+                          name="birth_height"
+                          placeholder="birth_height"
+                          onChange={handleInputChange}
+                        />
+
+                        <label className="mt-5 input-bordered w-full">
+                            <select
+                                name="iot_device_id"
+                                onChange={handleSelectChange}
+                                className="input input-bordered w-full mt-1"
+                            >
+                                <option value="">iot device</option>
+
+                                {
+                                    IotDeviceData && IotDeviceData.map((b) => {
+                                        return <option key={b.id} value={b.id}>{b.serial_number}</option>
+                                    })
+                                }
+                                
+                            </select>
+                        </label>
+                 
+                        <div className="flex flex-col items-start mt-5">
+                          <label htmlFor="last_vaccination" className="w-full">Last Vaccination</label>
+                          <input
+                            className="input input-bordered w-full"
+                            id="last_vaccination"
+                            value={cattle.last_vaccination}
+                            type="date"
+                            name="last_vaccination"
+                            placeholder="last_vaccination"
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        
+                        <div className="mt-5 flex justify-end gap-3">
+                          <button type="submit" className="btn">{cattle.id != 0 ? 'Update' :'Create'} Cattle</button>
+                        </div>
+                      </form> */}
+
+                
+{cattleData.map((cattle) => (
+              <div className="card" key={cattle.id} onClick={() => window.location.href = `/peternak/cattle/${cattle.id}`}>
+                <div className="card-body d-flex justify-between">
+                  {/* untuk title */}
+                  <div className="">
+                    <h3 className="text-emerald-600">{cattle.name}</h3>
+                    <div className="d-flex justify">
+                      <p className="text-xs">{cattle.iot_device_id}</p>
+                    </div>
+                  </div>
+                  
+                  {/* untuk button */}
+                  <div>
+                    <div className="bg-emerald-600 rounded-md">
+                        <p className="text-white text-sm m-2">Sehat</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}

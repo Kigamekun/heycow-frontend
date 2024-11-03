@@ -128,7 +128,7 @@ export default function Page() {
                             </div>
                             
                             <div>
-                                <label htmlFor="address"><h5>Address<span className="text-red-500">*</span></h5></label>
+                                <label htmlFor="address"><h5>Address<span className="text-red-500"></span></h5></label>
                                 <Input type="text" id="address"
                                 className="input input-bordered w-full h-[50px]" onChange={(event) => setAddress(event.target.value)}
                                 placeholder="Masukkan Alamat Anda" />

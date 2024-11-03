@@ -38,7 +38,7 @@ import axios from "axios"
 import Swal from "sweetalert2"
 import Image from "next/image"
 import { swal } from "@/public/assets/extensions/sweetalert2/sweetalert2.all";
-export default function Page( {params} ){
+export default function Page(){
     const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
     // const { data, isLoading, error } = useQuery('cattle', () =>
@@ -540,7 +540,7 @@ const [cattleData, setCattleData] = React.useState(
                         <div className="grid grid-cols-1 gap-3 w-full">
                             <div>
                                 <div className="title-iot d-flex justify-between">
-                                    <h5 className="text-black font-bold">Cattle {params.id}</h5>
+                                    <h5 className="text-black font-bold">Cattle 1</h5>
                                     <Button className="bg-emerald-600">Detail IoT</Button>
                                 </div>
                             </div>
@@ -554,12 +554,8 @@ const [cattleData, setCattleData] = React.useState(
                                 </TableHeader>
                                 <TableBody>
                                     <TableRow className="text-black">
-                                      
                                       <TableCell className="font-bold text-lg">Breed</TableCell>
-                                      {cattleData?.map((cattle) => (
-                                        <TableCell key={cattle.id} className="font-thin text-sm">{cattle.breed_id}</TableCell>
-                                      ))}
-                                     
+                                      <TableCell className="font-thin text-sm">Name</TableCell>
                                     </TableRow>
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">Gender</TableCell>

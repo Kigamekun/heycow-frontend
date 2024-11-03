@@ -1,8 +1,7 @@
 'use client'
 
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 import * as React from "react"
-import { hoshino } from "@/images/hoshino.jpg"
 import {
   getCoreRowModel,
   getFilteredRowModel,
@@ -11,7 +10,9 @@ import {
   useReactTable
 } from "@tanstack/react-table"
 
+
 import { Input } from "@/components/ui/input"
+
 import {
   Table,
   TableBody,
@@ -27,16 +28,22 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  useDisclosure
+  useDisclosure,
+  Checkbox, 
+  Link
 } from '@nextui-org/modal'
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogDescription,
+//   DialogHeader,
+//   DialogTitle
+// } from "@/components/ui/dialog"
+
+
 
 
 const handleInputChange = (event) => {
@@ -46,8 +53,6 @@ const handleInputChange = (event) => {
 
 }
 
-
-
 const handleSelectChange = (event) => {
   
   const name = event.target.name;
@@ -56,17 +61,252 @@ const handleSelectChange = (event) => {
   setCattle({ ...cattle, [name]: value });
 
 }
+
+import {Select, SelectSection, SelectItem} from "@nextui-org/select";
 import { ArrowUpDown } from "lucide-react"
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 
-
+import {RadioGroup, Radio} from "@nextui-org/radio";
 import axios from "axios"
 import Swal from "sweetalert2"
 
-
+import { animals } from "./dummy"
 export default function Home() {
   const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
   const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
+    
+  // State Cattle 
+  const [cattleData, setCattleData] = React.useState(
+    []
+  );
+  
+  const [cattle, setCattle] = React.useState({
+    id: 0,
+    name: "",
+    farm: "",
+    breed_id: "" ,
+    type : "",
+    status : "",
+    birth_date : "",
+    birth_weight : "",
+    birth_height : "",
+    serial_number : "",
+    iot_device_id : "",
+    last_vaccination : ""
+  });
+  // State IOT DEVICE
+  const [IotDeviceData, setIotDeviceData] = React.useState(
+    []
+  );
+  // State Breeds
+  const [breedsData, setBreedsData] = React.useState(
+    []
+  );
+  
+  // State Farm
+  const [farmData, setFarmData] = React.useState(
+    []
+  );
+
+
+  
+  // mengambil farm data
+  const getFarmData = async () => {
+    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
+      headers: {
+        'content-type': 'text/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      }
+    })
+      .then(function (response) {
+        if (response.data.data != undefined) {
+          setFarmData(response.data.data);
+        console.log(response.data.data);
+        }
+      }).catch(function (error) {
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          })
+
+          logout()
+
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'error terjadi',
+            text: 'mohon coba lagi nanti.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      })
+  }
+
+
+  // mengambil Iot Data
+  const getIotDeviceData = async () => {
+    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices`, {
+      headers: {
+        'content-type': 'text/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      }
+    })
+      .then(function (response) {
+        if (response.data.data != undefined) {
+          setIotDeviceData(response.data.data.data);
+        console.log(response.data.data.data);
+        }
+      }).catch(function (error) {
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          })
+
+          logout()
+
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'error terjadi',
+            text: 'mohon coba lagi nanti.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      })
+  }
+  
+  const getCattleData = async () => {
+
+  
+    try {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle`, {
+        headers: {
+          'content-type': 'text/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+  
+      if (res.data.data) {
+        setCattleData(res.data.data.data);
+        console.log('Ada datanya');
+        console.log(res.data.data.data);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+  
+        logout();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'error terjadi',
+          text: 'mohon coba lagi nanti.',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    }
+  };
+  console.log(cattleData);
+  React.useEffect(() => {
+    getCattleData();
+  }, []);
+
+
+  // Membuat cattle data
+  const createCattle = async (e) => {
+    e.preventDefault();
+
+    Swal.fire({
+      title: 'Loading...',
+      text: 'Mohon tunggu sebentar...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    const bodyFormData = new FormData();
+    bodyFormData.append('name', cattle.name);
+    bodyFormData.append('breed_id', cattle.breed_id);
+    bodyFormData.append('status', cattle.status);
+    bodyFormData.append('gender', cattle.gender);
+    bodyFormData.append('type', cattle.type);
+    bodyFormData.append('farm', cattle.farm);
+    bodyFormData.append('birth_date', cattle.birth_date);
+    bodyFormData.append('birth_weight', cattle.birth_weight);
+    bodyFormData.append('birth_height', cattle.birth_height);
+    bodyFormData.append('iot_device_id', cattle.iot_device_id);
+    bodyFormData.append('last_vaccination', cattle.last_vaccination);
+
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle`,
+        bodyFormData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          }
+        }
+      );
+      console.log(res.data) ;
+      // Refresh cattle data
+      getCattleData();
+
+      // Reset form fields
+      setCattle({
+        id: 0,
+        name: "",
+        breed_id: "" ,
+        gender : "",
+        type : "",
+        farm : "",
+        status : "",
+        birth_date : "",
+        birth_weight : "",
+        birth_height : "",
+        iot_device_id : "",
+        last_vaccination : ""
+      });
+
+      setOpen(false);
+
+      Swal.close();
+    } catch (error) {
+      console.error('Error:', error.response);  // Log error lengkap dari response
+      if (error.response && error.response.status === 401) {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500
+        });
+        logout();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error terjadi',
+          text: 'Mohon coba lagi nanti.',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      }
+    }
+  };
 
   return (
     <>
@@ -85,55 +325,89 @@ export default function Home() {
             </div>
             
             {/* Section Modal Opened */}
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-              <ModalContent>
+            <Modal 
+                isOpen={isOpen} 
+                onOpenChange={onOpenChange}
+                scrollBehavior="inside"
+                placement="center"
+                backdrop="opaque"
+                classNames={{
+                backdrop: "bg-black bg-opacity-50"
+                }}
+                >
+                <ModalContent className="w-[800px] h-[650px] bg-white rounded-xl ">
                 {(onClose) => (
                   <>
-                    <ModalHeader className="dialog-title flex flex-col gap-1">
-                      <h5 className="text-black font-bold">Add New Cattle</h5>
-                    </ModalHeader>
-                    <ModalBody>
-                    <form method="dialog">
-                        <input
-                          className="input input-bordered w-full mt-5"
-                          // value={cattle.name}
+                  <ModalHeader className="dialog-title flex flex-col gap-1 px-6 mt-6">
+                    <h3 className="text-black font-bold text-center">Add New Cattle</h3>
+                  </ModalHeader>
+                  <ModalBody className="grid grid-cols-2">
+                    {/* Cattle Name */}
+                      <div className="grid grid-cols-1 gap-1">
+                        <label htmlFor="name" className="text-black font-bold">
+                          <h6>
+                            Cattle Name<span className="text-red-600">*</span>
+                          </h6>
+                        </label>
+                        <Input
+                          isRequired
+                          id="name"
+                          autoFocus
                           type="text"
-                          name="name"
-                          placeholder="Name"
+                          label="text"
+                          placeholder="Input your cattle name"
+                          variant="bordered"
+                          className="w-full h-[2.8rem] "
                           onChange={handleInputChange}
                         />
+                      </div>
 
-
-                        <div>
-                          <label className="mt-5 input-bordered w-full">
-                            <select
-                              name="breed_id"
-                              onChange={handleSelectChange}
-                              className="input input-bordered w-full mt-1"
-                            >
-                              <option value="">Breed</option>
-                              {breedsData && breedsData.map((b) => (
-                                <option key={b.id} value={b.id}>{b.name}</option>
-                              ))}
-                            </select>
-                          </label>
-                        </div>
-                       
-                        <label className="mt-5 input-bordered w-full">
-                            <select
-                                name="status"
-                                // value={cattle.status}
-                                onChange={handleSelectChange}
-                                className="input input-bordered w-full mt-1"
-                            >
-                                <option value="">Pilih Status Sapimu</option>
-                                <option value="sehat">Sehat</option>
-                                <option value="sakit">Sakit</option>
-                                <option value="mati">Mati</option>
-                            </select>
+                      {/* Breed */}
+                      <div className="grid grid-cols-1 gap-1">
+                        <label htmlFor="breed" className="text-black font-bold">
+                          <h6>Breed</h6>
                         </label>
-                       
-                        <div className="mt-5 input-bordered w-full flex justify-start gap-3     ">
+                        <Select
+                        id="breed"
+                        variant="bordered"
+                        autoFocus
+                        items={animals}
+                        label="Select an animal" 
+                        size
+                        onChange={handleSelectChange}
+                        className=" w-ful">
+                          {(animal) => <SelectItem className="bg-white"
+                          variant="bordered">{animal.label}</SelectItem>}
+                        </Select>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 gap-1">
+                        <label htmlFor="date" className="text-black font-bold">
+                          <h6>
+                            Birth Date<span className="text-red-600">*</span>
+                          </h6>
+                        </label>
+                        <Input
+                          isRequired
+                          id="date"
+                          autoFocus
+                          type="date"
+                          label="text"
+                          placeholder="Input your cattle name"
+                          variant="bordered"
+                          className="w-full h-[2.8rem] "
+                          onChange={handleInputChange}
+                        />
+                      </div>
+
+                      {/* Gender Date */}
+                      <div className="grid grid-cols-1 gap-1">
+                        <label htmlFor="birth" className="text-black font-bold">
+                          <h6>
+                            Gender Date<span className="text-red-600">*</span>
+                          </h6>
+                        </label>
+                        <div className="input-bordered w-full flex justify-start gap-3     ">
                             <label>
                                 <input
                                 type="radio"
@@ -155,108 +429,113 @@ export default function Home() {
                                 Betina
                             </label>
                         </div>
-
-                        <label className="mt-5 input-bordered w-full">
-                            <select
-                                name="type"
-                                // value={cattle.type}
-                                onChange={handleSelectChange}
-                                className="input input-bordered w-full mt-1"
-                            >
-                                <option value="">Pilih Jenis Sapimu</option>
-                                <option value="pedaging">Sapi Pedaging</option>
-                                <option value="peranakan">Sapi Peternak</option>
-                                <option value="perah">Sapi Perah</option>
-                            </select>
+                        {/* <RadioGroup
+                          
+                          color="default"
+                          classNames="text-black font-bold d-flex"
+                          // value={selected}
+                          // onChange={handleInputChange}
+                          // id="birth"
+                          // autoFocus
+                          // type="date"
+                          // label="text"
+                          // placeholder="Input your cattle name"
+                          // variant="bordered"
+                          // className="w-full h-[2.8rem] "
+                        >
+                          <Radio value="jantan">Jantan</Radio>
+                          <Radio value="brtina">Betina</Radio>
+                        </RadioGroup> */}
+                      </div>
+                      {/* Farm */}
+                      <div className="grid grid-cols-1">
+                        <label htmlFor="breed" className="text-black font-bold">
+                          <h6>Farm</h6>
                         </label>
-
-                        <div>
-                          <label className="mt-5 input-bordered w-full">
-                            <select
-                              name="farm"
-                              onChange={handleSelectChange}
-                              className="input input-bordered w-full mt-1"
-                            >
-                              <option value="">Pilih nama farm mu</option>
-                              {farmData && farmData.map((b) => (
-                                <option key={b.id} value={b.id}>{b.name}</option>
-                              ))}
-                            </select>
-                          </label>
-                        </div>
-
-                        <input
-                          className="input input-bordered w-full mt-5"
-                          value={cattle.birth_date}
-                          type="date"
-                          name="birth_date"
-                          placeholder="birth_date"
-                          onChange={handleInputChange}
-                        />
-                        <input
-                          className="input input-bordered w-full mt-5"
-                          value={cattle.birth_weight}
-                          type="text"
-                          name="birth_weight"
-                          placeholder="birth_weight"
-                          onChange={handleInputChange}
-                        />
-                         <input
-                          className="input input-bordered w-full mt-5"
-                          value={cattle.birth_height}
-                          type="text"
-                          name="birth_height"
-                          placeholder="birth_height"
-                          onChange={handleInputChange}
-                        />
-
-                        <label className="mt-5 input-bordered w-full">
-                            <select
-                                name="iot_device_id"
-                                onChange={handleSelectChange}
-                                className="input input-bordered w-full mt-1"
-                            >
-                                <option value="">iot device</option>
-
-                                {
-                                    IotDeviceData && IotDeviceData.map((b) => {
-                                        return <option key={b.id} value={b.id}>{b.serial_number}</option>
-                                    })
-                                }
-                                
-                            </select>
+                        <Select
+                        id="breed"
+                        variant="bordered"
+                        autoFocus
+                        items={animals}
+                        // label="Select an animal" 
+                        placeholder="Select an animal"
+                        size
+                        className=" w-full ">
+                          {(animal) => <SelectItem className="bg-white"
+                          variant="bordered">{animal.label}</SelectItem>}
+                        </Select>
+                      </div>
+                      {/* Cattle Height */}
+                      <div className="grid grid-cols-1 gap-1">
+                        <label htmlFor="height" className="text-black font-bold">
+                          <h6>
+                            Cattle Height<span className="text-red-600">*</span>
+                          </h6>
                         </label>
-                 
-                        <div className="flex flex-col items-start mt-5">
-                          <label htmlFor="last_vaccination" className="w-full">Last Vaccination</label>
-                          <input
-                            className="input input-bordered w-full"
-                            id="last_vaccination"
-                            value={cattle.last_vaccination}
-                            type="date"
-                            name="last_vaccination"
-                            placeholder="last_vaccination"
-                            onChange={handleInputChange}
-                          />
-                        </div>
-                        
-                        <div className="mt-5 flex justify-end gap-3">
-                          <button type="submit" className="btn">{cattle.id != 0 ? 'Update' :'Create'} Cattle</button>
-                        </div>
-                      </form>
+                        <Input
+                          id="height"
+                          autoFocus
+                          type="text"
+                          label="text"
+                          placeholder="Input your cattle weight"
+                          variant="bordered"
+                          className="w-full h-[2.8rem] "
+                          onChange={handleInputChange}
+                        />
+                      </div>
+
+                      {/* Cattle Weight */}
+                      <div className="grid grid-cols-1 gap-1">
+                        <label htmlFor="weight" className="text-black font-bold">
+                          <h6>
+                            Cattle Weight<span className="text-red-600">*</span>
+                          </h6>
+                        </label>
+                        <Input
+                          id="weight"
+                          autoFocus
+                          type="text"
+                          label="text"
+                          placeholder="Input your cattle weight"
+                          variant="bordered"
+                          className="w-full h-[2.8rem] "
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                      {/* IoT Devices */}
+                      <div className="grid grid-cols-1 gap-1">
+                        <label htmlFor="iot" className="text-black font-bold">
+                          <h6>IoT Device</h6>
+                        </label>
+                        <Select
+                        id="iot"
+                        variant="bordered"
+                        autoFocus
+                        items={animals}
+                        // label="Select an animal" 
+                        placeholder="Select an animal"
+                        size
+                        className=" w-ful">
+                          {(animal) => <SelectItem className="bg-white"
+                          variant="bordered">{animal.label}</SelectItem>}
+                        </Select>
+                      </div>
                     </ModalBody>
                     <ModalFooter>
-                      <Button onClick={onClose} className="btn btn-secondary">Close</Button>
+
+                    <Button isSubmit className="bg-emerald-600 text-md" onPress={onClose}>
+                      Submit
+                    </Button>
                     </ModalFooter>
                   </>
                 )}
               </ModalContent>
             </Modal>
 
-            <div className="mt-4 d-flex grid grid-cols-4 justify-between">
+            <div className="mt-4  d-flex grid grid-cols-4 justify-between">
               <div className="card border border-green-500 p-2 m-2">
-                <div className="card-body d-flex justify-between gap-2">
-                  <img src="https://via.placeholder.com/80" alt="cow" />
+                <div className="card-body d-flex justify-between gap-10">
+                  <i className="bi bi-emoji-laughing-fill text-emerald-500 text-[2rem]" />
                   <div className="d-flex flex-col ">
                     <h6 className="text-emerald-400">Sehat</h6>
                     <p>10</p>
@@ -266,19 +545,18 @@ export default function Home() {
               </div>
 
               <div className="card border p-2 m-2">
-                <div className="card-body d-flex justify-between gap-2">
-                  <img src="https://via.placeholder.com/80" alt="cow" />
+                <div className="card-body d-flex justify-between gap-10">
+                  <i className="bi bi-emoji-sunglasses-fill text-yellow-400 text-[2rem]" />
                   <div className="d-flex flex-col ">
                     <h6 className="text-yellow-400">Terjual</h6>
                     <p>10</p>
                   </div>
                 </div>
               </div>
-
+             
               <div className="card border border-red-600 p-2 m-2">
-                <div className="card-body d-flex justify-between gap-2">
-                  <img src="https://via.placeholder.com/80" alt="cow" />
-
+                <div className="card-body d-flex justify-between gap-10">
+                  <i className="bi bi-emoji-tear-fill text-red-500 text-[2rem]" />
                   <div className="d-flex flex-col ">
                     <h6 className="text-red-600">Sakit</h6>
                     <p>10</p>
@@ -286,9 +564,8 @@ export default function Home() {
                 </div>
               </div>
               <div className="card border border-red-600 p-2 m-2">
-                <div className="card-body d-flex justify-between gap-2">
-                  <img src="https://via.placeholder.com/80" alt="cow" />
-
+                <div className="card-body d-flex justify-between gap-10">
+                  <i className="bi bi-emoji-dizzy-fill text-red-800 text-[2rem]" />
                   <div className="d-flex flex-col ">
                     <h6 className="text-red-600">Mati</h6>
                     <p>10</p>
@@ -296,15 +573,6 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="card  border p-2 m-2">
-                <div className="card-body d-flex justify-between gap-2">
-                  <img src="https://via.placeholder.com/80" alt="cow" />
-                  <div className="d-flex flex-col ">
-                    <h6>Pengangon</h6>
-                    <p>10</p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -322,103 +590,28 @@ export default function Home() {
       </div>
 
       {/* Cattle section */}
-      <div className="container grid grid-cols-3 gap-3 mt-5">
-        <div className="card ">
-          <div className="card-body d-flex justify-between">
-            {/* untuk title */}
-            <div className="mt-">
-              <h3 className="text-emerald-600">Sapi</h3>
-              <p className="text-xs">Iot Device</p>
-            </div>
-            
-            {/* untuk button */}
-            <div >
-              <div className="bg-emerald-600 rounded-md">
-                  <p className="text-white text-sm m-2">Sehat</p>
+      <div className="container grid grid-cols-3 gap-3 mt-5 cursor-pointer" >
+        
+        
+
+       
+        {Array.isArray(cattleData) && cattleData?.map((cattle) => (
+          <div key={cattle.id} className="card" onClick={() => window.location.href = `/peternak/cattle/${cattle.id}?user=${user.id}`}>
+            <div className="card-body d-flex justify-between">
+              <div>
+                <h3 className="text-emerald-600">{cattle.name}</h3>
+                {/* <p className="text-xs">{cattle.iot_device_id}</p> */}
+                <p className="text-black">{cattle.iot_device_id}</p>
+              </div>
+              <div>
+                <div className={`bg-${cattle.status === 'Sehat' ? 'emerald' : 'red'}-600 rounded-md`}>
+                  <p className="text-white text-sm m-2">{cattle.status}</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="card ">
-          <div className="card-body d-flex justify-between">
-            {/* untuk title */}
-            <div className="mt-">
-              <h3 className="text-emerald-600">Sapi</h3>
-              <p className="text-xs">Iot Device</p>
-            </div>
-            
-            {/* untuk button */}
-            <div>
-              <div className="bg-emerald-600 rounded-md">
-                  <p className="text-white text-sm m-2">Sehat</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="card ">
-          <div className="card-body d-flex justify-between">
-            {/* untuk title */}
-            <div className="mt-">
-              <h3 className="text-emerald-600">Sapi</h3>
-              <p className="text-xs">Iot Device</p>
-            </div>
-            
-            {/* untuk button */}
-            <div>
-              <div className="bg-emerald-600 rounded-md">
-                  <p className="text-white text-sm m-2">Sehat</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="card ">
-          <div className="card-body d-flex justify-between">
-            {/* untuk title */}
-            <div className="mt-">
-              <h3 className="text-emerald-600">Sapi</h3>
-              <p className="text-xs">Iot Device</p>
-            </div>
-            
-            {/* untuk button */}
-            <div>
-              <div className="bg-emerald-600 rounded-md">
-                  <p className="text-white text-sm m-2">Sehat</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="card ">
-          <div className="card-body d-flex justify-between">
-            {/* untuk title */}
-            <div className="mt-">
-              <h3 className="text-emerald-600">Sapi</h3>
-              <p className="text-xs">Iot Device</p>
-            </div>
-            
-            {/* untuk button */}
-            <div>
-              <div className="bg-emerald-600 rounded-md">
-                  <p className="text-white text-sm m-2">Sehat</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="card ">
-          <div className="card-body d-flex justify-between">
-            {/* untuk title */}
-            <div className="mt-">
-              <h3 className="text-emerald-600">Sapi</h3>
-              <p className="text-xs">Iot Device</p>
-            </div>
-            
-            {/* untuk button */}
-            <div>
-              <div className="bg-emerald-600 rounded-md">
-                  <p className="text-white text-sm m-2">Sehat</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        ))}
+
       </div>
     </>
   )
