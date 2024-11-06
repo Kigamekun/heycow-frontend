@@ -2,6 +2,8 @@
 import Head from 'next/head';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/globals.css';
+import Image from 'next/image';
+import { heycow } from '@/images/hey_cow.svg';
 
 export default function Home() {
   return (
@@ -13,6 +15,7 @@ export default function Home() {
         {/* You can link any external CSS or JS libraries here */}
       </header>
 
+      
       {/* Navbar Section */}
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container header">
@@ -35,6 +38,7 @@ export default function Home() {
       <section id="hero" className="d-flex align-items-center dark-background">
         <div className="container text-center">
           <h1>Welcome to HeyCow!</h1>
+          <Image src={heycow}/>
           <h2>Managing your livestock has never been easier.</h2>
           <a href="#about" className="btn-get-started scrollto">Get Started</a>
         </div>

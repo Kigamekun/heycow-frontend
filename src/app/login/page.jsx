@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-sync-scripts */
 'use client';
 
-import heycow from '@/images/heycow_img.svg'
+import heycow from '@/images/hey_cow.svg'
 import { useAuth } from "@/lib/hooks/auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -40,11 +40,11 @@ export default function Page() {
             <main className="my-0 mx-auto min-h-full max-w-screen-sm">
 
 
-                <div className="d-flex justify-center">
+                <div className="d-flex justify-center my-7">
                     <Image
                         src={heycow}
                         alt="Descriptive Alt Text"
-                        width={250}
+                        width={150}
                         height={50}
                     />
                 </div>
@@ -52,7 +52,7 @@ export default function Page() {
                     <div className="card w-[500px] h-[500px] shadow-xl p-4">
                         <div className="p-2 text-center">
                             <h1 className="card-title text-black">Sign in</h1>
-                            <p>Welcome to Future Farmer, enjoy our app!</p>
+                            <p>Welcome back Future Farmer, enjoy our app!</p>
                         </div>
                         
                         <div className="card-body mx-4">
