@@ -64,3 +64,44 @@
     @apply bg-background text-foreground;
   }
 }
+
+.sidebar-link i,
+.sidebar-link span {
+  color: white;
+}
+
+
+.sidebar-link:hover i,
+.sidebar-link:hover span {
+  color: #20A577;
+}
+
+.sidebar-wrapper .menu .sidebar-link:hover i {
+  color: #20A577;
+}
+
+.sidebar-wrapper .menu .sidebar-link i{
+  color:white
+}
+
+.sidebar-wrapper .menu .sidebar-link i {
+  color: white
+}
+
+.sidebar-wrapper .menu .sidebar-title{
+  color: white;
+}
+
+.sidebar-wrapper .menu .sidebar-item.active>.sidebar-link {
+  background-color: #435ebe
+}
+
+.sidebar-wrapper .menu .sidebar-item.active>.sidebar-link span {
+  color: #fff
+}
+
+.sidebar-wrapper .menu .sidebar-item.active>.sidebar-link svg,
+.sidebar-wrapper .menu .sidebar-item.active>.sidebar-link i {
+  fill: #fff;
+  color: #fff
+}
