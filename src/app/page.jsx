@@ -3,15 +3,15 @@ import Head from 'next/head';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/globals.css';
 import Image from 'next/image';
-import { heycow } from '@/images/hey_cow.svg';
-
+import {heycow} from '@/images/hey_cow.svg'
 export default function Home() {
   return (
     <>
       <header>
-        <title>HeyCow! Landing Page</title>
+        <Image src={heycow}/>
+        <title>HeyCow!</title>
         <meta name="description" content="HeyCow! Landing Page" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href={heycow} />
         {/* You can link any external CSS or JS libraries here */}
       </header>
 
@@ -38,7 +38,6 @@ export default function Home() {
       <section id="hero" className="d-flex align-items-center dark-background">
         <div className="container text-center">
           <h1>Welcome to HeyCow!</h1>
-          <Image src={heycow}/>
           <h2>Managing your livestock has never been easier.</h2>
           <a href="#about" className="btn-get-started scrollto">Get Started</a>
         </div>

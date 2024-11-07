@@ -6,6 +6,9 @@ import Image from 'next/image';
 import { Avatar } from '@nextui-org/react';
 import { Editor } from '@tinymce/tinymce-react';
 import {Select, SelectSection, SelectItem} from "@nextui-org/react";
+import { useState, useEffect } from 'react';
+import axios from "axios";
+import { usePathname, useRouter } from 'next/navigation';
 import {
     Modal,
     ModalBody,
@@ -36,21 +39,47 @@ export default function Profile() {
         setCattle({ ...cattle, [name]: value });
         
     }
-    const [avatar, setAvatar] = React.useState('');
-    React.useEffect(() => {
-        if (user && user.avatar) {
-          // Asumsikan user.avatar berisi URL avatar
-          const avatarUrl = user.avatar.startsWith('http') || user.avatar.startsWith('/') 
-        ? user.avatar 
-        : `${process.env.NEXT_PUBLIC_BACKEND_HOST}/${user.avatar}`;
-      console.log('Avatar URL:', avatarUrl); // Debugging URL avatar
-      setAvatar(avatarUrl);
-        //   setAvatar(user.avatar);
-    //     const avatarUrl = user.avatar.startsWith('http') ? user.avatar : `/${user.avatar}`;
-    //   setAvatar(avatarUrl);
+    const [userAvatar, setUserAvatar] = React.useState('');
+    const fetchUserImage = async () => {
+        console.log('fetching user image...');
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/me`, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            })
+    
+            console.log('ada:', response.data.full_avatar_url); // Log the response to inspect its structure
+            console.log('Response:', response.data);
+            // Ensure the user object exists and has the full_image_url property
+            if (response.data.full_avatar_url && response.data.full_avatar_url) {
+                setUserAvatar(response.data.full_avatar_url);
+            } else {
+                console.error('User  object or full_avatar_url is undefined');
+            }
+            console.log('User  Avatar URL:', userAvatar);   
+        } catch (error) {
+            console.error('Error fetching user image:', error);
         }
-      }, [user]);
+    };
+    useEffect(() => {
+        fetchUserImage();
+        // if (user) {
+        //     fetchUserImage();
+        // }
+        // setActivePage(pathname || 'dashboard');
+        // console.log(pathname)
+    },[]);
+    
+    useEffect(() => {
+        console.log('User  Avatar Updated:', userAvatar); // Log whenever userAvatar changes
+    }, [userAvatar]);
 
+    const handleImageLoad = (event) => {
+        event.target.setAttribute('data-loaded', 'true');
+        console.log('Image loaded successfully');
+    };
     return(
        
         <main>
@@ -180,8 +209,7 @@ export default function Profile() {
                                 id="weight"
                                 autoFocus
                                 type="textarea"
-                                label="text"
-                                placeholder="Input your cattle weight"
+                                placeholder="Input your bio"
                                 variant="bordered"
                                 className="w-full h-[2.8rem] "
                                 onChange={handleInputChange}
@@ -226,11 +254,7 @@ export default function Profile() {
                         </Button>
                         <div>
                             <div className='profile-picture d-flex justify-center'>
-                                {avatar ? (
-                                    <Avatar isBordered src={avatar} />
-                                    ) : (
-                                    <div className='w-[100px] h-[100px] rounded rounded-pill align-middle ml-[9.3rem] bg-gray-200'></div>
-                                )}
+                                <img src={userAvatar} width={120} height={120} alt="Profile" className="rounded-full ml-[9rem]"  onLoad={handleImageLoad}/>
                                 
                             </div>
                             <h5 className='mt-3 text-black font-bold text-center'>{user ? user.name : "mulyono"}</h5>
@@ -277,7 +301,7 @@ export default function Profile() {
                                 </p>
                                 <div className='border rounded-md h-[3rem] py-2 px-1'>
                                     <p className='text-md text-black font-light'>
-                                        {user ? user.farm : '-'}
+                                        {user ? user.farm_id : '-'}
                                     </p>
                                 </div>
                             </div>

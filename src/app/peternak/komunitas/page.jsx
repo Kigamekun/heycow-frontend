@@ -24,16 +24,16 @@ export default function Page() {
     const [blogPostsData, setBlogPostsData] = React.useState(
         []
     );
-
+    // const [blogImagesData, setBlogImagesData] = React.useState(null);
     const [userData, setUserData] = React.useState(
         []
     )
-
+    
     const [blogPosts, setBlogPost] = React.useState({
         id: 0,
         title: '',
-        contet: '',
-        categpry: '',
+        content: '',
+        category: '',
         full_image_url : ''
     });
     // const fetchImage = async (e) => {
@@ -42,18 +42,16 @@ export default function Page() {
     //     setBlogPost({ ...blogPosts, image: base64 });
     // }
     const getUserData = async () => {
-        try { 
-            
-
+        try {
             const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`,
                 {headers :{
-                    'Content-Type' : 'text/json',
+                    'Content-Type' : 'multipart/form-data',
                     'Authorization' : `Bearer ${localStorage.getItem('token')}`
                 }}
             )
             if(res.data.data) {
                 setUserData(res.data.data.data);
-                console.log('ada datanya');
+                console.log('ada datany user :', res.data); 
                 console.log(res.data.data.data)
             }
             
@@ -81,8 +79,6 @@ export default function Page() {
 
     const getBlogPostsData = async () => {
         try { 
-            
-
             const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts`,
                 {headers :{
                     'Content-Type' : 'text/json',
@@ -91,7 +87,7 @@ export default function Page() {
             )
             if(res.data.data) {
                 setBlogPostsData(res.data.data.data);
-                console.log('ada datanya');
+                console.log('ada datanya blog', res.data.data.data);
                 console.log(res.data.data.data)
             }
             
@@ -116,8 +112,32 @@ export default function Page() {
             }
         }
     }
-    const [sortOrder, setSortOrder] = useState('asc');
 
+  //   const fetchUserImage = async () => {
+  //     console.log('fetching user image blog...');
+  //     try {
+  //         const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts`, {
+  //             headers: {
+  //                 'Content-Type': 'multipart/form-data',
+  //                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
+  //             }
+  //         })
+  
+  //         console.log('ada image blog:', response.data.data.full_image_url); // Log the response to inspect its structure
+  //         console.log('Response:', response.data.data.data.full_image_url);
+  //         // Ensure the user object exists and has the full_image_url property
+  //         if (response.data.data.full_image_url &&  response.data.data.full_image_url) {
+  //             setBlogImagesData(response.data.data.full_image_url);
+  //         } else {
+  //             console.error('User  object or full_image_url is undefined');
+  //         }
+  //         console.log('User  Avatar URL:', blogImagesData);   
+  //     } catch (error) {
+  //         console.error('Error fetching user image:', error);
+  //     }
+  // };
+    const [sortOrder, setSortOrder] = useState('asc');
+    
     const handleSort = (order) => {
       setSortOrder(order);
       const sortedData = [...blogPostsData].sort((a, b) => {
@@ -144,7 +164,7 @@ export default function Page() {
         const bodyFormData = new FormData();
         bodyFormData.append('title', blogPosts.title);
         bodyFormData.append('content', blogPosts.content);
-        bodyFormData.append('image', blogPosts.image);
+        bodyFormData.append('full_image_url', blogPosts.full_image_url);
         bodyFormData.append('category', blogPosts.category);
         
     
@@ -167,8 +187,8 @@ export default function Page() {
           setBlogPost({
             id: 0,
             title: '',
-            contet: '',
-            categpry: '',
+            content: '',
+            category: '',
             image : ''
           });
     
@@ -317,6 +337,7 @@ export default function Page() {
     console.log(blogPostsData);
     React.useEffect(() => {
         getBlogPostsData(),
+        // fetchUserImage(),
         getUserData()
       }, [])
     
@@ -375,7 +396,7 @@ export default function Page() {
                             <div className="card-body">
                                 <div className="container-post-profile d-flex justify-start gap-2">
                                     {/* <img src={post.image} alt="profile" className="w-[50px] h-[50px] rounded rounded-pill border" /> */}
-                                    <Avatar src={post.user.avatar} alt="profile" />
+                                    <img src={post.user.full_avatar_url || 'https://th.bing.com/th/id/OIP.YO6Vmx1wQhZoCc2U9N6GYgHaE8?rs=1&pid=ImgDetMain'} alt="profile" className="w-[50px] h-[50px] rounded-pill"/>
                                     <div className="mt-1">
                                         <h6 className="text-black font-bold">{post.user.name}</h6>
                                         <p className="text-xs">{post.created_at}</p>
@@ -387,7 +408,7 @@ export default function Page() {
                                         {post.content}
                                     </p>
                                     {/* <img src={post.image} alt="post" className="w-[100%] max-h-[400px] border" /> */}
-                                    <Image src={post.full_image_url} alt="post" width={300} height={300} />
+                                    <img src={post.full_image_url || 'https://icons.iconarchive.com/icons/fa-team/fontawesome/256/FontAwesome-Image-icon.png'} alt="post" className="w-[30rem]"/>
                                 </div>
                                 <div className="container-post-action d-flex gap-4 mt-3">
                                     <div className="Likes-count d-flex gap-2 text-md">

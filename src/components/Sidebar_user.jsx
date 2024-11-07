@@ -150,6 +150,12 @@ export function Sidebar() {
                          <span className="text-white">Help Center</span>
                      </Link>
                  </li>
+                 <li className={`sidebar-item ${pathname === "/peternak/history" ? "active" : ""}`}>
+                     <Link className="sidebar-link" href="/peternak/history">
+                            <i class="bi bi-clock-history text-white"></i>
+                            <span className="text-white">History</span>
+                     </Link>
+                 </li>
                  <li className={`sidebar-item ${pathname === "/peternak/profile" ? "active" : ""}`}>
                      <Link className="sidebar-link text-white" href="/peternak/profile">
                          <i className="bi bi-person-circle text-white " />
