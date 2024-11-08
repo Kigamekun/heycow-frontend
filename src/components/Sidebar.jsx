@@ -3,7 +3,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { useAuth } from '@/lib/hooks/auth';
-
+import Image from "next/image";
+import heycow from '@/images/heycow_img.svg';
 import Swal from "sweetalert2"
 
 export function Sidebar() {
@@ -39,7 +40,84 @@ export function Sidebar() {
     }, [pathname]);
 
     return (
-        <div className="sidebar-menu h-full overflow-x-hidden" style={{zIndex: 600}}>
+        // <div className="sidebar-menu h-full overflow-x-hidden bg-white" style={{zIndex: 600}}>
+        //     <ul className="menu">
+        //         <li className="sidebar-title">Menu</li>
+        //         <li className={`sidebar-item ${pathname === "/admin" ? "active" : ""}`}>
+        //             <Link href="/admin" className="sidebar-link">
+        //                 <i className="bi bi-grid-fill" />
+        //                 <span>Dashboard</span>
+        //             </Link>
+        //         </li>
+        //         <li className={`sidebar-item ${pathname === "/admin/blog" ? "active" : ""}`}>
+        //             <Link className="sidebar-link" href="/admin/blog">
+        //                 <i className="bi bi-grid-fill" />
+        //                 <span>Community</span>
+        //             </Link>
+        //         </li>
+        //         <li className="sidebar-title">Management</li>
+        //         <li className={`sidebar-item ${pathname === "/admin/user" ? "active" : ""}`}>
+        //             <Link className="sidebar-link" href="/admin/user">
+        //                 <i className="bi bi-person-fill" />
+        //                 <span>User</span>
+        //             </Link>
+        //         </li>
+        //         <li className="sidebar-title">Farm</li>
+        //         <li className={`sidebar-item ${pathname === "/admin/farm" ? "active" : ""}`}>
+        //             <Link className="sidebar-link" href="/admin/farm">
+        //                 <i className="bi bi-grid-fill" />
+        //                 <span>Farm</span>
+        //             </Link>
+        //         </li>
+        //         <li className={`sidebar-item ${pathname === "/admin/cattle" ? "active" : ""}`}>
+        //             <Link className="sidebar-link" href="/admin/cattle">
+        //                 <i className="bi bi-grid-fill" />
+        //                 <span>Cattle</span>
+        //             </Link>
+        //         </li>
+        //         <li className={`sidebar-item ${pathname === "/admin/device" ? "active" : ""}`}>
+        //             <Link className="sidebar-link" href="/admin/device">
+        //                 <i className="bi bi-grid-fill" />
+        //                 <span>Devices</span>
+        //             </Link>
+        //         </li>
+        //         <li className={`sidebar-item ${pathname === "/" ? "active" : ""}`}>
+        //             <Link className="sidebar-link" href="/">
+        //                 <i className="bi bi-grid-fill" />
+        //                 <span>History</span>
+        //             </Link>
+        //         </li>
+        //         <li className={`sidebar-item ${pathname === "/admin/report" ? "active" : ""}`}>
+        //             <Link className="sidebar-link" href="/admin/report">
+        //                 <i className="bi bi-grid-fill" />
+        //                 <span>Report</span>
+        //             </Link>
+        //         </li>
+
+        //         <button>
+        //             <li className="sidebar-item">
+        //                 <a className="sidebar-link" onClick={onClickLogout}>
+        //                     <i className="bi bi-box-arrow-right" />
+        //                     <span>Logout</span>
+        //                 </a>
+        //             </li>
+        //         </button>
+
+        //     </ul>
+        // </div>
+        <div className="fixed top-0 bottom-0 left-0 h-full overflow-x-hidden sidebar-menu bg-emerald-600">
+           
+
+            <div className="image-container w-[300px] px-4 mt-3">
+                <Link href="/peternak">
+                    <Image
+                        src={heycow}
+                        alt="Descriptive Alt Text"
+                        width={180}
+                        height={50}
+                    />
+                </Link>
+            </div>
             <ul className="menu">
                 <li className="sidebar-title">Menu</li>
                 <li className={`sidebar-item ${pathname === "/admin" ? "active" : ""}`}>

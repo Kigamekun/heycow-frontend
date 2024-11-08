@@ -19,8 +19,22 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+  Checkbox, 
+  Link
+} from '@nextui-org/modal';
+
+import { Input } from "@nextui-org/react";
+
 export default function Page() {
     const{user, middleware} = useAuth(['cattleman', 'admin'])
+    const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
     const [blogPostsData, setBlogPostsData] = React.useState(
         []
     );
@@ -335,12 +349,45 @@ export default function Page() {
         }
     };
     console.log(blogPostsData);
+    
+    const DeletePosts = async (id) => {
+      if (user && user.role === 'admin') {
+          try {
+              const res = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${id}`, {
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${localStorage.getItem('token')}`
+                  }
+              });
+              console.log(res.data);
+              // Optionally, you can add code here to update the UI after successful deletion
+          } catch (error) {
+              console.error('Error:', error.response);  // Log error lengkap dari response
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Error deleting post',
+                  text: error.response.data.message,
+                  showConfirmButton: false,
+                  timer: 1500
+              });
+          }
+      } else {
+          Swal.fire({
+              icon: 'error',
+              title: 'Anda tidak memiliki akses',
+              showConfirmButton: false,
+              timer: 1500
+          });
+      }
+  };
+
     React.useEffect(() => {
         getBlogPostsData(),
         // fetchUserImage(),
         getUserData()
       }, [])
     
+
     return (
         <>
         <main>
@@ -348,7 +395,7 @@ export default function Page() {
             
             <div className="container-filter d-flex justify-center">
                 <div className="card mt-3 w-[800px] "> 
-                    <div className="card-body d-flex justify-between"> 
+                    <div className="card-body d-flex justify-around mt-2"> 
                       <Popover className="d-flex gap-3 cursor-pointer">
                         <PopoverTrigger className="d-flex gap-3">
                           <i class="bi bi-filter text-black text-xl"></i>
@@ -361,24 +408,21 @@ export default function Page() {
                           <div onClick={() => handleSort('desc')}>
                             <p className="text-black text-lg">Sorting dari yang terlama</p>
                           </div>
-                          {/* <div className="d-flex gap-3 cursor-pointer" onClick={() => window.location.href = '/peternak/komunitas/forum'}>
-                            <i class="bi bi-question-circle text-black text-xl"></i>
-                            <p className="text-black text-lg">Sorting dari yang terbaru</p>  
-                          </div> */}
                         </PopoverContent>
                       </Popover>
-                        {/* <div className="d-flex gap-3 cursor-pointer">
-                          <Popover className="d-flex gap-3 cursor-pointer">
-                            
-                          </Popover>
-                            <i class="bi bi-filter text-black text-xl"></i>
-                            <p className="text-black text-lg">Filter</p>
-                        </div> */}
+
+                      <Divider orientation="vertical" color="black"/>
+                      <div className="d-flex gap-3 cursor-pointer" onClick={onOpen}>
+                        <i class="bi bi-clipboard-plus text-xl text-black"></i>
+                        <p className="text-black text-lg">Buat Post</p>
+                      </div>  
+                      
                       <Divider orientation="vertical" color="black"/>
                       <div className="d-flex gap-3 cursor-pointer" onClick={() => window.location.href = '/peternak/komunitas/forum'}>
                         <i class="bi bi-question-circle text-black text-xl"></i>
                         <p className="text-black text-lg">Tanyakan</p>
                       </div>
+
                       <Divider orientation="vertical"/>
                       <div className="d-flex gap-3 cursor-pointer" onClick={() => window.location.href = '/peternak/komunitas/jual'}>
                         <i class="bi bi-currency-exchange  text-black text-xl"></i>
@@ -394,14 +438,30 @@ export default function Page() {
                     {blogPostsData?.map((post, index) => (
                         <div key={index} className="card mt-3 w-[800px] grid grid-cols-1 gap-6">
                             <div className="card-body">
-                                <div className="container-post-profile d-flex justify-start gap-2">
-                                    {/* <img src={post.image} alt="profile" className="w-[50px] h-[50px] rounded rounded-pill border" /> */}
-                                    <img src={post.user.full_avatar_url || 'https://th.bing.com/th/id/OIP.YO6Vmx1wQhZoCc2U9N6GYgHaE8?rs=1&pid=ImgDetMain'} alt="profile" className="w-[50px] h-[50px] rounded-pill"/>
-                                    <div className="mt-1">
-                                        <h6 className="text-black font-bold">{post.user.name}</h6>
-                                        <p className="text-xs">{post.created_at}</p>
+                              <div className="settings post float-end">
+                                <Popover size="sm">
+                                  <PopoverTrigger>
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                  </PopoverTrigger>
+                                  <PopoverContent >
+                                    <div className="d-flex gap-3 cursor-pointer">
+                                      <div id="deletePost" onClick={DeletePosts(post.id)}> 
+                                        <i class="bi bi-trash-fill text-md"></i>
+                                        <p className="text-black text-md">Hapus</p>  
+                                      </div>
+                                      
                                     </div>
+                                  </PopoverContent>
+                                </Popover>
+                              </div>
+                              <div className="container-post-profile d-flex justify-start gap-2">
+                                {/* <img src={post.image} alt="profile" className="w-[50px] h-[50px] rounded rounded-pill border" /> */}
+                                <img src={post.user.full_avatar_url || 'https://th.bing.com/th/id/OIP.YO6Vmx1wQhZoCc2U9N6GYgHaE8?rs=1&pid=ImgDetMain'} alt="profile" className="w-[50px] h-[50px] rounded-pill"/>
+                                <div className="mt-1">
+                                  <h6 className="text-black font-bold">{post.user.name}</h6>
+                                    <p className="text-xs">{post.published_at}</p>
                                 </div>
+                              </div>
                                 <div className="container-post-content mt-3">
                                     <h4 className="text-black font-bold">{post.title}</h4>
                                     <p className="text-black">
@@ -426,6 +486,175 @@ export default function Page() {
                     
                 </div>
             </div>
+
+
+
+
+
+
+          {/* MODALS  */}
+          <Modal 
+            isOpen={isOpen} 
+            onOpenChange={onOpenChange}
+                scrollBehavior="inside"
+                    placement="center"
+                    backdrop="opaque"
+                    classNames={{
+                    backdrop: "bg-black bg-opacity-50"
+                    }}
+                    >
+                    <ModalContent className="w-[700px] h-[650px] bg-white rounded-xl ">
+                    {(onClose) => (
+                    <>
+                    <ModalHeader className="dialog-title flex flex-col gap-1 px-6 mt-6">
+                        <h3 className="text-black font-bold text-center">Edit Profile</h3>
+                    </ModalHeader>
+                    <ModalBody >
+                        {/* Cattle Name */}
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 gap-1">
+                                <label htmlFor="name" className="text-black font-bold">
+                                <h6>
+                                    Title<span className="text-red-600">*</span>
+                                </h6>
+                                </label>
+                                <Input
+                                isRequired
+                                id="name"
+                                autoFocus
+                                type="text"
+                                label="text"
+                                placeholder="Input your cattle name"
+                                variant="bordered"
+                                className="w-full h-[2.8rem] "
+                                onChange={handleInputChange}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-1">
+                                <label htmlFor="email" className="text-black font-bold">
+                                <h6>
+                                    Caption<span className="text-red-600">*</span>
+                                </h6>
+                                </label>
+                                <Input
+                                isRequired
+                                id="email"
+                                autoFocus
+                                type="email"
+                                label="text"
+                                placeholder="Edit email mu"
+                                variant="bordered"
+                                className="w-full h-[2.8rem] "
+                                onChange={handleInputChange}
+                                />
+                            </div>
+
+                            {/* Cattle Height */}
+                            <div className="grid grid-cols-1 gap-1">
+                                <label htmlFor="role" className="text-black font-bold">
+                                <h6>
+                                    Role
+                                </h6>
+                                </label>
+                                <Input
+                                id="role"
+                                isDisabled
+                                autoFocus
+                                type="text"
+                                label="text"
+                                variant="bordered"
+                                className="w-full h-[2.8rem] "
+                                defaultValue="junior@nextui.org"
+                                />
+                            </div>
+
+                            {/* Cattle Weight */}
+                            <div className="grid grid-cols-1 gap-1">
+                                <label htmlFor="weight" className="text-black font-bold">
+                                <h6>
+                                    Cattle Weight<span className="text-red-600">*</span>
+                                </h6>
+                                </label>
+                                <Input
+                                id="weight"
+                                autoFocus
+                                type="text"
+                                label="text"
+                                placeholder="Input your cattle weight"
+                                variant="bordered"
+                                className="w-full h-[2.8rem] "
+                                onChange={handleInputChange}
+                                />
+                            </div>
+
+                            
+                        </div>
+                        <div className="d-flex justify-center"></div>
+                        {/* No Telp*/}
+                        <div className="grid grid-cols-1 gap-1">
+                                <label htmlFor="role" className="text-black font-bold">
+                                <h6>
+                                    No. Telp
+                                </h6>
+                                </label>
+                                <Input
+                                id="role"
+                                autoFocus
+                                type="text"
+                                label="text"
+                                variant="bordered"
+                                className="w-full h-[2.8rem] "
+                                defaultValue="junior@nextui.org"
+                                />
+                            </div>
+                        {/* BIO */}
+                        <div className="grid grid-cols-1 gap-1">
+                            <label htmlFor="role" className="text-black font-bold">
+                            <h6>
+                                Bio
+                            </h6>
+                            </label>
+                            <Input
+                                id="weight"
+                                autoFocus
+                                type="textarea"
+                                placeholder="Input your bio"
+                                variant="bordered"
+                                className="w-full h-[2.8rem] "
+                                onChange={handleInputChange}
+                                />
+                        </div>
+                        {/* BIO */}
+                        <div className="grid grid-cols-1 gap-1">
+                            <label htmlFor="role" className="text-black font-bold">
+                            <h6>
+                                Avatar
+                            </h6>
+                            </label>
+                            <Input
+                                id="weight"
+                                autoFocus
+                                type="file"
+                                label="text"
+                                placeholder="Input your cattle weight"
+                                variant="bordered"
+                                className="w-full h-[2.8rem] "
+                                onChange={handleInputChange}
+                                />
+                        </div>
+                        
+                        </ModalBody>
+                        <ModalFooter>
+
+                        <Button isSubmit className="bg-emerald-600 text-md" onPress={onClose}>
+                        Submit
+                        </Button>
+                        </ModalFooter>
+                    </>
+                    )}
+                </ModalContent>
+            </Modal>
         </main>
         
         </>

@@ -41,69 +41,7 @@ export function Sidebar() {
 
     return (
         <div className="fixed top-0 bottom-0 left-0 h-full overflow-x-hidden sidebar-menu bg-emerald-600">
-            {/* <ul className="menu">
-                <li className="sidebar-title">Menu</li>
-                <li className={`sidebar-item ${pathname === "/admin" ? "active" : ""}`}>
-                    <Link href="/admin" className="sidebar-link">
-                        <i className="bi bi-grid-fill" />
-                        <span>Dashboard</span>
-                    </Link>
-                </li>
-                <li className={`sidebar-item ${pathname === "/admin/about" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/admin/about">
-                        <i className="bi bi-grid-fill" />
-                        <span>About</span>
-                    </Link>
-                </li>
-                <li className="sidebar-title">Management</li>
-                <li className={`sidebar-item ${pathname === "/" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/">
-                        <i className="bi bi-person-fill" />
-                        <span>User</span>
-                    </Link>
-                </li>
-                <li className="sidebar-title">Farm</li>
-                <li className={`sidebar-item ${pathname === "/admin/farm" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/admin/farm">
-                        <i className="bi bi-grid-fill" />
-                        <span>Farm</span>
-                    </Link>
-                </li>
-                <li className={`sidebar-item ${pathname === "/admin/cattle" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/admin/cattle">
-                        <i className="bi bi-grid-fill" />
-                        <span>Cattle</span>
-                    </Link>
-                </li>
-                <li className={`sidebar-item ${pathname === "/admin/device" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/admin/device">
-                        <i className="bi bi-grid-fill" />
-                        <span>Devices</span>
-                    </Link>
-                </li>
-                <li className={`sidebar-item ${pathname === "/" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/">
-                        <i className="bi bi-grid-fill" />
-                        <span>History</span>
-                    </Link>
-                </li>
-                <li className={`sidebar-item ${pathname === "/admin/report" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/admin/report">
-                        <i className="bi bi-grid-fill" />
-                        <span>Report</span>
-                    </Link>
-                </li>
-
-                <button>
-                    <li className="sidebar-item">
-                        <a className="sidebar-link" onClick={onClickLogout}>
-                            <i className="bi bi-box-arrow-right" />
-                            <span>Logout</span>
-                        </a>
-                    </li>
-                </button>
-
-            </ul> */}
+           
 
             <div className="image-container w-[300px] px-4 mt-3">
                 <Link href="/peternak">
@@ -151,8 +89,8 @@ export function Sidebar() {
                  </li>
                  <li className={`sidebar-item ${pathname === "/peternak/history" ? "active" : ""}`}>
                      <Link className="sidebar-link" href="/peternak/history">
-                            <i class="bi bi-clock-history text-white"></i>
-                            <span className="text-white">History</span>
+                            <i class="bi bi-clock-history "></i>
+                            <span className="">History</span>
                      </Link>
                  </li>
                  <li className={`sidebar-item ${pathname === "/peternak/profile" ? "active" : ""}`}>
