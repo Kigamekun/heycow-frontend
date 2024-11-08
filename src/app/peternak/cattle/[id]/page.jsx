@@ -15,9 +15,10 @@ import {
     ModalHeader,
     useDisclosure,
     Checkbox, 
-    Link
+  
 } from '@nextui-org/modal'
 
+import Link from "next/link";
 import { useEffect } from "react";
 import { useState } from "react";
 // import {  Table,  TableHeader,  TableBody,  TableColumn,  TableRow,  TableCell} from "@nextui-org/table";
@@ -44,7 +45,7 @@ export default function Page( {params} ){
 
 // State Cattle 
 const [cattleData, setCattleData] = React.useState(
-    []
+    null
   );
   
   const [cattle, setCattle] = React.useState({
@@ -373,11 +374,49 @@ const [cattleData, setCattleData] = React.useState(
         };
 
         fetchCattleData();
-    }, [params.id, logout]);
+    }, [params.id]);
     console.log(cattle);
     if (!cattle) {
         return <div>Loading...</div>;
     }
+
+    const deleteCattle = async () => {
+        try {
+            const response = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${params.id}`, {
+                headers: {
+                    'content-type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
+            console.log('Delete response:', response.data);
+            Swal.fire({
+                icon: 'success',
+                title: 'Cattle deleted successfully',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        } catch (error) {
+            console.error('Error deleting cattle:', error);
+            if (error.response && error.response.status === 401) {
+                Swal.fire({
+                    icon: 'error',
+                    title: error.response.data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                logout();
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error occurred',
+                    text: 'Please try again later.',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+      }
+    };
+  
     return (
         <>
             {/* card 1 untuk destroy dan edit */}
@@ -385,9 +424,8 @@ const [cattleData, setCattleData] = React.useState(
 
             
                 <div className="card w-[800px]">
-                    <div className="card-body d-flex justify-around">
-                        <Button className="bg-red-700" onClick={() => alert('destroy')}>Destroy Cattle</Button>
-                        <Button className="bg-emerald-600" onClick={onOpen} >Edit Cattle</Button>
+                    <div className="card-body d-flex justify-start">
+                      <h5 className="text-black font-bold"> {cattle.name}</h5>
                     </div>
                     <Modal 
                     isOpen={isOpen} 
@@ -493,40 +531,27 @@ const [cattleData, setCattleData] = React.useState(
                                     Betina
                                 </label>
                             </div>
-                            {/* <RadioGroup
-                            
-                            color="default"
-                            classNames="text-black font-bold d-flex"
-                            // value={selected}
-                            // onChange={handleInputChange}
-                            // id="birth"
-                            // autoFocus
-                            // type="date"
-                            // label="text"
-                            // placeholder="Input your cattle name"
-                            // variant="bordered"
-                            // className="w-full h-[2.8rem] "
-                            >
-                            <Radio value="jantan">Jantan</Radio>
-                            <Radio value="brtina">Betina</Radio>
-                            </RadioGroup> */}
+                           
                         </div>
                         {/* Farm */}
                         <div className="grid grid-cols-1">
-                            <label htmlFor="breed" className="text-black font-bold">
+                            <label htmlFor="farm" className="text-black font-bold">
                             <h6>Farm</h6>
                             </label>
                             <Select
-                            id="breed"
-                            variant="bordered"
-                            autoFocus
-                            items={animals}
-                            // label="Select an animal" 
-                            placeholder="Select an animal"
-                            size
-                            className=" w-full ">
-                            {(animal) => <SelectItem className="bg-white"
-                            variant="bordered">{animal.label}</SelectItem>}
+                              id="category"
+                              name="category"
+                              variant="bordered"
+                              placeholder="Select a category"
+                              className="w-full h-[2.8rem]"
+                              value={cattle.farm && cattle.farm.name}
+                              onChange={handleSelectChange}
+                            >
+                              {cattleData && cattleData.map((cattle) => (
+                                <SelectItem key={cattle && cattle.id} value={cattle.farm && cattle.farm.name}>
+                                  {cattle.farm && cattle.farm.name}
+                                </SelectItem>
+                              ))}
                             </Select>
                         </div>
                         {/* Cattle Height */}
@@ -608,17 +633,28 @@ const [cattleData, setCattleData] = React.useState(
                                 <img src={cattle.imageUrl} alt="cattle" width={250} height={250} />
                                 </div>
                                
-                                <p className="text-lg text-black text-center">From : <span className="font-bold">{cattle.farm.name}</span></p>
+                                <p className="text-lg text-black text-center">From : <span className="font-bold">{cattle.farm &&cattle.farm.name}</span></p>
                             </div>
                             <div className="d-flex justify-around">
-                                <Button className="bg-yellow-300" onClick={() => alert('Kamu yakin ingin diangonkan?')} >Angonkan</Button>
+                               <Link href={`/peternak/cattle/${cattle.id}/pengangon`}>
+                                  <Button className="bg-yellow-300" >
+                                    Angonkan
+                                  </Button>
+                                </Link>
+                           
+                                
                                 <Button className="bg-emerald-600" >Jual</Button>
                             </div>
                         </div>
                         <div className="grid grid-cols-1 gap-3 w-full">
                             <div>
                                 <div className="title-iot d-flex justify-between">
-                                    <h5 className="text-black font-bold"> {cattle.name}</h5>
+                                    
+                                    <div className="d-flex gap-3">
+                                      <i class="bi bi-trash-fill text-2xl cursor-pointer text-red-700" ></i>
+                                        
+                                        <i class="bi m-[-1re] bi-pencil-fill cursor-pointer text-2xl text-emerald-600" onClick={onOpen}></i>
+                                    </div>
                                     <Button className="bg-emerald-600">Detail IoT</Button>
                                 </div>
                             </div>
@@ -638,30 +674,30 @@ const [cattleData, setCattleData] = React.useState(
                                         <TableCell key={cattle.id} className="font-thin text-sm">{cattle.breed_id}</TableCell>
                                       ))} */}
 
-                                      <TableCell className="font-thin text-sm">{cattle.breed_id}</TableCell>
+                                      <TableCell className="font-thin text-sm">{cattle.breed && cattle.breed.name}</TableCell>
                                      
                                         
                                     </TableRow>
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">Gender</TableCell>
-                                      <TableCell className="font-thin text-sm">{cattle.gender}</TableCell>
+                                      <TableCell className="font-thin text-sm">{cattle.gender && cattle.gender}</TableCell>
                                     </TableRow>
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">Date of Birth</TableCell>
-                                      <TableCell className="font-thin text-sm">{cattle.birth_date}</TableCell>
+                                      <TableCell className="font-thin text-sm">{cattle.birth_date && cattle.birth_date}</TableCell>
                                     </TableRow>
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">Weight</TableCell>
-                                      <TableCell className="font-thin text-sm">{cattle.birth_weight}</TableCell>
+                                      <TableCell className="font-thin text-sm">{cattle.birth_weight && cattle.birth_weight} kg</TableCell>
                                     </TableRow>
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">Height</TableCell>
-                                      <TableCell className="font-thin text-sm">{cattle.birth_height}</TableCell>
+                                      <TableCell className="font-thin text-sm">{cattle.birth_date && cattle.birth_height} cm</TableCell>
                                     </TableRow>
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">IoT Devices</TableCell>
                                       <TableCell className="font-thin text-sm">
-                                        {cattle.iot_device_id}
+                                        {cattle.iot_device && cattle.iot_device.serial_number}
                                       </TableCell>
                                     </TableRow>
                                 </TableBody>
@@ -683,12 +719,12 @@ const [cattleData, setCattleData] = React.useState(
                                 </TableHeader>
                                 <TableBody>
                                     <TableRow className="text-black">
-                                      <TableCell className="font-bold text-lg">Breed</TableCell>
-                                      <TableCell className="font-thin text-sm">Name</TableCell>
+                                      <TableCell className="font-bold text-lg">Body Temprature</TableCell>
+                                      <TableCell className="font-thin text-sm">{cattle.healthRecords && cattle.healthRecords.temperature}</TableCell>
                                     </TableRow>
                                     <TableRow className="text-black">
-                                      <TableCell className="font-bold text-lg">Gender</TableCell>
-                                      <TableCell className="font-thin text-sm">Name</TableCell>
+                                      <TableCell className="font-bold text-lg">Status</TableCell>
+                                      <TableCell className="font-thin text-sm">{cattle.healthRecords && cattle.healthRecords.status}</TableCell>
                                     </TableRow>
                                 </TableBody>
                               </Table>

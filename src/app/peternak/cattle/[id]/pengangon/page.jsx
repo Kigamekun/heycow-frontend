@@ -12,34 +12,37 @@ import {
   getSortedRowModel,
   useReactTable
 } from "@tanstack/react-table"
-import { ArrowUpDown, Link } from "lucide-react"
+import { ArrowUpDown } from "lucide-react"
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 import { useRouter } from "next/router"
 
 import axios from "axios"
 import Swal from "sweetalert2"
+import Cattle from "@/app/admin/cattle/page"
 
-
-export default function Angon() {
+import Link from "next/link"
+export default function Pengangon() {
   const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' })
 // const router = useRouter();
   const [userData, setUserData] = React.useState(
     []
 )
 
- 
+
 const getUserData = async () => {
   try {
-    const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/pengangon`, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     });
     if (res.data.data) {
-      const filteredUsers = res.data.data.filter(user => user.is_pengangon === 1);
-      setUserData(filteredUsers);
-      console.log('Filtered user data:', filteredUsers);
+        console.log('User data:', res.data.data);
+        setUserData(res.data.data);
+    //   const filteredUsers = res.data.data.filter(user => user.is_pengangon === 1);
+    //   setUserData(filteredUsers);
+    //   console.log('Filtered user data:', filteredUsers);
     }
   } catch (error) {
     if (error.response && error.response.status === 401) {
@@ -86,18 +89,21 @@ const getUserData = async () => {
           <div key={index} className="card">
             <div className="card-body image dan profile d-flex gap-4">
               <img src={user.full_avatar_url || "https://via.placeholder.com/130"} alt="user" className="w-[130px]" />
-              <div className="d-flex flex-col grid grid-rows-3 gap-3">
+              <div className="d-flex flex-col grid grid-rows-3 gap-1">
                 <h4 className="text-black font-bold">{user.name}</h4>
-                <p className="text-r">{user.address}</p>
-                <p className="text-sm font-bold">{user.farm_name}</p>
+                <p className="text-md text-black font-bold">{user.farm}</p>
+                <p className="text-r">{user.upah}</p>
+                <p className="font-bold">{user.address}</p>
+             
               </div>
             </div>
             <div className="rating card-body mt-[-20px] d-flex justify-between">
               {/* rating */}
-              <ReactStars count={5} size={24} color2={'#ffd700'} />
+              <ReactStars count={5} value={user.rate} size={24} color2={'#ffd700'} />
               
               {/* button */}
-              <button className="btn btn-success" onClick={() => window.location.href = `/peternak/angon/${user.id}`}>Pilih</button>
+              <Link href={`/peternak/cattle/${Cattle.id}/pengangon/${Pengangon.id}`}><button className="btn btn-success" >Pilih</button></Link>
+              
             </div>
           </div>
         ))}

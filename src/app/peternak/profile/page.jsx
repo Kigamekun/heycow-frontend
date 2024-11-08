@@ -20,15 +20,65 @@ import {
     Link
 } from '@nextui-org/modal'
 import { Input } from "@/components/ui/input"
+import Swal from 'sweetalert2';
 // kita buat function fetching api
 
 export default function Profile() {
     const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
+    const [users, setUsers] = React.useState([]);
+    const [userData, setUserData] = React.useState({
+        id: 0,
+        name: null,
+        phone_number: '',
+        email: '',
+        bio: '',
+        selfie_name: null,
+    });
+    const updateMe = async () => {
+        // e.preventDefault();
+        try {
+            const res = await axios.put(
+                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${user.id}`, userData, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    }
+                }
+            )
+            if (res.data) {
+                console.log('data kita', res.data);
+                setUserData(res.data);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Profile updated successfully',
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+            }
+            console.log('data', res.data);
+            Swal.fire({
+                icon: 'success',
+                title: 'Profile updated successfully',
+                showConfirmButton: false,
+                timer: 1500,
+            });
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error occurred',
+                text: 'Please try again later.',
+                showConfirmButton: false,
+                timer: 1500,
+            });
+        }
+    }
+
     const handleInputChange = (event) => {
 
     const { name, value } = event.target;
-        setCattle({ ...cattle, [name]: value });
+        setUsers({ ...users, [name]: value });
     }
       
     const handleSelectChange = (event) => {
@@ -36,7 +86,7 @@ export default function Profile() {
     const name = event.target.name;
     const {value} = event.target.selectedOptions[0];
         console.log(value);
-        setCattle({ ...cattle, [name]: value });
+        setUsers({ ...users, [name]: value });
         
     }
     const [userAvatar, setUserAvatar] = React.useState('');
@@ -49,7 +99,7 @@ export default function Profile() {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
             })
-    
+            
             console.log('ada:', response.data.full_avatar_url); // Log the response to inspect its structure
             console.log('Response:', response.data);
             // Ensure the user object exists and has the full_image_url property
@@ -65,6 +115,7 @@ export default function Profile() {
     };
     useEffect(() => {
         fetchUserImage();
+        updateMe();
         // if (user) {
         //     fetchUserImage();
         // }
@@ -100,144 +151,150 @@ export default function Profile() {
                         <h3 className="text-black font-bold text-center">Edit Profile</h3>
                     </ModalHeader>
                     <ModalBody >
-                        {/* Cattle Name */}
-                        <div className="grid grid-cols-2 gap-3">
-                            <div className="grid grid-cols-1 gap-1">
-                                <label htmlFor="name" className="text-black font-bold">
-                                <h6>
-                                    Username<span className="text-red-600">*</span>
-                                </h6>
-                                </label>
-                                <Input
-                                isRequired
-                                id="name"
-                                autoFocus
-                                type="text"
-                                label="text"
-                                placeholder="Input your cattle name"
-                                variant="bordered"
-                                className="w-full h-[2.8rem] "
-                                onChange={handleInputChange}
-                                />
-                            </div>
+                        <form onSubmit={updateMe}>
+                            {/* Cattle Name */}
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 gap-1">
+                                    <label htmlFor="name" className="text-black font-bold">
+                                    <h6>
+                                        Username<span className="text-red-600">*</span>
+                                    </h6>
+                                    </label>
+                                    <Input
+                                    isRequired
+                                    id="name"
+                                    autoFocus
+                                    type="text"
+                                
+                                    placeholder={user ? user.name : "Input your email"}
+                                    variant="bordered"
+                                    className="w-full h-[2.8rem] "
+                                    onChange={handleInputChange}
+                                    />
+                                </div>
 
-                            <div className="grid grid-cols-1 gap-1">
-                                <label htmlFor="email" className="text-black font-bold">
-                                <h6>
-                                    Email<span className="text-red-600">*</span>
-                                </h6>
-                                </label>
-                                <Input
-                                isRequired
-                                id="email"
-                                autoFocus
-                                type="email"
-                                label="text"
-                                placeholder="Edit email mu"
-                                variant="bordered"
-                                className="w-full h-[2.8rem] "
-                                onChange={handleInputChange}
-                                />
-                            </div>
+                                <div className="grid grid-cols-1 gap-1">
+                                    <label htmlFor="email" className="text-black font-bold">
+                                    <h6>
+                                        Email<span className="text-red-600">*</span>
+                                    </h6>
+                                    </label>
+                                    <Input
+                                    isRequired
+                                    id="email"
+                                    autoFocus
+                                    type="email"
+                                    label="text"
+                                    defaultValue={user ? user.email : "Input your email"}
+                                    variant="bordered"
+                                    className="w-full h-[2.8rem] "
+                                    onChange={handleInputChange}
+                                    />
+                                </div>
 
-                            {/* Cattle Height */}
-                            <div className="grid grid-cols-1 gap-1">
-                                <label htmlFor="role" className="text-black font-bold">
-                                <h6>
-                                    Role
-                                </h6>
-                                </label>
-                                <Input
-                                id="role"
-                                isDisabled
-                                autoFocus
-                                type="text"
-                                label="text"
-                                variant="bordered"
-                                className="w-full h-[2.8rem] "
-                                defaultValue="junior@nextui.org"
-                                />
-                            </div>
+                                {/* Cattle Height */}
+                                <div className="grid grid-cols-1 gap-1">
+                                    <label htmlFor="role" className="text-black font-bold">
+                                    <h6>
+                                        Farm
+                                    </h6>
+                                    </label>
+                                    <Input
+                                    id="role"
+                                    isDisabled
+                                    autoFocus
+                                    type="text"
+                                    label="text"
+                                    variant="bordered"
+                                    className="w-full h-[2.8rem] "
+                                    defaultValue={user && user.farm}
+                                    />
+                                </div>
 
-                            {/* Cattle Weight */}
+                                {/* Cattle Weight */}
+                                <div className="grid grid-cols-1 gap-1">
+                                    <label htmlFor="address" className="text-black font-bold">
+                                    <h6>
+                                        Address<span className="text-red-600">*</span>
+                                    </h6>
+                                    </label>
+                                    <Input
+                                    id="address"
+                                    autoFocus
+                                    type="text"
+                                    label="text"
+                                    placeholder="Input your cattle address"
+                                    defaultValue={user ? user.address : "100"}
+                                    variant="bordered"
+                                    className="w-full h-[2.8rem] "
+                                    onChange={handleInputChange}
+                                    />
+                                </div>
+
+                                
+                            </div>
+                            <div className="d-flex justify-center"></div>
+                            {/* No Telp*/}
+                            <div className="grid grid-cols-1 gap-1">
+                                    <label htmlFor="role" className="text-black font-bold">
+                                    <h6>
+                                        No. Telp
+                                    </h6>
+                                    </label>
+                                    <Input
+                                    id="role"
+                                    autoFocus
+                                    type="text"
+                                    value={user && user.phone_number}
+                                    label="text"
+                                    variant="bordered"
+                                    className="w-full h-[2.8rem] "
+                                    defaultValue={user ? user.phone_number : "081282520510"}
+                                    />
+                                </div>
+                            {/* BIO */}
                             <div className="grid grid-cols-1 gap-1">
                                 <label htmlFor="weight" className="text-black font-bold">
                                 <h6>
-                                    Cattle Weight<span className="text-red-600">*</span>
+                                    Bio
                                 </h6>
                                 </label>
                                 <Input
-                                id="weight"
-                                autoFocus
-                                type="text"
-                                label="text"
-                                placeholder="Input your cattle weight"
-                                variant="bordered"
-                                className="w-full h-[2.8rem] "
-                                onChange={handleInputChange}
-                                />
+                                    id="weight"
+                                    autoFocus
+                                    name="bio"
+                                    value={user && user.bio}
+                                    type="textarea"
+                                    placeholder="Input your bio"
+                                    variant="bordered"
+                                    className="w-full h-[2.8rem] "
+                                    defaultValue={user ? user.bio : "Input your bio"}
+                                    onChange={handleInputChange}
+                                    />
                             </div>
-
-                            
-                        </div>
-                        <div className="d-flex justify-center"></div>
-                        {/* No Telp*/}
-                        <div className="grid grid-cols-1 gap-1">
+                            {/* BIO */}
+                            <div className="grid grid-cols-1 gap-1">
                                 <label htmlFor="role" className="text-black font-bold">
                                 <h6>
-                                    No. Telp
+                                    Avatar
                                 </h6>
                                 </label>
                                 <Input
-                                id="role"
-                                autoFocus
-                                type="text"
-                                label="text"
-                                variant="bordered"
-                                className="w-full h-[2.8rem] "
-                                defaultValue="junior@nextui.org"
-                                />
+                                    id="weight"
+                                    autoFocus
+                                    type="file"
+                                    label="text"
+                                    placeholder="Input your cattle weight"
+                                    variant="bordered"
+                                    className="w-full h-[2.8rem] "
+                                    onChange={handleInputChange}
+                                    />
                             </div>
-                        {/* BIO */}
-                        <div className="grid grid-cols-1 gap-1">
-                            <label htmlFor="role" className="text-black font-bold">
-                            <h6>
-                                Bio
-                            </h6>
-                            </label>
-                            <Input
-                                id="weight"
-                                autoFocus
-                                type="textarea"
-                                placeholder="Input your bio"
-                                variant="bordered"
-                                className="w-full h-[2.8rem] "
-                                onChange={handleInputChange}
-                                />
-                        </div>
-                        {/* BIO */}
-                        <div className="grid grid-cols-1 gap-1">
-                            <label htmlFor="role" className="text-black font-bold">
-                            <h6>
-                                Avatar
-                            </h6>
-                            </label>
-                            <Input
-                                id="weight"
-                                autoFocus
-                                type="file"
-                                label="text"
-                                placeholder="Input your cattle weight"
-                                variant="bordered"
-                                className="w-full h-[2.8rem] "
-                                onChange={handleInputChange}
-                                />
-                        </div>
-                        
+                        </form>
                         </ModalBody>
                         <ModalFooter>
 
-                        <Button isSubmit className="bg-emerald-600 text-md" onPress={onClose}>
+                        <Button isSubmit className="bg-emerald-600 text-md" type="submit" onPress={onClose}>
                         Submit
                         </Button>
                         </ModalFooter>
@@ -301,7 +358,7 @@ export default function Profile() {
                                 </p>
                                 <div className='border rounded-md h-[3rem] py-2 px-1'>
                                     <p className='text-md text-black font-light'>
-                                        {user ? user.farm_id : '-'}
+                                        {user && user.farm_id}
                                     </p>
                                 </div>
                             </div>

@@ -92,9 +92,9 @@ export function Navbar() {
                     <div className="menu d-flex justify-between py-3">
                         <div className="header d-flex">
                             <i class="bi bi-arrow-left text-black text-2xl mt-3 mx-4"></i>
-                            <p onClick={handleBackClick} className="back-button text-black text-xl font-bold mt-[1.2rem]">
+                            {/* <p onClick={handleBackClick} className="back-button text-black text-xl font-bold mt-[1.2rem]">
                                 {previousPath === window.location.pathname}
-                            </p>
+                            </p> */}
                             {/* <p onClick={() => router.back()} className="back-button text-black text-xl font-bold mt-[1.2rem]">
                                 Kembali ke halaman sebelumnya
                             </p> */}

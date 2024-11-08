@@ -30,6 +30,7 @@ import {
   Link
 } from '@nextui-org/modal';
 
+import { Select, SelectItem, SelectSection } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 
 export default function Page() {
@@ -43,17 +44,20 @@ export default function Page() {
         []
     )
     
-    const [blogPosts, setBlogPost] = React.useState({
+    const [blogPost, setBlogPost] = React.useState({
         id: 0,
         title: '',
         content: '',
         category: '',
-        full_image_url : ''
+        image : ''
     });
+
+    const categories = ['forum', 'jual'];
+
     // const fetchImage = async (e) => {
     //     const file = e.target.files[0];
     //     const base64 = await convertBase64(file);
-    //     setBlogPost({ ...blogPosts, image: base64 });
+    //     setBlogPost({ ...blogPost, image: base64 });
     // }
     const getUserData = async () => {
         try {
@@ -127,34 +131,11 @@ export default function Page() {
         }
     }
 
-  //   const fetchUserImage = async () => {
-  //     console.log('fetching user image blog...');
-  //     try {
-  //         const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts`, {
-  //             headers: {
-  //                 'Content-Type': 'multipart/form-data',
-  //                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
-  //             }
-  //         })
-  
-  //         console.log('ada image blog:', response.data.data.full_image_url); // Log the response to inspect its structure
-  //         console.log('Response:', response.data.data.data.full_image_url);
-  //         // Ensure the user object exists and has the full_image_url property
-  //         if (response.data.data.full_image_url &&  response.data.data.full_image_url) {
-  //             setBlogImagesData(response.data.data.full_image_url);
-  //         } else {
-  //             console.error('User  object or full_image_url is undefined');
-  //         }
-  //         console.log('User  Avatar URL:', blogImagesData);   
-  //     } catch (error) {
-  //         console.error('Error fetching user image:', error);
-  //     }
-  // };
     const [sortOrder, setSortOrder] = useState('asc');
     
     const handleSort = (order) => {
       setSortOrder(order);
-      const sortedData = [...blogPostsData].sort((a, b) => {
+      const sortedData = [...blogPostDataData].sort((a, b) => {
         if (order === 'asc') {
           return new Date(a.created_at) - new Date(b.created_at);
         } else {
@@ -163,6 +144,43 @@ export default function Page() {
       });
       setBlogPostsData(sortedData);
     };
+
+  //   const createBlog = async (event) => {
+  //     event.preventDefault();
+
+  //     const bodyFormData = new FormData();
+  //     bodyFormData.append('title', blogPost.title);
+  //     bodyFormData.append('caption', blogPost.content);
+  //     bodyFormData.append('image', blogPost.image);
+  //     bodyFormData.append('category', blogPost.category);
+
+  //     try {
+  //         const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts`, bodyFormData, {
+  //             headers: {
+  //                 'Content-Type': 'multipart/form-data',
+  //                 'Authorization': `Bearer ${localStorage.getItem('token')}`
+  //             }
+  //         });
+  //         console.log('Post created:', res.data);
+  //         console.log(res.data);
+  //         Swal.fire({
+  //             icon: 'success',
+  //             title: 'Post created successfully',
+  //             showConfirmButton: false,
+  //             timer: 1500
+  //         });
+  //         onClose();
+  //     } catch (error) {
+  //         console.error('Error creating post:', error.response);
+  //         Swal.fire({
+  //             icon: 'error',
+  //             title: 'Error creating post',
+  //             text: error.response.data.message,
+  //             showConfirmButton: false,
+  //             timer: 1500
+  //         });
+  //     }
+  // };
     const createBlog = async (e) => {
         e.preventDefault();
     
@@ -176,10 +194,10 @@ export default function Page() {
         });
     
         const bodyFormData = new FormData();
-        bodyFormData.append('title', blogPosts.title);
-        bodyFormData.append('content', blogPosts.content);
-        bodyFormData.append('full_image_url', blogPosts.full_image_url);
-        bodyFormData.append('category', blogPosts.category);
+        bodyFormData.append('title', blogPost.title);
+        bodyFormData.append('content', blogPost.content);
+        bodyFormData.append('image', blogPost.image);
+        bodyFormData.append('category', blogPost.category);
         
     
         try {
@@ -208,7 +226,14 @@ export default function Page() {
     
           setOpen(false);
     
-          Swal.close();
+          Swal.fire({
+            icon: 'success',
+            title: 'BlogPost berhasil dibuat',
+            text: 'Data blogpost berhasil dibuat',
+            showConfirmButton: true,
+            timer: 1500
+          });
+        
         } catch (error) {
           console.error('Error:', error.response);  // Log error lengkap dari response
           if (error.response && error.response.status === 401) {
@@ -219,15 +244,7 @@ export default function Page() {
               timer: 1500
             });
             logout();
-          } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error terjadi',
-              text: 'Mohon coba lagi nanti.',
-              showConfirmButton: false,
-              timer: 1500
-            });
-          }
+          } 
         }
       };
     // membuat data blogpost 
@@ -387,7 +404,18 @@ export default function Page() {
         getUserData()
       }, [])
     
+    const handleInputChange = (event) => {
+      const { name, value } = event.target;
+      setBlogPost({ ...blogPost, [name]: value });
+    };
 
+    const handleFileChange = (event) => {
+        setBlogPost({ ...blogPost, image: event.target.files[0] });
+    };
+
+    const handleSelectChange = (event) => {
+      setBlogPost({ ...blogPost, category: event.target.value });
+  };
     return (
         <>
         <main>
@@ -445,7 +473,7 @@ export default function Page() {
                                   </PopoverTrigger>
                                   <PopoverContent >
                                     <div className="d-flex gap-3 cursor-pointer">
-                                      <div id="deletePost" onClick={DeletePosts(post.id)}> 
+                                      <div id="deletePost" onClick={DeletePosts}> 
                                         <i class="bi bi-trash-fill text-md"></i>
                                         <p className="text-black text-md">Hapus</p>  
                                       </div>
@@ -487,174 +515,220 @@ export default function Page() {
                 </div>
             </div>
 
-
-
-
-
-
           {/* MODALS  */}
-          <Modal 
-            isOpen={isOpen} 
-            onOpenChange={onOpenChange}
+          <Modal
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
                 scrollBehavior="inside"
-                    placement="center"
-                    backdrop="opaque"
-                    classNames={{
+                placement="center"
+                backdrop="opaque"
+                classNames={{
                     backdrop: "bg-black bg-opacity-50"
-                    }}
-                    >
-                    <ModalContent className="w-[700px] h-[650px] bg-white rounded-xl ">
+                }}
+            >
+                <ModalContent className="w-[600px] bg-white rounded-xl ">
                     {(onClose) => (
-                    <>
-                    <ModalHeader className="dialog-title flex flex-col gap-1 px-6 mt-6">
-                        <h3 className="text-black font-bold text-center">Edit Profile</h3>
-                    </ModalHeader>
-                    <ModalBody >
-                        {/* Cattle Name */}
-                        <div className="grid grid-cols-2 gap-3">
-                            <div className="grid grid-cols-1 gap-1">
-                                <label htmlFor="name" className="text-black font-bold">
-                                <h6>
-                                    Title<span className="text-red-600">*</span>
-                                </h6>
-                                </label>
-                                <Input
-                                isRequired
-                                id="name"
-                                autoFocus
-                                type="text"
-                                label="text"
-                                placeholder="Input your cattle name"
-                                variant="bordered"
-                                className="w-full h-[2.8rem] "
-                                onChange={handleInputChange}
-                                />
-                            </div>
+                        <>
+                            <ModalHeader className="dialog-title flex flex-col gap-1 px-6 mt-6">
+                                <h3 className="text-black font-bold text-center">Create Post</h3>
+                            </ModalHeader>
+                            <ModalBody>
+                                <form onSubmit={createBlog}>
+                                    <div className="grid grid-cols-1 gap-3">
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="title" className="text-black font-bold">
+                                                <h6>
+                                                    Title<span className="text-red-600">*</span>
+                                                </h6>
+                                            </label>
+                                            <Input
+                                                isRequired
+                                                value={blogPost.title}
+                                                id="title"
+                                                name="title"
+                                                autoFocus
+                                                type="text"
+                                                placeholder="Input your blogPost title"
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
 
-                            <div className="grid grid-cols-1 gap-1">
-                                <label htmlFor="email" className="text-black font-bold">
-                                <h6>
-                                    Caption<span className="text-red-600">*</span>
-                                </h6>
-                                </label>
-                                <Input
-                                isRequired
-                                id="email"
-                                autoFocus
-                                type="email"
-                                label="text"
-                                placeholder="Edit email mu"
-                                variant="bordered"
-                                className="w-full h-[2.8rem] "
-                                onChange={handleInputChange}
-                                />
-                            </div>
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="content" className="text-black font-bold">
+                                                <h6>
+                                                    Caption<span className="text-red-600">*</span>
+                                                </h6>
+                                            </label>
+                                            <Input
+                                                isRequired
+                                                value={blogPost.content}
+                                                id="content"
+                                                name="content"
+                                                autoFocus
+                                                type="text"
+                                                placeholder="Input your blogPost caption"
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
 
-                            {/* Cattle Height */}
-                            <div className="grid grid-cols-1 gap-1">
-                                <label htmlFor="role" className="text-black font-bold">
-                                <h6>
-                                    Role
-                                </h6>
-                                </label>
-                                <Input
-                                id="role"
-                                isDisabled
-                                autoFocus
-                                type="text"
-                                label="text"
-                                variant="bordered"
-                                className="w-full h-[2.8rem] "
-                                defaultValue="junior@nextui.org"
-                                />
-                            </div>
-
-                            {/* Cattle Weight */}
-                            <div className="grid grid-cols-1 gap-1">
-                                <label htmlFor="weight" className="text-black font-bold">
-                                <h6>
-                                    Cattle Weight<span className="text-red-600">*</span>
-                                </h6>
-                                </label>
-                                <Input
-                                id="weight"
-                                autoFocus
-                                type="text"
-                                label="text"
-                                placeholder="Input your cattle weight"
-                                variant="bordered"
-                                className="w-full h-[2.8rem] "
-                                onChange={handleInputChange}
-                                />
-                            </div>
-
-                            
-                        </div>
-                        <div className="d-flex justify-center"></div>
-                        {/* No Telp*/}
-                        <div className="grid grid-cols-1 gap-1">
-                                <label htmlFor="role" className="text-black font-bold">
-                                <h6>
-                                    No. Telp
-                                </h6>
-                                </label>
-                                <Input
-                                id="role"
-                                autoFocus
-                                type="text"
-                                label="text"
-                                variant="bordered"
-                                className="w-full h-[2.8rem] "
-                                defaultValue="junior@nextui.org"
-                                />
-                            </div>
-                        {/* BIO */}
-                        <div className="grid grid-cols-1 gap-1">
-                            <label htmlFor="role" className="text-black font-bold">
-                            <h6>
-                                Bio
-                            </h6>
-                            </label>
-                            <Input
-                                id="weight"
-                                autoFocus
-                                type="textarea"
-                                placeholder="Input your bio"
-                                variant="bordered"
-                                className="w-full h-[2.8rem] "
-                                onChange={handleInputChange}
-                                />
-                        </div>
-                        {/* BIO */}
-                        <div className="grid grid-cols-1 gap-1">
-                            <label htmlFor="role" className="text-black font-bold">
-                            <h6>
-                                Avatar
-                            </h6>
-                            </label>
-                            <Input
-                                id="weight"
-                                autoFocus
-                                type="file"
-                                label="text"
-                                placeholder="Input your cattle weight"
-                                variant="bordered"
-                                className="w-full h-[2.8rem] "
-                                onChange={handleInputChange}
-                                />
-                        </div>
-                        
-                        </ModalBody>
-                        <ModalFooter>
-
-                        <Button isSubmit className="bg-emerald-600 text-md" onPress={onClose}>
-                        Submit
-                        </Button>
-                        </ModalFooter>
-                    </>
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="category" className="text-black font-bold">
+                                                <h6>
+                                                    Category<span className="text-red-600">*</span>
+                                                </h6>
+                                            </label>
+                                            <Select
+                                                id="category"
+                                                name="category"
+                                                value={blogPost.category}
+                                                variant="bordered"
+                                                placeholder="Select a category"
+                                                className="w-full h-[2.8rem]"
+                                                onChange={handleSelectChange}
+                                            >
+                                                {categories.map((category) => (
+                                                    <SelectItem key={category} value={category}>
+                                                        {category}
+                                                    </SelectItem>
+                                                ))}
+                                            </Select>
+                                        </div>
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="image" className="text-black font-bold">
+                                                <h6>
+                                                    Image
+                                                </h6>
+                                            </label>
+                                            <Input
+                                                id="image"
+                                                name="image"
+                                                autoFocus
+                                                type="file"
+                                                
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleFileChange}
+                                            />
+                                        </div>
+                                    </div>
+                                    <ModalFooter>
+                                        <Button type="submit" className="bg-emerald-600 text-md">
+                                            Submit
+                                        </Button>
+                                    </ModalFooter>
+                                </form>
+                            </ModalBody>
+                        </>
                     )}
                 </ModalContent>
             </Modal>
+          {/* <Modal
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+                scrollBehavior="inside"
+                placement="center"
+                backdrop="opaque"
+                classNames={{
+                    backdrop: "bg-black bg-opacity-50"
+                }}
+            >
+                <ModalContent className="w-[550px]  bg-white rounded-xl ">
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="dialog-title flex flex-col gap-1 px-6 mt-6">
+                                <h3 className="text-black font-bold text-center">Create Post</h3>
+                            </ModalHeader>
+                            <ModalBody>
+                                <form onSubmit={createBlog}>
+                                    <div className="grid grid-cols-1 gap-3">
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="title" className="text-black font-bold">
+                                                <h6>
+                                                    Title<span className="text-red-600">*</span>
+                                                </h6>
+                                            </label>
+                                            <Input
+                                                isRequired
+                                                id="title"
+                                                name="title"
+                                                autoFocus
+                                                type="text"
+                                                placeholder="Input your blogPost title"
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="caption" className="text-black font-bold">
+                                                <h6>
+                                                    Caption<span className="text-red-600">*</span>
+                                                </h6>
+                                            </label>
+                                            <Input
+                                                isRequired
+                                                id="caption"
+                                                name="caption"
+                                                autoFocus
+                                                type="text"
+                                                placeholder="Input your blogPost caption"
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="image" className="text-black font-bold">
+                                                <h6>
+                                                    Image
+                                                </h6>
+                                            </label>
+                                            <Input
+                                                id="image"
+                                                name="image"
+                                                autoFocus
+                                                type="file"
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleFileChange}
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="category" className="text-black font-bold">
+                                                <h6>
+                                                    Category<span className="text-red-600">*</span>
+                                                </h6>
+                                            </label>
+                                            <Input
+                                                id="category"
+                                                name="category"
+                                                autoFocus
+                                                type="text"
+                                                placeholder="Input your post category"
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
+                                    </div>
+                                    <ModalFooter>
+                                        <Button type="submit" className="bg-emerald-600 text-md">
+                                            Submit
+                                        </Button>
+                                    </ModalFooter>
+                                </form>
+                            </ModalBody>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal> */}
         </main>
         
         </>

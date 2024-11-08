@@ -22,6 +22,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+import { Cow } from "@phosphor-icons/react"
+
 import {
   Modal,
   ModalBody,
@@ -30,9 +32,10 @@ import {
   ModalHeader,
   useDisclosure,
   Checkbox, 
-  Link
 } from '@nextui-org/react'
 
+
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
 // import {
@@ -46,21 +49,6 @@ import { Button } from "@/components/ui/button"
 
 
 
-const handleInputChange = (event) => {
-
-  const { name, value } = event.target;
-  setCattle({ ...cattle, [name]: value });
-
-}
-
-const handleSelectChange = (event) => {
-  
-  const name = event.target.name;
-  const {value} = event.target.selectedOptions[0];
-  console.log(value);
-  setCattle({ ...cattle, [name]: value });
-
-}
 
 import {Select, SelectSection, SelectItem} from "@nextui-org/react";
 import { ArrowUpDown } from "lucide-react"
@@ -80,6 +68,7 @@ export default function Home() {
     []
   );
   
+
   const [cattle, setCattle] = React.useState({
     id: 0,
     name: "",
@@ -321,6 +310,22 @@ export default function Home() {
         return 'bg-gray-400';
     }
   };
+
+  const handleInputChange = (event) => {
+
+    const { name, value } = event.target;
+    setCattle({ ...cattle, [name]: value });
+  
+  }
+  
+  const handleSelectChange = (event) => {
+    
+    const name = event.target.name;
+    const {value} = event.target.selectedOptions[0];
+    console.log(value);
+    setCattle({ ...cattle, [name]: value });
+  
+  }
   return (
     <>
       <header className="mb-3">
@@ -545,12 +550,12 @@ export default function Home() {
               </ModalContent>
             </Modal>
 
-            <div className="mt-4  d-flex grid grid-cols-4 justify-between">
+            <div className="d-flex grid grid-cols-4 justify-between">
               <div className="card border border-green-500 p-2 m-2">
-                <div className="card-body d-flex justify-between gap-10">
-                  <i className="bi bi-emoji-laughing-fill text-emerald-500 text-[2rem]" />
+                <div className="mt-4 mx-4 d-flex justify-between gap-10">
+                  <Cow size={50} className=" text-emerald-500 text-[2rem]" />
                   <div className="d-flex flex-col ">
-                    <h6 className="text-emerald-400">Sehat</h6>
+                    <h6 className="text-emerald-400 text-lg">Sehat</h6>
                     <p>10</p>
                   </div>
 
@@ -558,8 +563,8 @@ export default function Home() {
               </div>
 
               <div className="card border p-2 m-2">
-                <div className="card-body d-flex justify-between gap-10">
-                  <i className="bi bi-emoji-sunglasses-fill text-yellow-400 text-[2rem]" />
+                <div className="mt-4 mx-4 d-flex justify-between gap-10">
+                  <Cow size={50} className=" text-yellow-400 text-[3rem]" />
                   <div className="d-flex flex-col ">
                     <h6 className="text-yellow-400">Terjual</h6>
                     <p>10</p>
@@ -568,19 +573,20 @@ export default function Home() {
               </div>
              
               <div className="card border border-red-600 p-2 m-2">
-                <div className="card-body d-flex justify-between gap-10">
-                  <i className="bi bi-emoji-tear-fill text-red-500 text-[2rem]" />
+                <div className="mt-4 mx-4 d-flex justify-between gap-10">
+                  <Cow size={50} className=" text-red-500 text-[3rem]" />
                   <div className="d-flex flex-col ">
                     <h6 className="text-red-600">Sakit</h6>
                     <p>10</p>
                   </div>
                 </div>
               </div>
-              <div className="card border border-red-600 p-2 m-2">
-                <div className="card-body d-flex justify-between gap-10">
-                  <i className="bi bi-emoji-dizzy-fill text-red-800 text-[2rem]" />
+
+              <div className="card border border-red-700 p-2 m-2">
+                <div className="mt-4 mx-4 d-flex justify-between gap-10">
+                  <Cow size={50} className=" text-red-700 text-[3rem]" />
                   <div className="d-flex flex-col ">
-                    <h6 className="text-red-600">Mati</h6>
+                    <h6 className="text-red-700">Mati</h6>
                     <p>10</p>
                   </div>
                 </div>
@@ -609,12 +615,13 @@ export default function Home() {
 
        
         {Array.isArray(cattleData) && cattleData?.map((cattle) => (
-          <div key={cattle.id} className="card" onClick={() => window.location.href = `/peternak/cattle/${cattle.id}?user=${user.id}`}>
+          <Link key={cattle.id} href = {`/peternak/cattle/${cattle.id}?user=${user && user.id}`}>
+          <div className="card" >
             <div className="card-body d-flex justify-between">
               <div>
-                <h3 className="text-emerald-600">{cattle.name}</h3>
+                <h3 className="text-emerald-600 text-ellipsis">{cattle.name}</h3>
                 {/* <p className="text-xs">{cattle.iot_device_id}</p> */}
-                <p className="text-black">{cattle.iot_device_id}</p>
+                <p className="text-black">{cattle.iot_device.serial_number}</p>
               </div>
               <div>
                 <div className={`${getStatusColor(cattle.status)} rounded-md`}>
@@ -623,6 +630,7 @@ export default function Home() {
               </div>
             </div>
           </div>
+          </Link>
         ))}
 
       </div>
