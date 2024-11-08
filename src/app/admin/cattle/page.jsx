@@ -56,23 +56,25 @@ export default function Cattle() {
     })
   const [rowSelection, setRowSelection] = React.useState({})
   //security by role
-  // const alert = () => {
-  //   Swal.fire({
-  //     title: "Anda bukan admin!",
-  //     text: "Anda tidak memiliki akses ke halaman ini!",
-  //     icon: "error",
-  //     showCancelButton: false,
-  //     confirmButtonColor: "#6A9944",
-  //     confirmButtonText: "OK"
-  //   }).then((result) => {
-  //     if (result.isConfirmed) {
-  //       window.location.href = '/peternak'; // Redirect to /peternak
-  //     }
-  //   });
-  // }
-  // if (user !== 'admin') {
-  //   alert()
-  // }
+  const alert = () => {
+    Swal.fire({
+      title: "Anda bukan admin!",
+      text: "Anda tidak memiliki akses ke halaman ini!",
+      icon: "error",
+      showCancelButton: false,
+      confirmButtonColor: "#6A9944",
+      confirmButtonText: "OK"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = '/peternak'; // Redirect to /peternak
+      }
+    });
+  }
+  if  (user? user.role !== 'admin' : true) {
+    alert()
+  }else{
+    console.log('admin')
+  } 
   const [cattleData, setCattleData] = React.useState([]);
   const columns = [
     {
