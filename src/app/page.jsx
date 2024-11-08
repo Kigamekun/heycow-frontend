@@ -2,17 +2,20 @@
 import Head from 'next/head';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/globals.css';
-
+import Image from 'next/image';
+import {heycow} from '@/images/hey_cow.svg'
 export default function Home() {
   return (
     <>
       <header>
-        <title>HeyCow! Landing Page</title>
+        <Image src={heycow}/>
+        <title>HeyCow!</title>
         <meta name="description" content="HeyCow! Landing Page" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href={heycow} />
         {/* You can link any external CSS or JS libraries here */}
       </header>
 
+      
       {/* Navbar Section */}
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container header">

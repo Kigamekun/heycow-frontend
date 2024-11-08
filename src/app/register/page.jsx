@@ -2,6 +2,7 @@
 'use client';
 
 import Image from "next/image";
+import heycow from '@/images/hey_cow.svg'
 import { useAuth } from "@/lib/hooks/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -25,60 +26,6 @@ export default function Page() {
         middleware: 'guest',
         redirectIfAuthenticated: '/home',
     })
-    // const handleRegister = async (event) => {
-     
-    //     // register({
-    //     //     name,
-    //     //     email,
-    //     //     address,
-    //     //     password,
-    //     //     confirmPassword,
-    //     //     setErrors,
-    //     //     setStatus,
-    //     // });
-        
-    //     // try {
-    //     //     console.log('Address before sending:', address); // Tambahkan log ini
-
-    //     //     const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/auth/register`, {
-    //     //         name,
-    //     //         email,
-    //     //         address,
-    //     //         password,
-    //     //         confirmPassword,
-    //     //     }, {
-    //     //         headers: {
-    //     //             'Content-Type': 'application/json',
-    //     //         },
-    //     //     });
-
-    //     //     if (response.status === 200) {
-    //     //         // Simpan user data dari response
-    //     //         const data = response.data.data;
-    
-    //     //         // Simpan user data ke local storage
-    //     //         localStorage.setItem('data', JSON.stringify(data));
-    
-    //     //         Swal.fire({
-    //     //             title: 'Registration successful',
-    //     //             text: 'You have successfully registered!',
-    //     //             icon: 'success',
-    //     //             confirmButtonText: 'Ok'
-    //     //         });
-                
-    //     //         setStatus('Registration successful');
-    //     //         router.push('/peternak');
-    //     //     } else {
-    //     //         throw new Error('Registration failed');
-    //     //     }
-    
-
-            
-    //     // } catch (error) {
-    //     //     setErrors([error.message]);
-    //     // }
-    // };
-
     const submitHandler = async (event) => {
         event.preventDefault();
         register({
@@ -95,15 +42,15 @@ export default function Page() {
     return (
         <>
             <main className="my-0 mx-auto min-h-full max-w-screen-sm">
-                <div className="d-flex justify-center">
-                    <Image
-                        src="/path/to/your/image.jpg"
-                        alt="Descriptive Alt Text"
-                        width={500}
-                        height={150}
-                    />
+                <div className="d-flex justify-center my-5">
+                <Image
+                    src={heycow}
+                    alt="Descriptive Alt Text"
+                    width={150}
+                    height={50}
+                />
                 </div>
-                <div className="card shadow-xl p-6">
+                <div className="card w-[650px] shadow-xl p-6">
                     <div className="p-3 text-center">
                         <h1 className="card-title text-black">Create an Account</h1>
                         <p>Welcome Future Farmer, enjoy our app!</p>

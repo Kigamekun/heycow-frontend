@@ -418,41 +418,6 @@ const [farmData, setFarmData] = React.useState([]);
       })
   }
   
-  // mengambil farm data
-  // const getFarmData = async () => {
-  //   var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
-  //     headers: {
-  //       'content-type': 'text/json',
-  //       'Authorization': `Bearer ${localStorage.getItem('token')}`,
-  //     }
-  //   })
-  //     .then(function (response) {
-  //       if (response.data.data != undefined) {
-  //         setFarmData(response.data.data);
-  //       console.log(response.data.data);
-  //       }
-  //     }).catch(function (error) {
-  //       if (error.response && error.response.status === 401) {
-  //         Swal.fire({
-  //           icon: 'error',
-  //           title: error.response.data.message,
-  //           showConfirmButton: false,
-  //           timer: 1500
-  //         })
-
-  //         logout()
-
-  //       } else {
-  //         Swal.fire({
-  //           icon: 'error',
-  //           title: 'error terjadi',
-  //           text: 'mohon coba lagi nanti.',
-  //           showConfirmButton: false,
-  //           timer: 1500
-  //         });
-  //       }
-  //     })
-  // }
   const getFarmData = async () => {
     try {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
@@ -461,13 +426,7 @@ const [farmData, setFarmData] = React.useState([]);
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         }
       });
-      // if (Array.isArray(res.data.data)) {
-      //   setFarmData(res.data.data);
-      //   console.log(res.data.data); // Debugging: log data
-      // } else {
-      //   console.error('Data yang diterima bukan array:', res.data.data);
-      //   setFarmData([]); // Set as empty array if data is not an array
-      // }
+      
     } catch (error) {
       console.error('Error:', error);
       if (error.response && error.response.status === 401) {

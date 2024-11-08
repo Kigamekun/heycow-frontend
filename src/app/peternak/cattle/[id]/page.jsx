@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 import { Input } from "@/components/ui/input"
 // import { Select } from "@nextui-org/select";
-import {Select, SelectSection, SelectItem} from "@nextui-org/select";
+import {Select, SelectSection, SelectItem} from "@nextui-org/react";
 import {
     Modal,
     ModalBody,
@@ -41,15 +41,6 @@ import { swal } from "@/public/assets/extensions/sweetalert2/sweetalert2.all";
 export default function Page( {params} ){
     const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
-    // const { data, isLoading, error } = useQuery('cattle', () =>
-    //     fetch(`/api/cattle/${params.id}`).then(res =>
-    //         res.json()
-    //     )
-    // );
-
-    // if (isLoading) return <div>Loading...</div>;
-
-    // if (error) return <div>Error: {error.message}</div>;
 
 // State Cattle 
 const [cattleData, setCattleData] = React.useState(
@@ -73,6 +64,8 @@ const [cattleData, setCattleData] = React.useState(
   const [IotDeviceData, setIotDeviceData] = React.useState(
     []
   );
+
+  
   // State Breeds
   const [breedsData, setBreedsData] = React.useState(
     []
@@ -121,7 +114,40 @@ const [cattleData, setCattleData] = React.useState(
       })
   }
 
+  const getBreedsData = async () => {
+    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/breeds`, {
+      headers: {
+        'content-type': 'text/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      }
+    })
+      .then(function (response) {
+        if (response.data.data != undefined) {
+          setBreedsData(response.data.data);
+        console.log(response.data.data);
+        }
+      }).catch(function (error) {
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          })
 
+          logout()
+
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'error terjadi',
+            text: 'mohon coba lagi nanti.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      })
+  }
   // mengambil Iot Data
   const getIotDeviceData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices`, {
@@ -279,13 +305,13 @@ const [cattleData, setCattleData] = React.useState(
   };
   const [data, setData] = useState([]);
 
-        useEffect(() => {
-            // Ganti dengan endpoint API Anda untuk mengambil data
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle`)
-            .then(response => response.json())
-            .then(data => setData(data))
-            .catch(error => console.error('Error fetching data:', error));
-        }, []);
+  React.useEffect(() => {
+    getCattleData();
+    getBreedsData();
+    getFarmData();
+    getIotDeviceData();
+
+  }, []);
     const handleInputChange = (event) => {
 
         const { name, value } = event.target;
@@ -301,6 +327,57 @@ const [cattleData, setCattleData] = React.useState(
         setCattle({ ...cattle, [name]: value });
       
       }
+      useEffect(() => {
+        // Fetch cattle data by ID
+        const fetchCattleData = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${params.id}`, {
+                    headers: {
+                        'content-type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    }
+                });
+                setCattle(response.data.data);
+
+                // Fetch IoT device data if iot_device_id is available
+                if (response.data.data.iot_device_id) {
+                    const iotResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices/${response.data.data.iot_device_id}`, {
+                        headers: {
+                            'content-type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        }
+                    });
+                    setIotDeviceData(iotResponse.data.data);
+                    console.log('data nya ',setIotDeviceData);
+                }
+            } catch (error) {
+                console.error('Error fetching cattle data:', error);
+                if (error.response && error.response.status === 401) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: error.response.data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    logout();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error terjadi',
+                        text: 'Mohon coba lagi nanti.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            }
+        };
+
+        fetchCattleData();
+    }, [params.id, logout]);
+    console.log(cattle);
+    if (!cattle) {
+        return <div>Loading...</div>;
+    }
     return (
         <>
             {/* card 1 untuk destroy dan edit */}
@@ -527,10 +604,11 @@ const [cattleData, setCattleData] = React.useState(
                         <div className="grid grid-cols-1 gap-60 w-full">
                             <div>
                                 <div className="title-iot d-flex justify-center">
-                                 <img src="https://i.pinimg.com/564x/df/e2/9f/dfe29f50ec425d8b4bd1eafb86f3ff2a.jpg" alt="cattle" width={250} height={250} />
+                                 {/* <img src="https://i.pinimg.com/564x/df/e2/9f/dfe29f50ec425d8b4bd1eafb86f3ff2a.jpg" alt="cattle" width={250} height={250} /> */}
+                                <img src={cattle.imageUrl} alt="cattle" width={250} height={250} />
                                 </div>
                                
-                                <p className="text-lg text-black text-center">From : <span className="font-bold">Kagawa Farm</span></p>
+                                <p className="text-lg text-black text-center">From : <span className="font-bold">{cattle.farm.name}</span></p>
                             </div>
                             <div className="d-flex justify-around">
                                 <Button className="bg-yellow-300" onClick={() => alert('Kamu yakin ingin diangonkan?')} >Angonkan</Button>
@@ -540,7 +618,7 @@ const [cattleData, setCattleData] = React.useState(
                         <div className="grid grid-cols-1 gap-3 w-full">
                             <div>
                                 <div className="title-iot d-flex justify-between">
-                                    <h5 className="text-black font-bold">Cattle {params.id}</h5>
+                                    <h5 className="text-black font-bold"> {cattle.name}</h5>
                                     <Button className="bg-emerald-600">Detail IoT</Button>
                                 </div>
                             </div>
@@ -556,30 +634,35 @@ const [cattleData, setCattleData] = React.useState(
                                     <TableRow className="text-black">
                                       
                                       <TableCell className="font-bold text-lg">Breed</TableCell>
-                                      {cattleData?.map((cattle) => (
+                                      {/* {cattleData?.map((cattle) => (
                                         <TableCell key={cattle.id} className="font-thin text-sm">{cattle.breed_id}</TableCell>
-                                      ))}
+                                      ))} */}
+
+                                      <TableCell className="font-thin text-sm">{cattle.breed_id}</TableCell>
                                      
+                                        
                                     </TableRow>
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">Gender</TableCell>
-                                      <TableCell className="font-thin text-sm">Name</TableCell>
+                                      <TableCell className="font-thin text-sm">{cattle.gender}</TableCell>
                                     </TableRow>
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">Date of Birth</TableCell>
-                                      <TableCell className="font-thin text-sm">Name</TableCell>
+                                      <TableCell className="font-thin text-sm">{cattle.birth_date}</TableCell>
                                     </TableRow>
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">Weight</TableCell>
-                                      <TableCell className="font-thin text-sm">Name</TableCell>
+                                      <TableCell className="font-thin text-sm">{cattle.birth_weight}</TableCell>
                                     </TableRow>
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">Height</TableCell>
-                                      <TableCell className="font-thin text-sm">Name</TableCell>
+                                      <TableCell className="font-thin text-sm">{cattle.birth_height}</TableCell>
                                     </TableRow>
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">IoT Devices</TableCell>
-                                      <TableCell className="font-thin text-sm">Name</TableCell>
+                                      <TableCell className="font-thin text-sm">
+                                        {cattle.iot_device_id}
+                                      </TableCell>
                                     </TableRow>
                                 </TableBody>
                               </Table>

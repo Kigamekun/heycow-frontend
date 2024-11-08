@@ -34,6 +34,7 @@ export default function RootLayout({ children }) {
             
             <div id="app" >
                 <Navbar />
+                
                 <div id="sidebar" className="d-flex fixed left-0 justify-between bg-emerald-500 z-50" >
                         <div className="sidebar-wrapper w-auto active overflow-hidden">
                             <div className="sidebar-header w-[300px]" >

@@ -31,7 +31,7 @@ import {
   useDisclosure,
   Checkbox, 
   Link
-} from '@nextui-org/modal'
+} from '@nextui-org/react'
 
 import { Button } from "@/components/ui/button"
 
@@ -62,11 +62,11 @@ const handleSelectChange = (event) => {
 
 }
 
-import {Select, SelectSection, SelectItem} from "@nextui-org/select";
+import {Select, SelectSection, SelectItem} from "@nextui-org/react";
 import { ArrowUpDown } from "lucide-react"
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 
-import {RadioGroup, Radio} from "@nextui-org/radio";
+import {RadioGroup, Radio} from "@nextui-org/react";
 import axios from "axios"
 import Swal from "sweetalert2"
 
@@ -90,7 +90,6 @@ export default function Home() {
     birth_date : "",
     birth_weight : "",
     birth_height : "",
-    serial_number : "",
     iot_device_id : "",
     last_vaccination : ""
   });
@@ -191,7 +190,7 @@ export default function Home() {
         headers: {
           'content-type': 'text/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
+        }
       });
   
       if (res.data.data) {
@@ -308,6 +307,20 @@ export default function Home() {
     }
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'sehat':
+        return 'bg-emerald-600';
+      case 'sakit':
+        return 'bg-red-400';
+      case 'sold':
+        return 'bg-yellow-400';
+      case 'mati':
+        return 'bg-red-800';
+      default:
+        return 'bg-gray-400';
+    }
+  };
   return (
     <>
       <header className="mb-3">
@@ -604,7 +617,7 @@ export default function Home() {
                 <p className="text-black">{cattle.iot_device_id}</p>
               </div>
               <div>
-                <div className={`bg-${cattle.status === 'Sehat' ? 'emerald' : 'red'}-600 rounded-md`}>
+                <div className={`${getStatusColor(cattle.status)} rounded-md`}>
                   <p className="text-white text-sm m-2">{cattle.status}</p>
                 </div>
               </div>
