@@ -2,39 +2,18 @@
 
 
 // Import untuk form 
-import { useRef } from "react";
 import { Editor } from '@tinymce/tinymce-react';
+import { useRef } from "react";
 
 // import Uppy from "@uppy/core";
 // import Dashboard from "@uppy/dashboard";
-import { useEffect } from "react";
 
-import {
-    ColumnDef,
-    ColumnFiltersState,
-    SortingState,
-    VisibilityState,
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable,
-} from "@tanstack/react-table";
 
 import { Input } from "@/components/ui/input";
 
-import ReactStars from "react-stars"
-import { Button } from "@/components/ui/button"
-import * as React from "react"
-import { hoshino } from "@/images/hoshino.jpg"
 
-import { ArrowUpDown, Link } from "lucide-react"
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 
-import Script from "next/script";
-import axios from "axios"
-import Swal from "sweetalert2"
 
 
 export default function Home() {
@@ -49,7 +28,7 @@ export default function Home() {
             {/* Search Bar  */}
 
         {/* Form section */}
-        <div className="d-flex justify-center mt-10">
+        <div className="justify-center mt-10 d-flex">
             <div className="card p-5 w-[50rem] ">
                 <div className="card-boy " >
                     <form>

@@ -24240,3 +24240,24 @@ a {
 .z-1 {
     z-index: 1
 }
+
+/* Sidebar container */
+.sidebar-menu {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* Hide sidebar on small screens */
+  @media (max-width: 768px) {
+    .sidebar-menu {
+      width: 100%; /* Full width on smaller screens */
+      transform: translateX(-100%); /* Hide sidebar by default */
+      position: fixed; /* Make it overlay */
+      z-index: 10;
+    }
+  
+    /* When sidebar is open */
+    .sidebar-menu.open {
+      transform: translateX(0); /* Slide sidebar in from the left */
+    }
+  }
+  

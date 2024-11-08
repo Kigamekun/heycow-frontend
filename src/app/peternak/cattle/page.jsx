@@ -2,25 +2,10 @@
 
 // import { Button } from "@/components/ui/button"
 import * as React from "react"
-import {
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable
-} from "@tanstack/react-table"
 
 
 import { Input } from "@/components/ui/input"
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 
 import {
   Modal,
@@ -28,9 +13,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  useDisclosure,
-  Checkbox, 
-  Link
+  useDisclosure
 } from '@nextui-org/react'
 
 import { Button } from "@/components/ui/button"
@@ -49,7 +32,7 @@ import { Button } from "@/components/ui/button"
 const handleInputChange = (event) => {
 
   const { name, value } = event.target;
-  setCattle({ ...cattle, [name]: value });
+  setCattle({...cattle, [name]: value });
 
 }
 
@@ -62,11 +45,9 @@ const handleSelectChange = (event) => {
 
 }
 
-import {Select, SelectSection, SelectItem} from "@nextui-org/react";
-import { ArrowUpDown } from "lucide-react"
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
+import { Select, SelectItem } from "@nextui-org/react"
 
-import {RadioGroup, Radio} from "@nextui-org/react";
 import axios from "axios"
 import Swal from "sweetalert2"
 
@@ -331,10 +312,10 @@ export default function Home() {
       <div className="card">
         <div className="card-body">
           <div className="align-items-center">
-            <div className="d-flex justify-between">
+            <div className="justify-between d-flex">
               <h3 className="ml-2 text-emerald-600">Manage Cattle</h3>
-              {/* <button className="btn btn-success rounded rounded-lg mr-2">Add New Cattle</button> */}
-              <Button onClick={onOpen} className="bg-emerald-600 text-md rounded rounded-lg mr-2">Add New Cattle</Button>
+              {/* <button className="mr-2 rounded rounded-lg btn btn-success">Add New Cattle</button> */}
+              <Button onClick={onOpen} className="mr-2 rounded rounded-lg bg-emerald-600 text-md">Add New Cattle</Button>
             </div>
             
             {/* Section Modal Opened */}
@@ -351,13 +332,13 @@ export default function Home() {
                 <ModalContent className="w-[800px] h-[650px] bg-white rounded-xl ">
                 {(onClose) => (
                   <>
-                  <ModalHeader className="dialog-title flex flex-col gap-1 px-6 mt-6">
-                    <h3 className="text-black font-bold text-center">Add New Cattle</h3>
+                  <ModalHeader className="flex flex-col gap-1 px-6 mt-6 dialog-title">
+                    <h3 className="font-bold text-center text-black">Add New Cattle</h3>
                   </ModalHeader>
                   <ModalBody className="grid grid-cols-2">
                     {/* Cattle Name */}
                       <div className="grid grid-cols-1 gap-1">
-                        <label htmlFor="name" className="text-black font-bold">
+                        <label htmlFor="name" className="font-bold text-black">
                           <h6>
                             Cattle Name<span className="text-red-600">*</span>
                           </h6>
@@ -377,7 +358,7 @@ export default function Home() {
 
                       {/* Breed */}
                       <div className="grid grid-cols-1 gap-1">
-                        <label htmlFor="breed" className="text-black font-bold">
+                        <label htmlFor="breed" className="font-bold text-black">
                           <h6>Breed</h6>
                         </label>
                         <Select
@@ -395,7 +376,7 @@ export default function Home() {
                       </div>
                       
                       <div className="grid grid-cols-1 gap-1">
-                        <label htmlFor="date" className="text-black font-bold">
+                        <label htmlFor="date" className="font-bold text-black">
                           <h6>
                             Birth Date<span className="text-red-600">*</span>
                           </h6>
@@ -415,12 +396,12 @@ export default function Home() {
 
                       {/* Gender Date */}
                       <div className="grid grid-cols-1 gap-1">
-                        <label htmlFor="birth" className="text-black font-bold">
+                        <label htmlFor="birth" className="font-bold text-black">
                           <h6>
                             Gender Date<span className="text-red-600">*</span>
                           </h6>
                         </label>
-                        <div className="input-bordered w-full flex justify-start gap-3     ">
+                        <div className="flex justify-start w-full gap-3 input-bordered ">
                             <label>
                                 <input
                                 type="radio"
@@ -462,7 +443,7 @@ export default function Home() {
                       </div>
                       {/* Farm */}
                       <div className="grid grid-cols-1">
-                        <label htmlFor="breed" className="text-black font-bold">
+                        <label htmlFor="breed" className="font-bold text-black">
                           <h6>Farm</h6>
                         </label>
                         <Select
@@ -473,14 +454,14 @@ export default function Home() {
                         // label="Select an animal" 
                         placeholder="Select an animal"
                         size
-                        className=" w-full ">
+                        className="w-full ">
                           {(animal) => <SelectItem className="bg-white"
                           variant="bordered">{animal.label}</SelectItem>}
                         </Select>
                       </div>
                       {/* Cattle Height */}
                       <div className="grid grid-cols-1 gap-1">
-                        <label htmlFor="height" className="text-black font-bold">
+                        <label htmlFor="height" className="font-bold text-black">
                           <h6>
                             Cattle Height<span className="text-red-600">*</span>
                           </h6>
@@ -499,7 +480,7 @@ export default function Home() {
 
                       {/* Cattle Weight */}
                       <div className="grid grid-cols-1 gap-1">
-                        <label htmlFor="weight" className="text-black font-bold">
+                        <label htmlFor="weight" className="font-bold text-black">
                           <h6>
                             Cattle Weight<span className="text-red-600">*</span>
                           </h6>
@@ -517,7 +498,7 @@ export default function Home() {
                       </div>
                       {/* IoT Devices */}
                       <div className="grid grid-cols-1 gap-1">
-                        <label htmlFor="iot" className="text-black font-bold">
+                        <label htmlFor="iot" className="font-bold text-black">
                           <h6>IoT Device</h6>
                         </label>
                         <Select
@@ -545,11 +526,11 @@ export default function Home() {
               </ModalContent>
             </Modal>
 
-            <div className="mt-4  d-flex grid grid-cols-4 justify-between">
-              <div className="card border border-green-500 p-2 m-2">
-                <div className="card-body d-flex justify-between gap-10">
+            <div className="grid justify-between grid-cols-4 mt-4 d-flex">
+              <div className="p-2 m-2 border border-green-500 card">
+                <div className="justify-between gap-10 card-body d-flex">
                   <i className="bi bi-emoji-laughing-fill text-emerald-500 text-[2rem]" />
-                  <div className="d-flex flex-col ">
+                  <div className="flex-col d-flex ">
                     <h6 className="text-emerald-400">Sehat</h6>
                     <p>10</p>
                   </div>
@@ -557,29 +538,29 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="card border p-2 m-2">
-                <div className="card-body d-flex justify-between gap-10">
+              <div className="p-2 m-2 border card">
+                <div className="justify-between gap-10 card-body d-flex">
                   <i className="bi bi-emoji-sunglasses-fill text-yellow-400 text-[2rem]" />
-                  <div className="d-flex flex-col ">
+                  <div className="flex-col d-flex ">
                     <h6 className="text-yellow-400">Terjual</h6>
                     <p>10</p>
                   </div>
                 </div>
               </div>
              
-              <div className="card border border-red-600 p-2 m-2">
-                <div className="card-body d-flex justify-between gap-10">
+              <div className="p-2 m-2 border border-red-600 card">
+                <div className="justify-between gap-10 card-body d-flex">
                   <i className="bi bi-emoji-tear-fill text-red-500 text-[2rem]" />
-                  <div className="d-flex flex-col ">
+                  <div className="flex-col d-flex ">
                     <h6 className="text-red-600">Sakit</h6>
                     <p>10</p>
                   </div>
                 </div>
               </div>
-              <div className="card border border-red-600 p-2 m-2">
-                <div className="card-body d-flex justify-between gap-10">
+              <div className="p-2 m-2 border border-red-600 card">
+                <div className="justify-between gap-10 card-body d-flex">
                   <i className="bi bi-emoji-dizzy-fill text-red-800 text-[2rem]" />
-                  <div className="d-flex flex-col ">
+                  <div className="flex-col d-flex ">
                     <h6 className="text-red-600">Mati</h6>
                     <p>10</p>
                   </div>
@@ -610,7 +591,7 @@ export default function Home() {
        
         {Array.isArray(cattleData) && cattleData?.map((cattle) => (
           <div key={cattle.id} className="card" onClick={() => window.location.href = `/peternak/cattle/${cattle.id}?user=${user.id}`}>
-            <div className="card-body d-flex justify-between">
+            <div className="justify-between card-body d-flex">
               <div>
                 <h3 className="text-emerald-600">{cattle.name}</h3>
                 {/* <p className="text-xs">{cattle.iot_device_id}</p> */}
@@ -618,7 +599,7 @@ export default function Home() {
               </div>
               <div>
                 <div className={`${getStatusColor(cattle.status)} rounded-md`}>
-                  <p className="text-white text-sm m-2">{cattle.status}</p>
+                  <p className="m-2 text-sm text-white">{cattle.status}</p>
                 </div>
               </div>
             </div>
