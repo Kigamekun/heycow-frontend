@@ -21,7 +21,6 @@ import {
 import Link from "next/link";
 import { useEffect } from "react";
 import { useState } from "react";
-// import {  Table,  TableHeader,  TableBody,  TableColumn,  TableRow,  TableCell} from "@nextui-org/table";
 
 import {
   Table,
@@ -37,8 +36,8 @@ import {
 import { animals } from "../dummy";
 import axios from "axios"
 import Swal from "sweetalert2"
-import Image from "next/image"
 import { swal } from "@/public/assets/extensions/sweetalert2/sweetalert2.all";
+
 export default function Page( {params} ){
     const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
@@ -65,20 +64,15 @@ const [cattleData, setCattleData] = React.useState(
   const [IotDeviceData, setIotDeviceData] = React.useState(
     []
   );
-
-  
   // State Breeds
   const [breedsData, setBreedsData] = React.useState(
     []
   );
-  
   // State Farm
   const [farmData, setFarmData] = React.useState(
     []
   );
 
-
-  
   // mengambil farm data
   const getFarmData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
@@ -332,7 +326,7 @@ const [cattleData, setCattleData] = React.useState(
         // Fetch cattle data by ID
         const fetchCattleData = async () => {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${params.id}`, {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${params.cattleID}`, {
                     headers: {
                         'content-type': 'application/json',
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -374,13 +368,14 @@ const [cattleData, setCattleData] = React.useState(
         };
 
         fetchCattleData();
-    }, [params.id]);
+    }, [params.cattleID]);
     console.log(cattle);
     if (!cattle) {
         return <div>Loading...</div>;
     }
 
     const deleteCattle = async () => {
+      
         try {
             const response = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${params.id}`, {
                 headers: {
@@ -651,7 +646,7 @@ const [cattleData, setCattleData] = React.useState(
                                 <div className="title-iot d-flex justify-between">
                                     
                                     <div className="d-flex gap-3">
-                                      <i class="bi bi-trash-fill text-2xl cursor-pointer text-red-700" ></i>
+                                      <i class="bi bi-trash-fill text-2xl cursor-pointer text-red-700" onClick={() => { alert('yakin mau di delete?'); deleteCattle(); }}></i>
                                         
                                         <i class="bi m-[-1re] bi-pencil-fill cursor-pointer text-2xl text-emerald-600" onClick={onOpen}></i>
                                     </div>

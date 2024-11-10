@@ -1,9 +1,9 @@
 'use client'
 
-import ReactStars from "react-stars"
-import { Button } from "@/components/ui/button"
-import * as React from "react"
-import { Image } from "@nextui-org/react"
+import ReactStars from "react-stars";
+import { Button } from "@/components/ui/button";
+import * as React from "react";
+import { Image } from "@nextui-org/react";
 import {
   Table,
   TableBody,
@@ -11,28 +11,32 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
-import axios from "axios"
-import Swal from "sweetalert2"
-import Link from 'next/link'; // Ensure Link is imported from next/link
+import { useAuth } from "@/lib/hooks/auth"; // Hook for authentication
+import axios from "axios";
+import Swal from "sweetalert2";
+import Link from 'next/link'; 
+import { useRouter } from 'next/navigation';
+import { Select, SelectItem } from "@nextui-org/react";
 
-export default function PengangonDetail() {
-  const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' })
-//   const { cattleId, pengangonId } = router.query; // Get the cattleId and pengangonId from the URL
+export default function PengangonDetail({ params }) {
+  // const { cattleID, pengangonID } = params; // Accessing route params directly
+  const router = useRouter();
+  const { cattleID, pengangonID } = router.query;
+  const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' });
+
   const [userData, setUserData] = React.useState(null);
   const [cattleData, setCattleData] = React.useState([]);
-
+  const [cattle, setCattle] = React.useState(null);
   const getUserData = async () => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/pengangon/${user.id}/detail`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/pengangon/${user.id}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
       if (res.data.data) {
-        setUserData(res.data.data);
-        console.log('User data:', res.data.data);
+        setUserData('user data pengangon' ,res.data.data);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -57,15 +61,15 @@ export default function PengangonDetail() {
 
   const getCattleData = async () => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${cattleId}`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${cattle.id}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
+      console.log('Cattle data:', res.data.data);
       if (res.data.data) {
         setCattleData(res.data.data);
-        console.log('Cattle data:', res.data.data);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -87,20 +91,34 @@ export default function PengangonDetail() {
       }
     }
   }
+  useEffect(() => {
+    console.log('Cattle ID:', cattleID);
+    console.log('Pengangon ID:', pengangonID);
+  }, [cattleID, pengangonID]);
 
   React.useEffect(() => {
-    if (cattleId && pengangonId) {
+    if (cattleID && pengangonID) {
       getUserData();
       getCattleData();
     }
-  }, [cattleId, pengangonId]);
+  }, [cattleID, pengangonID]);
 
-  if (!userData) {
+  if (!userData || !cattleData) {
     return <div>Loading...</div>;
   }
 
+  const handleSelectChange = (value) => {
+    console.log('Selected category:', value);
+    // Handle category selection logic
+  };
+
   return (
     <>
+     <div>
+      <h1>Cattle ID: {cattleID}</h1>
+      <h2>Pengangon ID: {pengangonID}</h2>
+      {/* Your other component logic here */}
+    </div>
       <h3 className="ml-2 text-emerald-600">{userData.name}</h3>
       <div className="d-flex justify-center">
         <div className="card p-4 w-[650px] ">
@@ -109,8 +127,7 @@ export default function PengangonDetail() {
           </div>
         </div>  
       </div>
-      {/* Search Bar  */}
-      {/* Angon atau farmer section */}
+      {/* Angon or Farmer section */}
       <div className="s d-flex justify-center ">
         <div className="card w-[650px] p-2">
           <div className="card-body d-flex justify-around">
@@ -147,9 +164,7 @@ export default function PengangonDetail() {
         <div className="card w-[650px] p-2">
           <div className="card-body">
             <label htmlFor="category" className="text-black font-bold">
-              <h6>
-                Category<span className="text-red-600">*</span>
-              </h6>
+              <h6>Category<span className="text-red-600">*</span></h6>
             </label>
             <Select
               id="category"
@@ -169,9 +184,9 @@ export default function PengangonDetail() {
         </div>
       </div>
       <div className="title-iot d-flex justify-center">
-        <img src={cattle.imageUrl} alt="cattle" width={250} height={250} />
+        <img src={cattleData.imageUrl} alt="cattle" width={250} height={250} />
       </div>
-      <p className="text-lg text-black text-center">From : <span className="font-bold">{cattle.farm && cattle.farm.name}</span></p>
+      <p className="text-lg text-black text-center">From : <span className="font-bold">{cattleData.farm && cattleData.farm.name}</span></p>
       <div className="d-flex justify-around">
         <Link href="#">
           <Button className="bg-yellow-300" onClick={() => alert('Kamu yakin ingin diangonkan?')}>Angonkan</Button>
@@ -188,5 +203,5 @@ export default function PengangonDetail() {
         </div>
       </div>
     </>
-  )
+  );
 }

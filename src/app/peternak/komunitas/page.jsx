@@ -390,21 +390,6 @@ export default function Page() {
       }
   };
 
-  const handleInputChange = (event) => {
-
-    const { name, value } = event.target;
-    setCattle({ ...cattle, [name]: value });
-  
-  }
-  
-  const handleSelectChange = (event) => {
-    
-    const name = event.target.name;
-    const {value} = event.target.selectedOptions[0];
-    console.log(value);
-    setCattle({ ...cattle, [name]: value });
-  
-  }
 
     React.useEffect(() => {
         getBlogPostsData(),

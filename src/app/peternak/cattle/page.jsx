@@ -533,53 +533,57 @@ export default function Home() {
               </ModalContent>
             </Modal>
 
-            <div className="d-flex grid grid-cols-4 justify-between">
-              <div className="card border border-green-500 p-2 m-2">
-                <div className="mt-4 mx-4 d-flex justify-between gap-10">
+          </div>
+          <div className="row mt-3">
+          <div className="col-sm-3">
+              <div className="border border-success card">
+                <div className="gap-10 float-start card-body d-flex">
                   <Cow size={50} className=" text-emerald-500 text-[2rem]" />
-                  <div className="d-flex flex-col ">
-                    <h6 className="text-emerald-400 text-lg">Sehat</h6>
-                    <p>10</p>
-                  </div>
-
+                    <div className="flex-col d-flex ">
+                      <h6 className="text-emerald-600">Sehat</h6>
+                      <p>15</p>
+                    </div>
                 </div>
               </div>
-
-              <div className="card border p-2 m-2">
-                <div className="mt-4 mx-4 d-flex justify-between gap-10">
-                  <Cow size={50} className=" text-yellow-400 text-[3rem]" />
-                  <div className="d-flex flex-col ">
-                    <h6 className="text-yellow-400">Terjual</h6>
-                    <p>10</p>
-                  </div>
-                </div>
-              </div>
-             
-              <div className="card border border-red-600 p-2 m-2">
-                <div className="mt-4 mx-4 d-flex justify-between gap-10">
-                  <Cow size={50} className=" text-red-500 text-[3rem]" />
-                  <div className="d-flex flex-col ">
+            </div>
+          <div className="col-sm-3">
+            <div className="border border-success card">
+              <div className="gap-10 float-start card-body d-flex">
+              <Cow size={50} className=" text-red-500 text-[3rem]" />
+                  <div className="flex-col d-flex ">
                     <h6 className="text-red-600">Sakit</h6>
-                    <p>10</p>
+                    <p>2</p>
                   </div>
-                </div>
               </div>
-
-              <div className="card border border-red-700 p-2 m-2">
-                <div className="mt-4 mx-4 d-flex justify-between gap-10">
-                  <Cow size={50} className=" text-red-700 text-[3rem]" />
-                  <div className="d-flex flex-col ">
-                    <h6 className="text-red-700">Mati</h6>
-                    <p>10</p>
+            </div>
+          </div>
+          <div className="col-sm-3">
+            <div className="border border-success card">
+              <div className="gap-10 float-start card-body d-flex">
+              <Cow size={50} className=" text-yellow-400 text-[3rem]" />
+                  <div className="flex-col d-flex ">
+                    <h6 className="text-yellow-600">Dijual</h6>
+                    <p>7</p>
                   </div>
-                </div>
               </div>
-
+            </div>
+          </div>
+          <div className="col-sm-3">
+            <div className="border border-success card">
+              <div className="gap-10 float-start card-body d-flex">
+              <Cow size={50} className=" text-red-700 text-[3rem]" />
+                  <div className="flex-col d-flex ">
+                    <h6 className="text-red-600">Mati</h6>
+                    <p>15</p>
+                  </div>
+              </div>
             </div>
           </div>
         </div>
+        </div>
       </div>
-
+      
+      
       {/* Search Bar  */}
       <div>
         <div className="card-body float-start rounded">

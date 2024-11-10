@@ -14,7 +14,7 @@ import {
 } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 
 import axios from "axios"
 import Swal from "sweetalert2"
@@ -23,7 +23,7 @@ import Cattle from "@/app/admin/cattle/page"
 import Link from "next/link"
 export default function Pengangon() {
   const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' })
-// const router = useRouter();
+const router = useRouter();
   const [userData, setUserData] = React.useState(
     []
 )
@@ -90,8 +90,7 @@ const handleSearchChange = (event) => {
             />
           </div>
         </div>
-      {/* Angon atau farmer section */}
-      {/* Angon atau farmer section */}
+
       {/* Angon atau farmer section */}
       {filteredUserData.length > 0 ? (
         <div className="container grid grid-cols-2 gap-3 mt-4">
