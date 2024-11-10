@@ -21,6 +21,7 @@ import {
 } from '@nextui-org/modal'
 import { Input } from "@/components/ui/input"
 import Swal from 'sweetalert2';
+import { swal } from "@/public/assets/extensions/sweetalert2/sweetalert2.all";
 // kita buat function fetching api
 
 export default function Profile() {
@@ -35,45 +36,76 @@ export default function Profile() {
         bio: '',
         selfie_name: null,
     });
-    const updateMe = async () => {
-        // e.preventDefault();
-        try {
-            const res = await axios.put(
-                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${user.id}`, userData, {
+
+    const getUserData = async () => {
+        console.log('fetching user data...');
+        try{
+            const res = await axios.get(
+                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/me`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     }
                 }
-            )
+            );
+
+            console.log('data user', res.data);
             if (res.data) {
                 console.log('data kita', res.data);
                 setUserData(res.data);
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Profile updated successfully',
-                    showConfirmButton: false,
-                    timer: 1500,
-                });
             }
-            console.log('data', res.data);
-            Swal.fire({
-                icon: 'success',
-                title: 'Profile updated successfully',
-                showConfirmButton: false,
-                timer: 1500,
-            });
-        } catch (error) {
-            console.error('Error updating profile:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error occurred',
-                text: 'Please try again later.',
-                showConfirmButton: false,
-                timer: 1500,
-            });
+            // swal.fire ({
+            //     icon: 'success',
+            //     title: 'Profile updated successfully',
+            //     showConfirmButton: false,
+            //     timer: 1500,
+            // })
+        }catch(error){
+            console.error('Error fetching user data:', error);
+
         }
     }
+
+
+    // const updateMe = async (e) => {
+    //     e.preventDefault();
+    //     try {
+    //         const res = await axios.put(
+    //             `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${user.id}`, userData, {
+    //                 headers: {
+    //                     'Content-Type': 'application/json',
+    //                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    //                 }
+    //             }
+    //         )
+    //         if (res.data) {
+    //             console.log('data kita', res.data);
+    //             setUserData(res.data);
+    //             Swal.fire({
+    //                 icon: 'success',
+    //                 title: 'Profile updated successfully',
+    //                 showConfirmButton: false,
+    //                 timer: 1500,
+    //             });
+    //         }
+    //         console.log('data', res.data);
+    //         Swal.fire({
+    //             icon: 'success',
+    //             title: 'Profile updated successfully',
+    //             showConfirmButton: false,
+    //             timer: 1500,
+    //         });
+    //     } catch (error) {
+    //         console.error('Error updating profile:', error);
+    //         Swal.fire({
+    //             icon: 'error',
+    //             title: 'Error occurred',
+    //             text: 'Please try again later.',
+    //             showConfirmButton: false,
+    //             timer: 1500,
+    //         });
+    //     }
+    // }
 
     const handleInputChange = (event) => {
 
@@ -105,17 +137,31 @@ export default function Profile() {
             // Ensure the user object exists and has the full_image_url property
             if (response.data.full_avatar_url && response.data.full_avatar_url) {
                 setUserAvatar(response.data.full_avatar_url);
+                swal.fire({
+                    icon: 'success',
+                    title: 'Profile updated successfully',
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
             } else {
                 console.error('User  object or full_avatar_url is undefined');
             }
             console.log('User  Avatar URL:', userAvatar);   
         } catch (error) {
+            swal.fire({
+                icon: 'error',
+                title: 'Error occurred',
+                text: 'Please try again later.',
+                showConfirmButton: false,
+                timer: 1500,
+            }); // Show an error message
             console.error('Error fetching user image:', error);
         }
     };
     useEffect(() => {
+        getUserData();
         fetchUserImage();
-        updateMe();
+        // updateMe();
         // if (user) {
         //     fetchUserImage();
         // }
@@ -294,7 +340,7 @@ export default function Profile() {
                         </ModalBody>
                         <ModalFooter>
 
-                        <Button isSubmit className="bg-emerald-600 text-md" type="submit" onPress={onClose}>
+                        <Button isSubmit className="bg-emerald-600 text-md" type="submit">
                         Submit
                         </Button>
                         </ModalFooter>

@@ -183,9 +183,9 @@ export default function Home() {
       });
   
       if (res.data.data) {
-        setCattleData(res.data.data.data);
+        setCattleData(res.data.data);
         console.log('Ada datanya');
-        console.log(res.data.data.data);
+        console.log(res.data.data);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
