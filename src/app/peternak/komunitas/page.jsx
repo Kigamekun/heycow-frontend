@@ -1,23 +1,17 @@
 'use client'
 
-import { swal } from "@/public/assets/extensions/sweetalert2/sweetalert2.all";
-import axios from "axios";
-import Script from "next/script";
-import * as React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
-import Swal from "sweetalert2";
-import { Image } from "@nextui-org/react";
-import { Divider } from "@nextui-org/react";
-import { Separator } from "@/components/ui/separator"
-import { Avatar } from "@nextui-org/react";
-import { useAuth } from "@/lib/hooks/auth";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/hooks/auth";
+import { Divider } from "@nextui-org/react";
+import axios from "axios";
+import * as React from "react";
+import { useState } from "react";
+import Swal from "sweetalert2";
 
 import {
   Modal,
@@ -25,9 +19,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  useDisclosure,
-  Checkbox, 
-  Link
+  useDisclosure
 } from '@nextui-org/modal';
 
 import { Select, SelectItem, SelectSection } from "@nextui-org/react";
@@ -398,6 +390,22 @@ export default function Page() {
       }
   };
 
+  const handleInputChange = (event) => {
+
+    const { name, value } = event.target;
+    setCattle({ ...cattle, [name]: value });
+  
+  }
+  
+  const handleSelectChange = (event) => {
+    
+    const name = event.target.name;
+    const {value} = event.target.selectedOptions[0];
+    console.log(value);
+    setCattle({ ...cattle, [name]: value });
+  
+  }
+
     React.useEffect(() => {
         getBlogPostsData(),
         // fetchUserImage(),
@@ -421,48 +429,48 @@ export default function Page() {
         <main>
             <h3 className="text-emerald-600">Community</h3>
             
-            <div className="container-filter d-flex justify-center">
+            <div className="justify-center container-filter d-flex">
                 <div className="card mt-3 w-[800px] "> 
-                    <div className="card-body d-flex justify-around mt-2"> 
-                      <Popover className="d-flex gap-3 cursor-pointer">
-                        <PopoverTrigger className="d-flex gap-3">
+                    <div className="justify-around mt-2 card-body d-flex"> 
+                      <Popover className="gap-3 cursor-pointer d-flex">
+                        <PopoverTrigger className="gap-3 d-flex">
                           <i class="bi bi-filter text-black text-xl"></i>
-                          <p className="text-black text-lg">Filter</p>
+                          <p className="text-lg text-black">Filter</p>
                         </PopoverTrigger>
                         <PopoverContent>
                           <div onClick={() => handleSort('asc')}>
-                            <p className="text-black text-lg">Sorting dari yang terbaru</p>
+                            <p className="text-lg text-black">Sorting dari yang terbaru</p>
                           </div>
                           <div onClick={() => handleSort('desc')}>
-                            <p className="text-black text-lg">Sorting dari yang terlama</p>
+                            <p className="text-lg text-black">Sorting dari yang terlama</p>
                           </div>
                         </PopoverContent>
                       </Popover>
 
                       <Divider orientation="vertical" color="black"/>
-                      <div className="d-flex gap-3 cursor-pointer" onClick={onOpen}>
+                      <div className="gap-3 cursor-pointer d-flex" onClick={onOpen}>
                         <i class="bi bi-clipboard-plus text-xl text-black"></i>
-                        <p className="text-black text-lg">Buat Post</p>
+                        <p className="text-lg text-black">Buat Post</p>
                       </div>  
                       
                       <Divider orientation="vertical" color="black"/>
-                      <div className="d-flex gap-3 cursor-pointer" onClick={() => window.location.href = '/peternak/komunitas/forum'}>
+                      <div className="gap-3 cursor-pointer d-flex" onClick={() => window.location.href = '/peternak/komunitas/forum'}>
                         <i class="bi bi-question-circle text-black text-xl"></i>
-                        <p className="text-black text-lg">Tanyakan</p>
+                        <p className="text-lg text-black">Tanyakan</p>
                       </div>
 
                       <Divider orientation="vertical"/>
-                      <div className="d-flex gap-3 cursor-pointer" onClick={() => window.location.href = '/peternak/komunitas/jual'}>
+                      <div className="gap-3 cursor-pointer d-flex" onClick={() => window.location.href = '/peternak/komunitas/jual'}>
                         <i class="bi bi-currency-exchange  text-black text-xl"></i>
-                        <p className="text-black text-lg">Jual</p>
+                        <p className="text-lg text-black">Jual</p>
                       </div>
                   </div>
                 </div>
             </div>
 
-            <div className="d-flex justify-center">
+            <div className="justify-center d-flex">
                 
-                <div className="container-post grid grid-cols-1">
+                <div className="grid grid-cols-1 container-post">
                     {blogPostsData?.map((post, index) => (
                         <div key={index} className="card mt-3 w-[800px] grid grid-cols-1 gap-6">
                             <div className="card-body">
@@ -482,28 +490,28 @@ export default function Page() {
                                   </PopoverContent>
                                 </Popover>
                               </div>
-                              <div className="container-post-profile d-flex justify-start gap-2">
+                              <div className="justify-start gap-2 container-post-profile d-flex">
                                 {/* <img src={post.image} alt="profile" className="w-[50px] h-[50px] rounded rounded-pill border" /> */}
                                 <img src={post.user.full_avatar_url || 'https://th.bing.com/th/id/OIP.YO6Vmx1wQhZoCc2U9N6GYgHaE8?rs=1&pid=ImgDetMain'} alt="profile" className="w-[50px] h-[50px] rounded-pill"/>
                                 <div className="mt-1">
-                                  <h6 className="text-black font-bold">{post.user.name}</h6>
+                                  <h6 className="font-bold text-black">{post.user.name}</h6>
                                     <p className="text-xs">{post.published_at}</p>
                                 </div>
                               </div>
-                                <div className="container-post-content mt-3">
-                                    <h4 className="text-black font-bold">{post.title}</h4>
+                                <div className="mt-3 container-post-content">
+                                    <h4 className="font-bold text-black">{post.title}</h4>
                                     <p className="text-black">
                                         {post.content}
                                     </p>
                                     {/* <img src={post.image} alt="post" className="w-[100%] max-h-[400px] border" /> */}
                                     <img src={post.full_image_url || 'https://icons.iconarchive.com/icons/fa-team/fontawesome/256/FontAwesome-Image-icon.png'} alt="post" className="w-[30rem]"/>
                                 </div>
-                                <div className="container-post-action d-flex gap-4 mt-3">
-                                    <div className="Likes-count d-flex gap-2 text-md">
+                                <div className="gap-4 mt-3 container-post-action d-flex">
+                                    <div className="gap-2 Likes-count d-flex text-md">
                                         <i class="bi bi-heart-fill text-red-600"></i>
                                         <p className="text-black">{post.likes_count}</p>
                                     </div>
-                                    <div className="Likes-count d-flex gap-2 text-md ">
+                                    <div className="gap-2 Likes-count d-flex text-md ">
                                         <i class="bi bi-chat-dots-fill text-emerald-500"></i>
                                         <p className="text-black">{post.comments_count}</p>
                                     </div>
