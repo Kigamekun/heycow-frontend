@@ -67,45 +67,45 @@ export default function Profile() {
     }
 
 
-    // const updateMe = async (e) => {
-    //     e.preventDefault();
-    //     try {
-    //         const res = await axios.put(
-    //             `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${user.id}`, userData, {
-    //                 headers: {
-    //                     'Content-Type': 'application/json',
-    //                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
-    //                 }
-    //             }
-    //         )
-    //         if (res.data) {
-    //             console.log('data kita', res.data);
-    //             setUserData(res.data);
-    //             Swal.fire({
-    //                 icon: 'success',
-    //                 title: 'Profile updated successfully',
-    //                 showConfirmButton: false,
-    //                 timer: 1500,
-    //             });
-    //         }
-    //         console.log('data', res.data);
-    //         Swal.fire({
-    //             icon: 'success',
-    //             title: 'Profile updated successfully',
-    //             showConfirmButton: false,
-    //             timer: 1500,
-    //         });
-    //     } catch (error) {
-    //         console.error('Error updating profile:', error);
-    //         Swal.fire({
-    //             icon: 'error',
-    //             title: 'Error occurred',
-    //             text: 'Please try again later.',
-    //             showConfirmButton: false,
-    //             timer: 1500,
-    //         });
-    //     }
-    // }
+    const updateMe = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await axios.put(
+                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${user.id}`, userData, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    }
+                }
+            )
+            if (res.data) {
+                console.log('data kita', res.data);
+                setUserData(res.data);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Profile updated successfully',
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+            }
+            console.log('data', res.data);
+            Swal.fire({
+                icon: 'success',
+                title: 'Profile updated successfully',
+                showConfirmButton: false,
+                timer: 1500,
+            });
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error occurred',
+                text: 'Please try again later.',
+                showConfirmButton: false,
+                timer: 1500,
+            });
+        }
+    }
 
     const handleInputChange = (event) => {
 

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import heycow from '@/images/heycow_img.svg';
 import Image from "next/image";
 import Swal from "sweetalert2";
-
+import { Barn, Cow } from '@phosphor-icons/react';
 export function Sidebar() {
     const [activePage, setActivePage] = useState('');
     const router = useRouter();
@@ -67,18 +67,25 @@ export function Sidebar() {
                          <span className="">Komunitas</span>
                      </Link>
                  </li>
+                 <li className={`sidebar-item ${pathname === "/peternak/request" ? "active" : ""}`}>
+                     <Link className=" sidebar-link" href="/peternak/profile">
+                            <i class="bi bi-send-exclamation"></i>
+                            <span className="">Request</span>
+                     </Link>
+                 </li>
+
                  <li className=" sidebar-title">Management</li>
 
                  <li className={`sidebar-item ${pathname === "/peternak/cattle" ? "active" : ""}`}>
                      <Link className="sidebar-link" href="/peternak/cattle">
-                         <i className=" bi bi-grid-fill"  />
-                         <span className="">Cattle</span>
+                            <Cow size={20} />
+                            <span className="">Cattle</span>
                      </Link>
                  </li>
                  <li className={`sidebar-item ${pathname === "/peternak/angon" && "/peternak/angon/pengangon" ? "active" : ""}`}>
                      <Link className="sidebar-link" href="/peternak/angon">
-                         <i className=" bi bi-file-person-fill" />
-                         <span className="">Angon</span>
+                            <Barn size={20} />
+                            <span className="">Angon</span>
                      </Link>
                  </li>
                  <li className={`sidebar-item ${pathname === "/peternak/help-center" ? "active" : ""}`}>
@@ -93,21 +100,7 @@ export function Sidebar() {
                             <span className="">History</span>
                      </Link>
                  </li>
-                 <li className={`sidebar-item ${pathname === "/peternak/profile" ? "active" : ""}`}>
-                     <Link className=" sidebar-link" href="/peternak/profile">
-                         <i className=" bi bi-person-circle" />
-                         <span className="">Profile</span>
-                     </Link>
-                 </li>
-
-                 <button>
-                     <li className="sidebar-item">
-                         <a className="sidebar-link" onClick={onClickLogout}>
-                             <i className=" bi bi-box-arrow-right" />
-                             <span className="">Logout</span>
-                         </a>
-                     </li>
-                 </button>
+                 
 
              </ul>
         </div>

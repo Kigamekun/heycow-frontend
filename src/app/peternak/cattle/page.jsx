@@ -62,7 +62,7 @@ import { animals } from "./dummy"
 export default function Home() {
   const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
   const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
-    
+  const [searchQuery, setSearchQuery] = React.useState('')
   // State Cattle 
   const [cattleData, setCattleData] = React.useState(
     []
@@ -302,7 +302,7 @@ export default function Home() {
         return 'bg-emerald-600';
       case 'sakit':
         return 'bg-red-400';
-      case 'sold':
+      case 'dijual':
         return 'bg-yellow-400';
       case 'mati':
         return 'bg-red-800';
@@ -317,7 +317,9 @@ export default function Home() {
     setCattle({ ...cattle, [name]: value });
   
   }
-  
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
   const handleSelectChange = (event) => {
     
     const name = event.target.name;
@@ -326,6 +328,13 @@ export default function Home() {
     setCattle({ ...cattle, [name]: value });
   
   }
+  
+  const filteredCattleData = cattleData.filter(cattle =>
+    cattle.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  // const filteredUserData = userData.filter(user =>
+  //   user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
   return (
     <>
       <header className="mb-3">
@@ -447,23 +456,6 @@ export default function Home() {
                                 Betina
                             </label>
                         </div>
-                        {/* <RadioGroup
-                          
-                          color="default"
-                          classNames="text-black font-bold d-flex"
-                          // value={selected}
-                          // onChange={handleInputChange}
-                          // id="birth"
-                          // autoFocus
-                          // type="date"
-                          // label="text"
-                          // placeholder="Input your cattle name"
-                          // variant="bordered"
-                          // className="w-full h-[2.8rem] "
-                        >
-                          <Radio value="jantan">Jantan</Radio>
-                          <Radio value="brtina">Betina</Radio>
-                        </RadioGroup> */}
                       </div>
                       {/* Farm */}
                       <div className="grid grid-cols-1">
@@ -599,41 +591,41 @@ export default function Home() {
 
       {/* Search Bar  */}
       <div>
-        <div className="card-body float-end">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Search..."
-        />
+        <div className="card-body float-start rounded">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
         </div>
       </div>
 
       {/* Cattle section */}
-      <div className="container grid grid-cols-3 gap-3 mt-5 cursor-pointer" >
-        
-        
-
-       
-        {Array.isArray(cattleData) && cattleData?.map((cattle) => (
-          <Link key={cattle.id} href = {`/peternak/cattle/${cattle.id}?user=${user && user.id}`}>
-          <div className="card" >
-            <div className="card-body d-flex justify-between">
-              <div>
-                <h3 className="text-emerald-600 text-ellipsis">{cattle.name}</h3>
-                {/* <p className="text-xs">{cattle.iot_device_id}</p> */}
-                <p className="text-black">{cattle.iot_device.serial_number}</p>
-              </div>
-              <div>
-                <div className={`${getStatusColor(cattle.status)} rounded-md`}>
-                  <p className="text-white text-sm m-2">{cattle.status}</p>
+      {filteredCattleData.length > 0 ? (
+        <div className="container grid grid-cols-3 gap-3 mt-5 cursor-pointer">
+          {filteredCattleData.map((cattle) => (
+            <Link key={cattle.id} href={`/peternak/cattle/${cattle.id}?user=${user && user.id}`}>
+              <div className="card">
+                <div className="card-body d-flex justify-between">
+                  <div>
+                    <h3 className="text-emerald-600 text-ellipsis">{cattle.name}</h3>
+                    <p className="text-black">{cattle.iot_device.serial_number}</p>
+                  </div>
+                  <div>
+                    <div className={`${getStatusColor(cattle.status)} rounded-md`}>
+                      <p className="text-white text-sm m-2">{cattle.status}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-          </Link>
-        ))}
-
-      </div>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="mt-4 text-center text-gray-500">No results found</div>
+      )}
     </>
   )
 }

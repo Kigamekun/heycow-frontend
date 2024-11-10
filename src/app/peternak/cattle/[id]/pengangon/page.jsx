@@ -27,8 +27,12 @@ export default function Pengangon() {
   const [userData, setUserData] = React.useState(
     []
 )
+  const [searchQuery, setSearchQuery] = React.useState('');
 
 
+  const filteredUserData = userData.filter(user =>
+    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 const getUserData = async () => {
   try {
     const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/pengangon`, {
@@ -64,7 +68,9 @@ const getUserData = async () => {
     }
   }
 }
-
+const handleSearchChange = (event) => {
+  setSearchQuery(event.target.value);
+};
   React.useEffect(() => {
     getUserData();
   }, [])
@@ -73,41 +79,46 @@ const getUserData = async () => {
       <h3 className="ml-2 text-emerald-600">Pengangon</h3>
     
         {/* Search Bar  */}
-      <div className="mt-3">
-        <div className="card-body float-start rounded">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search..."
-          />
+        <div>
+          <div className="card-body float-start rounded">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </div>
         </div>
-      </div>
       {/* Angon atau farmer section */}
       {/* Angon atau farmer section */}
-      <div className="container grid grid-cols-2 gap-3 mt-4">
-        {userData.map((user, index) => (
-          <div key={index} className="card">
-            <div className="card-body image dan profile d-flex gap-4">
-              <img src={user.full_avatar_url || "https://via.placeholder.com/130"} alt="user" className="w-[130px]" />
-              <div className="d-flex flex-col grid grid-rows-3 gap-1">
-                <h4 className="text-black font-bold">{user.name}</h4>
-                <p className="text-md text-black font-bold">{user.farm}</p>
-                <p className="text-r">{user.upah}</p>
-                <p className="font-bold">{user.address}</p>
-             
+      {/* Angon atau farmer section */}
+      {filteredUserData.length > 0 ? (
+        <div className="container grid grid-cols-2 gap-3 mt-4">
+          {filteredUserData.map((user, index) => (
+            <div key={index} className="card">
+              <div className="card-body image dan profile d-flex gap-4">
+                <img src={user.full_avatar_url || "https://via.placeholder.com/130"} alt="user" className="w-[130px]" />
+                <div className="d-flex flex-col grid ">
+                  <h4 className="text-black font-bold">{user.name}</h4>
+                  <p className="text-md text-black font-bold">{user.farm}</p>
+                  <p className="text-">{user.upah}</p>
+                  <p className="font-bold">{user.address}</p>
+                </div>
+              </div>
+              <div className="rating card-body mt-[-20px] d-flex justify-between">
+                {/* rating */}
+                <ReactStars count={5} value={user.rate} size={24} color2={'#ffd700'} />
+                
+                {/* button */}
+                <Link href={`/peternak/cattle/${user.cattle_id}/pengangon/${user.id}`}><button className="btn btn-success">Pilih</button></Link>
               </div>
             </div>
-            <div className="rating card-body mt-[-20px] d-flex justify-between">
-              {/* rating */}
-              <ReactStars count={5} value={user.rate} size={24} color2={'#ffd700'} />
-              
-              {/* button */}
-              <Link href={`/peternak/cattle/${Cattle.id}/pengangon/${Pengangon.id}`}><button className="btn btn-success" >Pilih</button></Link>
-              
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="mt-4 text-center text-gray-500">No results found</div>
+      )}
     </>
   )
 }

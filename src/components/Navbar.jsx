@@ -9,7 +9,7 @@ import { useAuth } from '@/lib/hooks/auth';
 import Swal from "sweetalert2"
 import Image from "next/image";
 import { Avatar } from "@nextui-org/react";
-
+import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
 import Request from "./request";
 
 export function Navbar() {
@@ -52,6 +52,24 @@ export function Navbar() {
         } catch (error) {
             console.error('Error fetching user image:', error);
         }
+    };
+    const onClickLogout = () => {
+        Swal.fire({
+            title: "Anda yakin?",
+            text: "Anda akan logout!",
+            icon: "warning",
+            showCancelButton: true,
+            //  confirmButtonColor: "#6A9944",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Confirm",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                logout(); // Execute the logout function
+            } else {
+                Swal.fire("Cancelled", "Logout cancelled", "error");
+            }
+        });
     };
     useEffect(() => {
         fetchUserImage();
@@ -102,17 +120,37 @@ export function Navbar() {
                                 <span className="page-tag">{activePage}</span>
                             </Link> */}
                         </div>
-                        <div className="header">
-                            <div className="profile d-flex align-items-center">
-                                <div className="profile-info text-right">
-                                    <h4>{user ? user.name : 'User'}</h4>
-                                    <p>{user ? user.role : 'Role'}</p>
+                        <Popover>
+                            <PopoverTrigger>
+                                <div className="header">
+                                    <div className="profile d-flex align-items-center">
+                                        <div className="profile-info text-right">
+                                            <h4>{user ? user.name : 'User'}</h4>
+                                            <p>{user ? user.role : 'Role'}</p>
+                                        </div>
+                                        <div className="ml-3">
+                                            <img src={userAvatar || 'https://images.unsplash.com/broken'} alt="Profile" className="rounded-full w-[60px] mb-3" onLoad={handleImageLoad}/>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="ml-3">
-                                    <img src={userAvatar || 'https://images.unsplash.com/broken'} alt="Profile" className="rounded-full w-[60px] mb-3" onLoad={handleImageLoad}/>
+                            </PopoverTrigger>
+                            <PopoverContent className="bg-white p-2 mt-[-2rem] cursor-pointer">
+                                <div className="w-[10rem]">
+                                    <Link href='/peternak/profile' >
+                                        <div className='d-flex gap-3 justify-center text-black text-lg'>
+                                            <i className=" bi bi-person-circle" />
+                                            <p>Profile</p>
+                                        </div>
+                                    </Link>
+                                    <div  onClick={onClickLogout} className="d-flex justify-center gap-3 text-lg text-red-600 font-bold">
+                                        <i className=" bi bi-box-arrow-right"  />  
+                                        <p>Logout</p>
+                                    </div>
+                                
                                 </div>
-                            </div>
-                        </div>
+                            </PopoverContent>
+                        </Popover>
+                        
                     </div>
                 </nav>
             </header>
