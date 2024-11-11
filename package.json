@@ -33,6 +33,7 @@
     "heycow-frontend": "file:",
     "lucide-react": "^0.452.0",
     "next": "14.2.15",
+    "phosphor-icons": "^1.4.2",
     "react": "^18",
     "react-dom": "^18",
     "react-stars": "^2.2.5",

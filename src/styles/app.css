@@ -23109,6 +23109,8 @@ body .bi:before,
     vertical-align: top
 }
 
+
+
 .sidebar-wrapper .menu .sidebar-link span {
     margin-left: 1rem
 }
@@ -23121,6 +23123,17 @@ body .bi:before,
     color: #20A577;
     transition: 10ms;
 }
+
+.sidebar-wrapper .menu .sidebar-link:hover .ph .ph-cow {
+    color: #20A577;
+    transition: 10ms;
+}
+
+.sidebar-wrapper .menu .sidebar-link:hover .ph .ph-barn {
+    color: #20A577;
+    transition: 10ms;
+}
+
 
 .sidebar-wrapper .menu .sidebar-item {
     list-style: none;
