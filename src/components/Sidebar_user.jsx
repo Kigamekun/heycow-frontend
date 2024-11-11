@@ -5,9 +5,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 
 import heycow from '@/images/heycow_img.svg';
+import { Barn, Cow } from '@phosphor-icons/react';
 import Image from "next/image";
 import Swal from "sweetalert2";
-import { Barn, Cow } from '@phosphor-icons/react';
 export function Sidebar() {
     const [activePage, setActivePage] = useState('');
     const router = useRouter();
@@ -78,13 +78,17 @@ export function Sidebar() {
 
                  <li className={`sidebar-item ${pathname === "/peternak/cattle" ? "active" : ""}`}>
                      <Link className="sidebar-link" href="/peternak/cattle">
-                            <Cow size={20} />
+                            <div className='ph'>
+                            <Cow className="ph-cow"size={20} />
+                            </div>
                             <span className="">Cattle</span>
                      </Link>
                  </li>
                  <li className={`sidebar-item ${pathname === "/peternak/angon" && "/peternak/angon/pengangon" ? "active" : ""}`}>
                      <Link className="sidebar-link" href="/peternak/angon">
-                            <Barn size={20} />
+                            <div className='ph'>
+                            <Barn className ="ph-barn"size={20} />
+                            </div>
                             <span className="">Angon</span>
                      </Link>
                  </li>
@@ -98,6 +102,12 @@ export function Sidebar() {
                      <Link className="sidebar-link" href="/peternak/history">
                             <i class="bi bi-clock-history "></i>
                             <span className="">History</span>
+                     </Link>
+                 </li>
+                 <li className={`sidebar-item ${pathname === "/peternak/profile" ? "active" : ""}`}>
+                     <Link className=" sidebar-link" href="/peternak/profile">
+                            <i class="bi bi-person-fill"></i>
+                            <span className="">Profile</span>
                      </Link>
                  </li>
                  
