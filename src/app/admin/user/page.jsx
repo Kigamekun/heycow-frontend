@@ -68,7 +68,7 @@ export default function Home() {
         }
       });
     }
-    if (user !== 'admin') {
+    if (user === 'cattleman') {
       alert()
     }
 

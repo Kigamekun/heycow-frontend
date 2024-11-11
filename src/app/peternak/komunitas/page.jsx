@@ -12,7 +12,7 @@ import axios from "axios";
 import * as React from "react";
 import { useState } from "react";
 import Swal from "sweetalert2";
-
+import Link from "next/link";
 import {
   Modal,
   ModalBody,
@@ -43,14 +43,16 @@ export default function Page() {
         category: '',
         image : ''
     });
-
+    
+    const [cattleData, setCattleData] = React.useState([]);
+    const [cattle, setCattle] = React.useState({
+        id: 0,
+        name: "",
+        breed_id: "" ,
+        iot_device_id : "",
+    });
     const categories = ['forum', 'jual'];
 
-    // const fetchImage = async (e) => {
-    //     const file = e.target.files[0];
-    //     const base64 = await convertBase64(file);
-    //     setBlogPost({ ...blogPost, image: base64 });
-    // }
     const getUserData = async () => {
         try {
             const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`,
@@ -137,42 +139,6 @@ export default function Page() {
       setBlogPostsData(sortedData);
     };
 
-  //   const createBlog = async (event) => {
-  //     event.preventDefault();
-
-  //     const bodyFormData = new FormData();
-  //     bodyFormData.append('title', blogPost.title);
-  //     bodyFormData.append('caption', blogPost.content);
-  //     bodyFormData.append('image', blogPost.image);
-  //     bodyFormData.append('category', blogPost.category);
-
-  //     try {
-  //         const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts`, bodyFormData, {
-  //             headers: {
-  //                 'Content-Type': 'multipart/form-data',
-  //                 'Authorization': `Bearer ${localStorage.getItem('token')}`
-  //             }
-  //         });
-  //         console.log('Post created:', res.data);
-  //         console.log(res.data);
-  //         Swal.fire({
-  //             icon: 'success',
-  //             title: 'Post created successfully',
-  //             showConfirmButton: false,
-  //             timer: 1500
-  //         });
-  //         onClose();
-  //     } catch (error) {
-  //         console.error('Error creating post:', error.response);
-  //         Swal.fire({
-  //             icon: 'error',
-  //             title: 'Error creating post',
-  //             text: error.response.data.message,
-  //             showConfirmButton: false,
-  //             timer: 1500
-  //         });
-  //     }
-  // };
     const createBlog = async (e) => {
         e.preventDefault();
     
@@ -321,8 +287,6 @@ export default function Page() {
         }
       };
     const getCattleData = async () => {
-
-  
         try {
           const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle`, {
             headers: {
@@ -330,11 +294,11 @@ export default function Page() {
               'Authorization': `Bearer ${localStorage.getItem('token')}`,
             }
           });
-      
+          console.log('data cattle', res.data.data);
           if (res.data.data) {
-            setCattleData(res.data.data.data);
-            console.log('Ada datanya');
-            console.log(res.data.data.data);
+            setCattleData(res.data.data);
+            console.log('Ada datanya' , res.data.data);
+            console.log(res.data.data);
           }
         } catch (error) {
           if (error.response && error.response.status === 401) {
@@ -394,7 +358,8 @@ export default function Page() {
     React.useEffect(() => {
         getBlogPostsData(),
         // fetchUserImage(),
-        getUserData()
+        getUserData(),
+        getCattleData()
       }, [])
     
     const handleInputChange = (event) => {
@@ -479,17 +444,29 @@ export default function Page() {
                                 {/* <img src={post.image} alt="profile" className="w-[50px] h-[50px] rounded rounded-pill border" /> */}
                                 <img src={post.user.full_avatar_url || 'https://th.bing.com/th/id/OIP.YO6Vmx1wQhZoCc2U9N6GYgHaE8?rs=1&pid=ImgDetMain'} alt="profile" className="w-[50px] h-[50px] rounded-pill"/>
                                 <div className="mt-1">
-                                  <h6 className="font-bold text-black">{post.user.name}</h6>
+                                  <h5 className="font-bold text-black">{post.user.name}</h5>
                                     <p className="text-xs">{post.published_at}</p>
                                 </div>
                               </div>
                                 <div className="mt-3 container-post-content">
                                     <h4 className="font-bold text-black">{post.title}</h4>
-                                    <p className="text-black">
+                                    <p className="text-black truncate ">
                                         {post.content}
                                     </p>
                                     {/* <img src={post.image} alt="post" className="w-[100%] max-h-[400px] border" /> */}
-                                    <img src={post.full_image_url || 'https://icons.iconarchive.com/icons/fa-team/fontawesome/256/FontAwesome-Image-icon.png'} alt="post" className="w-[30rem]"/>
+                                    <div className="d-flex justify-center">
+                                    <img src={post.full_image_url || 'https://icons.iconarchive.com/icons/fa-team/fontawesome/256/FontAwesome-Image-icon.png'} alt="post" className="w-[45rem]"/>
+                                    </div>
+                                   
+                                  
+                                    {post.category === 'jual' && (
+                                      <div className="d-flex justify-between mt-5">
+                                      <p className="text-black text-3xl font-bold">{post.price}</p>
+                                      <Link href={`/peternak/komunitas/jual/${post.id}`}>
+                                        <Button className="text-white text-md font-bold bg-emerald-600">Lihat Detail</Button>
+                                      </Link>
+                                    </div>
+                                    )}
                                 </div>
                                 <div className="gap-4 mt-3 container-post-action d-flex">
                                     <div className="gap-2 Likes-count d-flex text-md">
@@ -584,11 +561,54 @@ export default function Page() {
                                                 onChange={handleSelectChange}
                                             >
                                                 {categories.map((category) => (
-                                                    <SelectItem key={category} value={category}>
+                                                    <SelectItem className="bg-white w-full" key={category} value={category}>
                                                         {category}
                                                     </SelectItem>
                                                 ))}
                                             </Select>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="cattle_id" className="text-black font-bold">
+                                                <h6>
+                                                    Pilih Sapi yang ingin dijual!
+                                                </h6>
+                                            </label>
+                                            <Select
+                                                id="cattle_id"
+                                                name="cattle_id"
+                                                value={blogPost.cattle_id}
+                                                variant="bordered"
+                                                placeholder="Select your cattle"
+                                                className="w-full h-[2.8rem]"
+                                                onChange={handleSelectChange}
+                                            >
+                                                {cattleData.map((cattle) => (
+                                                    <SelectItem className="bg-white w-full" key={cattle} value={cattle}>
+                                                        {cattle && cattle.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </Select>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="title" className="text-black font-bold">
+                                                <h6>
+                                                    Price
+                                                </h6>
+                                            </label>
+                                            <Input
+                                                isRequired
+                                                value={blogPost.price}
+                                                id="title"
+                                                name="price"
+                                                autoFocus
+                                                type="text"
+                                                placeholder="Input your cattle price!"
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleInputChange}
+                                            />
                                         </div>
                                         <div className="grid grid-cols-1 gap-1">
                                             <label htmlFor="image" className="text-black font-bold">
@@ -619,109 +639,7 @@ export default function Page() {
                     )}
                 </ModalContent>
             </Modal>
-          {/* <Modal
-                isOpen={isOpen}
-                onOpenChange={onOpenChange}
-                scrollBehavior="inside"
-                placement="center"
-                backdrop="opaque"
-                classNames={{
-                    backdrop: "bg-black bg-opacity-50"
-                }}
-            >
-                <ModalContent className="w-[550px]  bg-white rounded-xl ">
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="dialog-title flex flex-col gap-1 px-6 mt-6">
-                                <h3 className="text-black font-bold text-center">Create Post</h3>
-                            </ModalHeader>
-                            <ModalBody>
-                                <form onSubmit={createBlog}>
-                                    <div className="grid grid-cols-1 gap-3">
-                                        <div className="grid grid-cols-1 gap-1">
-                                            <label htmlFor="title" className="text-black font-bold">
-                                                <h6>
-                                                    Title<span className="text-red-600">*</span>
-                                                </h6>
-                                            </label>
-                                            <Input
-                                                isRequired
-                                                id="title"
-                                                name="title"
-                                                autoFocus
-                                                type="text"
-                                                placeholder="Input your blogPost title"
-                                                variant="bordered"
-                                                className="w-full h-[2.8rem] "
-                                                onChange={handleInputChange}
-                                            />
-                                        </div>
-
-                                        <div className="grid grid-cols-1 gap-1">
-                                            <label htmlFor="caption" className="text-black font-bold">
-                                                <h6>
-                                                    Caption<span className="text-red-600">*</span>
-                                                </h6>
-                                            </label>
-                                            <Input
-                                                isRequired
-                                                id="caption"
-                                                name="caption"
-                                                autoFocus
-                                                type="text"
-                                                placeholder="Input your blogPost caption"
-                                                variant="bordered"
-                                                className="w-full h-[2.8rem] "
-                                                onChange={handleInputChange}
-                                            />
-                                        </div>
-
-                                        <div className="grid grid-cols-1 gap-1">
-                                            <label htmlFor="image" className="text-black font-bold">
-                                                <h6>
-                                                    Image
-                                                </h6>
-                                            </label>
-                                            <Input
-                                                id="image"
-                                                name="image"
-                                                autoFocus
-                                                type="file"
-                                                variant="bordered"
-                                                className="w-full h-[2.8rem] "
-                                                onChange={handleFileChange}
-                                            />
-                                        </div>
-
-                                        <div className="grid grid-cols-1 gap-1">
-                                            <label htmlFor="category" className="text-black font-bold">
-                                                <h6>
-                                                    Category<span className="text-red-600">*</span>
-                                                </h6>
-                                            </label>
-                                            <Input
-                                                id="category"
-                                                name="category"
-                                                autoFocus
-                                                type="text"
-                                                placeholder="Input your post category"
-                                                variant="bordered"
-                                                className="w-full h-[2.8rem] "
-                                                onChange={handleInputChange}
-                                            />
-                                        </div>
-                                    </div>
-                                    <ModalFooter>
-                                        <Button type="submit" className="bg-emerald-600 text-md">
-                                            Submit
-                                        </Button>
-                                    </ModalFooter>
-                                </form>
-                            </ModalBody>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal> */}
+          
         </main>
         
         </>

@@ -1,4 +1,12 @@
-'use client';
+'use client'
+
+export default function Request() {
+    return (
+        <div>
+            <h1>Request</h1>
+        </div>
+    )
+}'use client';
 
 import {
     Table,

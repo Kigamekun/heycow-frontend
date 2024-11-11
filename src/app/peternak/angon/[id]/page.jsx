@@ -42,7 +42,7 @@ import {
 import axios from "axios"
 import Swal from "sweetalert2"
 import { useRouter } from "next/navigation" 
-import Pengangon from "../../cattle/[id]/pengangon/page"
+
 import Cattle from "@/app/admin/cattle/page"
 export default function Home({ params }) {
   const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' })

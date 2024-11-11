@@ -2,10 +2,6 @@
 import { Button } from "@/components/ui/button";
 import * as React from 'react';
 import { useAuth } from '@/lib/hooks/auth';
-import Image from 'next/image';
-import { Avatar } from '@nextui-org/react';
-import { Editor } from '@tinymce/tinymce-react';
-import {Select, SelectSection, SelectItem} from "@nextui-org/react";
 import { useState, useEffect } from 'react';
 import axios from "axios";
 import { usePathname, useRouter } from 'next/navigation';
@@ -21,25 +17,24 @@ import {
 } from '@nextui-org/modal'
 import { Input } from "@/components/ui/input"
 import Swal from 'sweetalert2';
-import { swal } from "@/public/assets/extensions/sweetalert2/sweetalert2.all";
-// kita buat function fetching api
+import { P } from "@/public/assets/extensions/chart.js/chunks/helpers.segment";
 
 export default function Profile() {
-    const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
-    const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
-    const [users, setUsers] = React.useState([]);
+    const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' });
+    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const [userData, setUserData] = React.useState({
         id: 0,
-        name: null,
+        name: '',
         phone_number: '',
         email: '',
         bio: '',
-        selfie_name: null,
-    });
+        avatar: null,
+        selfie_ktp: null,
+    }, []);
 
     const getUserData = async () => {
         console.log('fetching user data...');
-        try{
+        try {
             const res = await axios.get(
                 `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/me`, {
                     headers: {
@@ -54,26 +49,18 @@ export default function Profile() {
                 console.log('data kita', res.data);
                 setUserData(res.data);
             }
-            // swal.fire ({
-            //     icon: 'success',
-            //     title: 'Profile updated successfully',
-            //     showConfirmButton: false,
-            //     timer: 1500,
-            // })
-        }catch(error){
+        } catch (error) {
             console.error('Error fetching user data:', error);
-
         }
     }
-
 
     const updateMe = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.put(
-                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${user.id}`, userData, {
+            const res = await axios.post(
+                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/update-profile`, userData, {
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'multipart/form-data',
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     }
                 }
@@ -88,13 +75,6 @@ export default function Profile() {
                     timer: 1500,
                 });
             }
-            console.log('data', res.data);
-            Swal.fire({
-                icon: 'success',
-                title: 'Profile updated successfully',
-                showConfirmButton: false,
-                timer: 1500,
-            });
         } catch (error) {
             console.error('Error updating profile:', error);
             Swal.fire({
@@ -107,20 +87,22 @@ export default function Profile() {
         }
     }
 
-    const handleInputChange = (event) => {
+    const handleFileChange = (event) => {
+        setUserData({ ...userData, avatar: event.target.files[0] });
+    };
 
-    const { name, value } = event.target;
-        setUsers({ ...users, [name]: value });
-    }
-      
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setUserData({ ...userData, [name]: value });
+    };
+
     const handleSelectChange = (event) => {
-        
-    const name = event.target.name;
-    const {value} = event.target.selectedOptions[0];
+        const name = event.target.name;
+        const { value } = event.target.selectedOptions[0];
         console.log(value);
-        setUsers({ ...users, [name]: value });
-        
-    }
+        setUserData({ ...userData, [name]: value });
+    };
+
     const [userAvatar, setUserAvatar] = React.useState('');
     const fetchUserImage = async () => {
         console.log('fetching user image...');
@@ -132,219 +114,197 @@ export default function Profile() {
                 }
             })
             
-            console.log('ada:', response.data.full_avatar_url); // Log the response to inspect its structure
+            console.log('ada:', response.data.avatar); // Log the response to inspect its structure
             console.log('Response:', response.data);
             // Ensure the user object exists and has the full_image_url property
-            if (response.data.full_avatar_url && response.data.full_avatar_url) {
-                setUserAvatar(response.data.full_avatar_url);
-                swal.fire({
-                    icon: 'success',
-                    title: 'Profile updated successfully',
-                    showConfirmButton: false,
-                    timer: 1500,
-                });
+            if (response.data.avatar && response.data.avatar) {
+                setUserAvatar(response.data.avatar);
             } else {
-                console.error('User  object or full_avatar_url is undefined');
+                console.error('User object or full_avatar_url is undefined');
             }
-            console.log('User  Avatar URL:', userAvatar);   
+            console.log('User Avatar URL:', userAvatar);   
         } catch (error) {
-            swal.fire({
+            Swal.fire({
                 icon: 'error',
                 title: 'Error occurred',
                 text: 'Please try again later.',
                 showConfirmButton: false,
                 timer: 1500,
-            }); // Show an error message
+            })
             console.error('Error fetching user image:', error);
         }
     };
+
     useEffect(() => {
         getUserData();
         fetchUserImage();
-        // updateMe();
-        // if (user) {
-        //     fetchUserImage();
-        // }
-        // setActivePage(pathname || 'dashboard');
-        // console.log(pathname)
-    },[]);
-    
+    }, []);
+
     useEffect(() => {
-        console.log('User  Avatar Updated:', userAvatar); // Log whenever userAvatar changes
+        console.log('User Avatar Updated:', userAvatar); // Log whenever userAvatar changes
     }, [userAvatar]);
 
     const handleImageLoad = (event) => {
         event.target.setAttribute('data-loaded', 'true');
         console.log('Image loaded successfully');
     };
-    return(
-       
+
+    return (
         <main>
             <Modal 
-                    isOpen={isOpen} 
-                    onOpenChange={onOpenChange}
-                    scrollBehavior="inside"
-                    placement="center"
-                    backdrop="opaque"
-                    classNames={{
+                isOpen={isOpen} 
+                onOpenChange={onOpenChange}
+                scrollBehavior="inside"
+                placement="center"
+                backdrop="opaque"
+                classNames={{
                     backdrop: "bg-black bg-opacity-50"
-                    }}
-                    >
-                    <ModalContent className="w-[700px] h-[650px] bg-white rounded-xl ">
+                }}
+            >
+                <ModalContent className="w-[700px] h-[650px] bg-white rounded-xl ">
                     {(onClose) => (
-                    <>
-                    <ModalHeader className="dialog-title flex flex-col gap-1 px-6 mt-6">
-                        <h3 className="text-black font-bold text-center">Edit Profile</h3>
-                    </ModalHeader>
-                    <ModalBody >
-                        <form onSubmit={updateMe}>
-                            {/* Cattle Name */}
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className="grid grid-cols-1 gap-1">
-                                    <label htmlFor="name" className="text-black font-bold">
-                                    <h6>
-                                        Username<span className="text-red-600">*</span>
-                                    </h6>
-                                    </label>
-                                    <Input
-                                    isRequired
-                                    id="name"
-                                    autoFocus
-                                    type="text"
-                                
-                                    placeholder={user ? user.name : "Input your email"}
-                                    variant="bordered"
-                                    className="w-full h-[2.8rem] "
-                                    onChange={handleInputChange}
-                                    />
-                                </div>
+                        <>
+                            <ModalHeader className="dialog-title flex flex-col gap-1 px-6 mt-6">
+                                <h3 className="text-black font-bold text-center">Edit Profile</h3>
+                            </ModalHeader>
+                            <ModalBody >
+                                <form onSubmit={updateMe}>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="name" className="text-black font-bold">
+                                                <h6>
+                                                    Username<span className="text-red-600">*</span>
+                                                </h6>
+                                            </label>
+                                            <Input
+                                                id="name"
+                                                autoFocus
+                                                type="text"
+                                                name="name"
+                                                value={userData.name}
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
 
-                                <div className="grid grid-cols-1 gap-1">
-                                    <label htmlFor="email" className="text-black font-bold">
-                                    <h6>
-                                        Email<span className="text-red-600">*</span>
-                                    </h6>
-                                    </label>
-                                    <Input
-                                    isRequired
-                                    id="email"
-                                    autoFocus
-                                    type="email"
-                                    label="text"
-                                    defaultValue={user ? user.email : "Input your email"}
-                                    variant="bordered"
-                                    className="w-full h-[2.8rem] "
-                                    onChange={handleInputChange}
-                                    />
-                                </div>
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="email" className="text-black font-bold">
+                                                <h6>
+                                                    Email<span className="text-red-600">*</span>
+                                                </h6>
+                                            </label>
+                                            <Input
+                                                id="email"
+                                                name="email"
+                                                autoFocus
+                                                type="email"
+                                                value={userData.email}
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
 
-                                {/* Cattle Height */}
-                                <div className="grid grid-cols-1 gap-1">
-                                    <label htmlFor="role" className="text-black font-bold">
-                                    <h6>
-                                        Farm
-                                    </h6>
-                                    </label>
-                                    <Input
-                                    id="role"
-                                    isDisabled
-                                    autoFocus
-                                    type="text"
-                                    label="text"
-                                    variant="bordered"
-                                    className="w-full h-[2.8rem] "
-                                    defaultValue={user && user.farm}
-                                    />
-                                </div>
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="farm_id" className="text-black font-bold">
+                                                <h6>
+                                                    Farm
+                                                </h6>
+                                            </label>
+                                            <Input
+                                                id="farm_id"
+                                                name="farm_id"
+                                                isDisabled
+                                                autoFocus
+                                                type="text"
+                                                value={userData.farm}
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                            />
+                                        </div>
 
-                                {/* Cattle Weight */}
-                                <div className="grid grid-cols-1 gap-1">
-                                    <label htmlFor="address" className="text-black font-bold">
-                                    <h6>
-                                        Address<span className="text-red-600">*</span>
-                                    </h6>
-                                    </label>
-                                    <Input
-                                    id="address"
-                                    autoFocus
-                                    type="text"
-                                    label="text"
-                                    placeholder="Input your cattle address"
-                                    defaultValue={user ? user.address : "100"}
-                                    variant="bordered"
-                                    className="w-full h-[2.8rem] "
-                                    onChange={handleInputChange}
-                                    />
-                                </div>
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="address" className="text-black font-bold">
+                                                <h6>
+                                                    Address<span className="text-red-600">*</span>
+                                                </h6>
+                                            </label>
+                                            <Input
+                                                id="address"
+                                                autoFocus
+                                                name="address"
+                                                type="text"
+                                                value={userData.address}
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
 
-                                
-                            </div>
-                            <div className="d-flex justify-center"></div>
-                            {/* No Telp*/}
-                            <div className="grid grid-cols-1 gap-1">
-                                    <label htmlFor="role" className="text-black font-bold">
-                                    <h6>
-                                        No. Telp
-                                    </h6>
-                                    </label>
-                                    <Input
-                                    id="role"
-                                    autoFocus
-                                    type="text"
-                                    value={user && user.phone_number}
-                                    label="text"
-                                    variant="bordered"
-                                    className="w-full h-[2.8rem] "
-                                    defaultValue={user ? user.phone_number : "081282520510"}
-                                    />
-                                </div>
-                            {/* BIO */}
-                            <div className="grid grid-cols-1 gap-1">
-                                <label htmlFor="weight" className="text-black font-bold">
-                                <h6>
-                                    Bio
-                                </h6>
-                                </label>
-                                <Input
-                                    id="weight"
-                                    autoFocus
-                                    name="bio"
-                                    value={user && user.bio}
-                                    type="textarea"
-                                    placeholder="Input your bio"
-                                    variant="bordered"
-                                    className="w-full h-[2.8rem] "
-                                    defaultValue={user ? user.bio : "Input your bio"}
-                                    onChange={handleInputChange}
-                                    />
-                            </div>
-                            {/* BIO */}
-                            <div className="grid grid-cols-1 gap-1">
-                                <label htmlFor="role" className="text-black font-bold">
-                                <h6>
-                                    Avatar
-                                </h6>
-                                </label>
-                                <Input
-                                    id="weight"
-                                    autoFocus
-                                    type="file"
-                                    label="text"
-                                    placeholder="Input your cattle weight"
-                                    variant="bordered"
-                                    className="w-full h-[2.8rem] "
-                                    onChange={handleInputChange}
-                                    />
-                            </div>
-                        </form>
-                        </ModalBody>
-                        <ModalFooter>
+                                        <div className="grid grid-cols-1 my-3 gap-1">
+                                            <label htmlFor="phone_number" className="text-black font-bold">
+                                                <h6>
+                                                    No. Telp
+                                                </h6>
+                                            </label>
+                                            <Input
+                                                id="phone_number"
+                                                autoFocus
+                                                name="phone_number"
+                                                type="text"
+                                                value={userData.phone_number}
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
 
-                        <Button isSubmit className="bg-emerald-600 text-md" type="submit">
-                        Submit
-                        </Button>
-                        </ModalFooter>
-                    </>
+                                        
+                                        {userData.is_pengangon === 1 && (
+                                            <div className="grid grid-cols-1 my-3 gap-1">
+                                                <label htmlFor="upah" className="text-black font-bold">
+                                                    <h6>
+                                                        Upah
+                                                    </h6>
+                                                </label>
+                                                <Input
+                                                    id="upah"
+                                                    autoFocus
+                                                    name="upah"
+                                                    type="text"
+                                                    value={userData.upah}
+                                                    variant="bordered"
+                                                    className="w-full h-[2.8rem] "
+                                                    onChange={handleInputChange}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-1 gap-1">
+                                        <label htmlFor="avatar" className="text-black font-bold">
+                                            <h6>
+                                                Avatar
+                                            </h6>
+                                        </label>
+                                        <Input
+                                            id="avatar"
+                                            autoFocus
+                                            type="file"
+                                            variant="bordered"
+                                            className="w-full h-[2.8rem] "
+                                            onChange={handleFileChange}
+                                        />
+                                    </div>
+                                </form>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button className="bg-emerald-600 text-md" type="submit" onClick={updateMe}>
+                                    Submit
+                                </Button>
+                            </ModalFooter>
+                        </>
                     )}
                 </ModalContent>
             </Modal>
@@ -357,8 +317,7 @@ export default function Profile() {
                         </Button>
                         <div>
                             <div className='profile-picture d-flex justify-center'>
-                                <img src={userAvatar} width={120} height={120} alt="Profile" className="rounded-full ml-[9rem]"  onLoad={handleImageLoad}/>
-                                
+                                <img src={userAvatar} width={120} height={120} alt="Profile" className="rounded-full ml-[9rem]" onLoad={handleImageLoad} />
                             </div>
                             <h5 className='mt-3 text-black font-bold text-center'>{user ? user.name : "mulyono"}</h5>
                         </div>
@@ -382,7 +341,7 @@ export default function Profile() {
                                 </p>
                                 <div className='border rounded-md h-[3rem] py-2 px-1'>
                                     <p className='text-md text-black font-light'>
-                                        {user? user.email : "mulyono25@gmail.com"}
+                                        {user ? user.email : "mulyono25@gmail.com"}
                                     </p>
                                 </div>
                             </div>
@@ -404,21 +363,32 @@ export default function Profile() {
                                 </p>
                                 <div className='border rounded-md h-[3rem] py-2 px-1'>
                                     <p className='text-md text-black font-light'>
-                                        {user && user.farm_id}
+                                        {user && user.farm}
+                                    </p>
+                                </div>
+                            </div>
+                            <div>
+                                <p className='text-md mb-[-0.2rem] text-black font-bold'>
+                                    Upah
+                                </p>
+                                <div className='border rounded-md h-[3rem] py-2 px-1'>
+                                    <p className='text-md text-black font-light'>
+                                        Rp {user && user.upah} / Bulan
+                                    </p>
+                                </div>
+                            </div>
+                            <div>
+                                <p className='text-md mb-[-0.2rem] text-black font-bold'>
+                                    Address
+                                </p>
+                                <div className='border rounded-md h-[3rem] py-2 px-1'>
+                                    <p className='text-md text-black font-light'>
+                                        {user && user.address}
                                     </p>
                                 </div>
                             </div>
                         </div>
-                        <div className='mt-3'>
-                            <p className='text-md mb-[-0.2rem] text-black font-bold'>
-                                Bio Profile
-                            </p>
-                            <div className='border rounded-md py-2 px-1'>
-                                <p className='text-md text-black font-light'>
-                                    {user ? user.bio : '-'}
-                                </p>
-                            </div>
-                        </div> 
+                    
                     </div>
                 </div>
             </div>
