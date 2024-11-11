@@ -62,10 +62,8 @@ export default function Home() {
       }
     });
   }
-  if (user? user.role !== 'admin' : true) {
+  if (user === 'cattleman') {
     alert()
-  }else{
-    console.log('admin')
   }
   const [deviceData, setDeviceData] = React.useState([]);
   const columns = [

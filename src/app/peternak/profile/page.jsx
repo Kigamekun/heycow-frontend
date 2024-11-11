@@ -30,7 +30,7 @@ export default function Profile() {
         bio: '',
         avatar: null,
         selfie_ktp: null,
-    });
+    }, []);
 
     const getUserData = async () => {
         console.log('fetching user data...');
@@ -241,24 +241,47 @@ export default function Profile() {
                                                 onChange={handleInputChange}
                                             />
                                         </div>
+
+                                        <div className="grid grid-cols-1 my-3 gap-1">
+                                            <label htmlFor="phone_number" className="text-black font-bold">
+                                                <h6>
+                                                    No. Telp
+                                                </h6>
+                                            </label>
+                                            <Input
+                                                id="phone_number"
+                                                autoFocus
+                                                name="phone_number"
+                                                type="text"
+                                                value={userData.phone_number}
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
+
+                                        
+                                        {userData.is_pengangon === 1 && (
+                                            <div className="grid grid-cols-1 my-3 gap-1">
+                                                <label htmlFor="upah" className="text-black font-bold">
+                                                    <h6>
+                                                        Upah
+                                                    </h6>
+                                                </label>
+                                                <Input
+                                                    id="upah"
+                                                    autoFocus
+                                                    name="upah"
+                                                    type="text"
+                                                    value={userData.upah}
+                                                    variant="bordered"
+                                                    className="w-full h-[2.8rem] "
+                                                    onChange={handleInputChange}
+                                                />
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="grid grid-cols-1 my-3 gap-1">
-                                        <label htmlFor="phone_number" className="text-black font-bold">
-                                            <h6>
-                                                No. Telp
-                                            </h6>
-                                        </label>
-                                        <Input
-                                            id="phone_number"
-                                            autoFocus
-                                            name="phone_number"
-                                            type="text"
-                                            value={userData.phone_number}
-                                            variant="bordered"
-                                            className="w-full h-[2.8rem] "
-                                            onChange={handleInputChange}
-                                        />
-                                    </div>
+                                    
                                     <div className="grid grid-cols-1 gap-1">
                                         <label htmlFor="avatar" className="text-black font-bold">
                                             <h6>
@@ -344,17 +367,28 @@ export default function Profile() {
                                     </p>
                                 </div>
                             </div>
-                        </div>
-                        <div className='mt-3'>
-                            <p className='text-md mb-[-0.2rem] text-black font-bold'>
-                                Bio Profile
-                            </p>
-                            <div className='border rounded-md py-2 px-1'>
-                                <p className='text-md text-black font-light'>
-                                    {user ? user.bio : '-'}
+                            <div>
+                                <p className='text-md mb-[-0.2rem] text-black font-bold'>
+                                    Upah
                                 </p>
+                                <div className='border rounded-md h-[3rem] py-2 px-1'>
+                                    <p className='text-md text-black font-light'>
+                                        Rp {user && user.upah} / Bulan
+                                    </p>
+                                </div>
                             </div>
-                        </div> 
+                            <div>
+                                <p className='text-md mb-[-0.2rem] text-black font-bold'>
+                                    Address
+                                </p>
+                                <div className='border rounded-md h-[3rem] py-2 px-1'>
+                                    <p className='text-md text-black font-light'>
+                                        {user && user.address}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    
                     </div>
                 </div>
             </div>

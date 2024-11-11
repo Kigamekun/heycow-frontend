@@ -44,6 +44,23 @@ export default function Home() {
   const [columnFilters, setColumnFilters] = React.useState(
     []
   )
+  const alert = () => {
+    Swal.fire({
+      title: "Anda bukan admin!",
+      text: "Anda tidak memiliki akses ke halaman ini!",
+      icon: "error",
+      showCancelButton: false,
+      confirmButtonColor: "#6A9944",
+      confirmButtonText: "OK"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = '/peternak'; // Redirect to /peternak
+      }
+    });
+  }
+  if (user === 'cattleman') {
+    alert()
+  }
   const [columnVisibility, setColumnVisibility] =
     React.useState({
       image: false,

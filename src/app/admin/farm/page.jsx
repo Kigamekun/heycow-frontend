@@ -55,10 +55,8 @@ export default function Home() {
       }
     });
   }
-  if (user? user.role !== 'admin' : true) {
+  if (user === 'cattleman') {
     alert()
-  }else{
-    console.log('admin')
   }
 
   const [sorting, setSorting] = React.useState([])

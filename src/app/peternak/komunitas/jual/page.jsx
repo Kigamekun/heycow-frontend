@@ -31,6 +31,7 @@ import {
   
 import { Select, SelectItem, SelectSection } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
+import Link from "next/link";
 
 export default function JualPage() {
     const [jualData, setJualData] = React.useState([]);
@@ -332,7 +333,7 @@ export default function JualPage() {
             <div className="d-flex justify-center">
             <div className="grid grid-cols-1 container-post">
                     {jualData?.map((post, index) => (
-                        <div key={index} className="card mt-3 w-[800px] grid grid-cols-1 gap-6">
+                        <div key={index} className="card mt-3 w-[50rem] grid grid-cols-1 gap-6">
                             <div className="card-body">
                               <div className="settings post float-end">
                                 <Popover size="sm">
@@ -364,7 +365,16 @@ export default function JualPage() {
                                         {post.content}
                                     </p>
                                     {/* <img src={post.image} alt="post" className="w-[100%] max-h-[400px] border" /> */}
-                                    <img src={post.full_image_url || 'https://icons.iconarchive.com/icons/fa-team/fontawesome/256/FontAwesome-Image-icon.png'} alt="post" className="w-[30rem]"/>
+                                    <div className="d-flex justify-center">
+                                      <img src={post.full_image_url || 'https://icons.iconarchive.com/icons/fa-team/fontawesome/256/FontAwesome-Image-icon.png'} alt="post" className="w-[45rem]"/>
+                                    </div>
+                                    
+                                    <div className="d-flex justify-between mt-5">
+                                      <p className="text-black text-3xl font-bold">{post.price}</p>
+                                      <Link href={`/peternak/komunitas/jual/${post.id}`}>
+                                        <Button className="text-white text-md font-bold bg-emerald-600">Lihat Detail</Button>
+                                      </Link>
+                                    </div>
                                 </div>
                                 <div className="gap-4 mt-3 container-post-action d-flex">
                                     <div className="gap-2 Likes-count d-flex text-md">
@@ -445,27 +455,48 @@ export default function JualPage() {
                                         </div>
 
                                         <div className="grid grid-cols-1 gap-1">
-                                            <label htmlFor="category" className="text-black font-bold">
+                                            <label htmlFor="cattle_id" className="text-black font-bold">
                                                 <h6>
-                                                    Category<span className="text-red-600">*</span>
+                                                    Pilih Sapi yang ingin dijual!
                                                 </h6>
                                             </label>
                                             <Select
-                                                id="category"
-                                                name="category"
-                                                value={jual.category}
+                                                id="cattle_id"
+                                                name="cattle_id"
+                                                value={jual.cattle_id}
                                                 variant="bordered"
-                                                placeholder="Select a category"
+                                                placeholder="Select your cattle"
                                                 className="w-full h-[2.8rem]"
                                                 onChange={handleSelectChange}
                                             >
-                                                {categories.map((category) => (
-                                                    <SelectItem className="bg-white w-full" key={category} value={category}>
-                                                        {category}
+                                                {cattleData.map((cattle) => (
+                                                    <SelectItem className="bg-white w-full" key={cattle} value={cattle}>
+                                                        {cattle && cattle.name}
                                                     </SelectItem>
                                                 ))}
                                             </Select>
                                         </div>
+
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="title" className="text-black font-bold">
+                                                <h6>
+                                                    Price
+                                                </h6>
+                                            </label>
+                                            <Input
+                                                isRequired
+                                                value={jual.price}
+                                                id="title"
+                                                name="price"
+                                                autoFocus
+                                                type="text"
+                                                placeholder="Input your cattle price!"
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
+
                                         <div className="grid grid-cols-1 gap-1">
                                             <label htmlFor="image" className="text-black font-bold">
                                                 <h6>
