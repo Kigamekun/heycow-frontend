@@ -21,7 +21,7 @@ import Swal from "sweetalert2"
 import Cattle from "@/app/admin/cattle/page"
 
 import Link from "next/link"
-export default function Pengangon() {
+export default function Pengangon( {params} ) {
   const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' })
 const router = useRouter();
   const [userData, setUserData] = React.useState(
@@ -110,7 +110,7 @@ const handleSearchChange = (event) => {
                 <ReactStars count={5} value={user.rate} size={24} color2={'#ffd700'} />
                 
                 {/* button */}
-                <Link href={`/peternak/cattle/${user.cattle_id}/pengangon/${user.id}`}><button className="btn btn-success">Pilih</button></Link>
+                <Link href={`/peternak/cattle/${params.cattleID}/pengangon/${user.id}`}><button className="btn btn-success">Pilih</button></Link>
               </div>
             </div>
           ))}

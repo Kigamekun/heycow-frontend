@@ -68,7 +68,7 @@ export function Sidebar() {
                      </Link>
                  </li>
                  <li className={`sidebar-item ${pathname === "/peternak/request" ? "active" : ""}`}>
-                     <Link className=" sidebar-link" href="/peternak/profile">
+                     <Link className=" sidebar-link" href="/peternak/request">
                             <i class="bi bi-send-exclamation"></i>
                             <span className="">Request</span>
                      </Link>

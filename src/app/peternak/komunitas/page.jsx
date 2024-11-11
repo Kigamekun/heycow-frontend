@@ -46,11 +46,6 @@ export default function Page() {
 
     const categories = ['forum', 'jual'];
 
-    // const fetchImage = async (e) => {
-    //     const file = e.target.files[0];
-    //     const base64 = await convertBase64(file);
-    //     setBlogPost({ ...blogPost, image: base64 });
-    // }
     const getUserData = async () => {
         try {
             const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`,
@@ -137,42 +132,6 @@ export default function Page() {
       setBlogPostsData(sortedData);
     };
 
-  //   const createBlog = async (event) => {
-  //     event.preventDefault();
-
-  //     const bodyFormData = new FormData();
-  //     bodyFormData.append('title', blogPost.title);
-  //     bodyFormData.append('caption', blogPost.content);
-  //     bodyFormData.append('image', blogPost.image);
-  //     bodyFormData.append('category', blogPost.category);
-
-  //     try {
-  //         const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts`, bodyFormData, {
-  //             headers: {
-  //                 'Content-Type': 'multipart/form-data',
-  //                 'Authorization': `Bearer ${localStorage.getItem('token')}`
-  //             }
-  //         });
-  //         console.log('Post created:', res.data);
-  //         console.log(res.data);
-  //         Swal.fire({
-  //             icon: 'success',
-  //             title: 'Post created successfully',
-  //             showConfirmButton: false,
-  //             timer: 1500
-  //         });
-  //         onClose();
-  //     } catch (error) {
-  //         console.error('Error creating post:', error.response);
-  //         Swal.fire({
-  //             icon: 'error',
-  //             title: 'Error creating post',
-  //             text: error.response.data.message,
-  //             showConfirmButton: false,
-  //             timer: 1500
-  //         });
-  //     }
-  // };
     const createBlog = async (e) => {
         e.preventDefault();
     
@@ -584,7 +543,7 @@ export default function Page() {
                                                 onChange={handleSelectChange}
                                             >
                                                 {categories.map((category) => (
-                                                    <SelectItem key={category} value={category}>
+                                                    <SelectItem className="bg-white w-full" key={category} value={category}>
                                                         {category}
                                                     </SelectItem>
                                                 ))}
@@ -619,109 +578,7 @@ export default function Page() {
                     )}
                 </ModalContent>
             </Modal>
-          {/* <Modal
-                isOpen={isOpen}
-                onOpenChange={onOpenChange}
-                scrollBehavior="inside"
-                placement="center"
-                backdrop="opaque"
-                classNames={{
-                    backdrop: "bg-black bg-opacity-50"
-                }}
-            >
-                <ModalContent className="w-[550px]  bg-white rounded-xl ">
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="dialog-title flex flex-col gap-1 px-6 mt-6">
-                                <h3 className="text-black font-bold text-center">Create Post</h3>
-                            </ModalHeader>
-                            <ModalBody>
-                                <form onSubmit={createBlog}>
-                                    <div className="grid grid-cols-1 gap-3">
-                                        <div className="grid grid-cols-1 gap-1">
-                                            <label htmlFor="title" className="text-black font-bold">
-                                                <h6>
-                                                    Title<span className="text-red-600">*</span>
-                                                </h6>
-                                            </label>
-                                            <Input
-                                                isRequired
-                                                id="title"
-                                                name="title"
-                                                autoFocus
-                                                type="text"
-                                                placeholder="Input your blogPost title"
-                                                variant="bordered"
-                                                className="w-full h-[2.8rem] "
-                                                onChange={handleInputChange}
-                                            />
-                                        </div>
-
-                                        <div className="grid grid-cols-1 gap-1">
-                                            <label htmlFor="caption" className="text-black font-bold">
-                                                <h6>
-                                                    Caption<span className="text-red-600">*</span>
-                                                </h6>
-                                            </label>
-                                            <Input
-                                                isRequired
-                                                id="caption"
-                                                name="caption"
-                                                autoFocus
-                                                type="text"
-                                                placeholder="Input your blogPost caption"
-                                                variant="bordered"
-                                                className="w-full h-[2.8rem] "
-                                                onChange={handleInputChange}
-                                            />
-                                        </div>
-
-                                        <div className="grid grid-cols-1 gap-1">
-                                            <label htmlFor="image" className="text-black font-bold">
-                                                <h6>
-                                                    Image
-                                                </h6>
-                                            </label>
-                                            <Input
-                                                id="image"
-                                                name="image"
-                                                autoFocus
-                                                type="file"
-                                                variant="bordered"
-                                                className="w-full h-[2.8rem] "
-                                                onChange={handleFileChange}
-                                            />
-                                        </div>
-
-                                        <div className="grid grid-cols-1 gap-1">
-                                            <label htmlFor="category" className="text-black font-bold">
-                                                <h6>
-                                                    Category<span className="text-red-600">*</span>
-                                                </h6>
-                                            </label>
-                                            <Input
-                                                id="category"
-                                                name="category"
-                                                autoFocus
-                                                type="text"
-                                                placeholder="Input your post category"
-                                                variant="bordered"
-                                                className="w-full h-[2.8rem] "
-                                                onChange={handleInputChange}
-                                            />
-                                        </div>
-                                    </div>
-                                    <ModalFooter>
-                                        <Button type="submit" className="bg-emerald-600 text-md">
-                                            Submit
-                                        </Button>
-                                    </ModalFooter>
-                                </form>
-                            </ModalBody>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal> */}
+          
         </main>
         
         </>

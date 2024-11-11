@@ -40,11 +40,11 @@ export function Navbar() {
                 }
             })
     
-            console.log('ada:', response.data.full_avatar_url); // Log the response to inspect its structure
+            console.log('ada:', response.data.avatar); // Log the response to inspect its structure
             console.log('Response:', response.data);
-            // Ensure the user object exists and has the full_avatar_url property
-            if (response.data.full_avatar_url && response.data.full_avatar_url) {
-                setUserAvatar(response.data.full_avatar_url);
+            // Ensure the user object exists and has the avatar property
+            if (response.data.avatar && response.data.avatar) {
+                setUserAvatar(response.data.avatar);
             } else {
                 console.error('User  object or full_image_url is undefined');
             }

@@ -3,13 +3,69 @@
 import { useAuth } from "@/lib/hooks/auth"; // Hook for authentication
 import Chart from 'chart.js/auto';
 import { useEffect, useRef, useState } from 'react';
+import Link from "next/link";
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default function Home() {
   const { user, logout } = useAuth({ middleware: 'admin' });
+  const [cattleData, setCattleData] = useState([]);
   const doughnutCanvas = useRef();
   const barCanvas = useRef();
   const [chartData, setChartData] = useState([])
 
+  // get Cattle Data
+  const getCattleData = async () => {
+
+  
+    try {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle`, {
+        headers: {
+          'content-type': 'text/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      });
+  
+      if (res.data.data) {
+        setCattleData(res.data.data);
+        console.log('Ada datanya');
+        console.log(res.data.data);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+  
+        logout();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'error terjadi',
+          text: 'mohon coba lagi nanti.',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    }
+  };
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'sehat':
+        return 'bg-emerald-600';
+      case 'sakit':
+        return 'bg-red-400';
+      case 'dijual':
+        return 'bg-yellow-400';
+      case 'mati':
+        return 'bg-red-800';
+      default:
+        return 'bg-gray-400';
+    }
+  };
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch("https://dummyjson.com/users")
@@ -25,6 +81,7 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
+    getCattleData();
     let doughnutChart = Chart.getChart('myChart');
     if (doughnutChart !== undefined) {
       doughnutChart.destroy();
@@ -134,9 +191,9 @@ export default function Home() {
           <div className="col-sm-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
-                <i className="bi bi-emoji-dizzy-fill text-red-800 text-[2rem]" />
+                <i className="bi bi-emoji-dizzy-fill text-red-400 text-[2rem]" />
                   <div className="flex-col d-flex ">
-                    <h6 className="text-red-600">Mati</h6>
+                    <h6 className="text-red-400">Sakit</h6>
                     <p>2</p>
                   </div>
               </div>
@@ -194,62 +251,24 @@ export default function Home() {
       </div>
       <h3 className="mb-4 ml-2 text-emerald-600">Daftar Ternak</h3>
       <div className="row">
-        <div className="col-sm-4">
-          <div className="card">
-            <div className="card-body">
-              <div className="justify-left">
-                <div className="row">
-                  <div className="col-sm-6">
-                    <h3>Cattle 1</h3>
+        <div className="container grid grid-cols-3 gap-3 mt-5 cursor-pointer">
+          {cattleData && cattleData.map((cattle) => (
+            <Link key={cattle.id} href={`/peternak/cattle/${cattle.id}?user=${user && user.id}`}>
+              <div className="card">
+                <div className="card-body d-flex justify-between">
+                  <div>
+                    <h3 className="text-emerald-600 text-ellipsis">{cattle && cattle.name}</h3>
+                    <p className="text-black">{cattle.iot_device && cattle.iot_device.serial_number}</p>
                   </div>
-                  <div className="col-sm-6">
-                    <div className="float-end">
-                      <span className="badge bg-success">Sehat</span>
+                  <div>
+                    <div className={`${getStatusColor(cattle.status)} rounded-md`}>
+                      <p className="text-white text-sm m-2">{cattle.status}</p>
                     </div>
                   </div>
                 </div>
-                <p>2324-2323-8482</p>
               </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-sm-4">
-          <div className="card">
-            <div className="card-body">
-              <div className="justify-left">
-                <div className="row">
-                  <div className="col-sm-6">
-                    <h3>Cattle 1</h3>
-                  </div>
-                  <div className="col-sm-6">
-                    <div className="float-end">
-                      <span className="badge bg-warning">Dijual</span>
-                    </div>
-                  </div>
-                </div>
-                <p>8324-3784-5385</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-sm-4">
-          <div className="card">
-            <div className="card-body">
-              <div className="justify-left">
-                <div className="row">
-                  <div className="col-sm-6">
-                    <h3>Cattle 3</h3>
-                  </div>
-                  <div className="col-sm-6">
-                    <div className="float-end">
-                      <span className="badge bg-danger">Sakit</span>
-                    </div>
-                  </div>
-                </div>
-                <p>4778-2284-8482</p>
-              </div>
-            </div>
-          </div>
+            </Link>
+          ))}
         </div>
       </div>
     </>

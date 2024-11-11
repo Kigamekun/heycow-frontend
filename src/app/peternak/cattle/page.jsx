@@ -605,8 +605,8 @@ export default function Home() {
               <div className="card">
                 <div className="card-body d-flex justify-between">
                   <div>
-                    <h3 className="text-emerald-600 text-ellipsis">{cattle.name}</h3>
-                    <p className="text-black">{cattle.iot_device.serial_number}</p>
+                    <h3 className="text-emerald-600 text-ellipsis">{cattle && cattle.name}</h3>
+                    <p className="text-black">{cattle.iot_device && cattle.iot_device.serial_number}</p>
                   </div>
                   <div>
                     <div className={`${getStatusColor(cattle.status)} rounded-md`}>
