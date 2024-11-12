@@ -104,12 +104,7 @@ export function Sidebar() {
                             <span className="">History</span>
                      </Link>
                  </li>
-                 <li className={`sidebar-item ${pathname === "/peternak/profile" ? "active" : ""}`}>
-                     <Link className=" sidebar-link" href="/peternak/profile">
-                            <i class="bi bi-person-fill"></i>
-                            <span className="">Profile</span>
-                     </Link>
-                 </li>
+                
                  
 
              </ul>

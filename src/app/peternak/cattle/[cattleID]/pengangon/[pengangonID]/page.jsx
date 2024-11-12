@@ -28,7 +28,9 @@ import {
 import { Select, SelectItem, SelectSection } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import duration from "@/public/assets/extensions/dayjs/plugin/duration";
-import { C } from "@/public/assets/extensions/chart.js/chunks/helpers.segment";
+
+
+
 export default function PengangonDetail({ params }) {
   const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' });
   const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
@@ -145,14 +147,14 @@ export default function PengangonDetail({ params }) {
       }
     }
   }
-
+console.log('nama',cattleData.name)
   const submitRequest = async (e) => {
     e.preventDefault();
     
     console.log('submitting request...');
     const bodyFormData = new FormData();
     bodyFormData.append('peternak_id', requests.peternak_id);
-    bodyFormData.append('duration', requests.duration);
+    bodyFormData.append('durasi', requests.duration);
     bodyFormData.append('cattle_id', requests.cattle_id);
 
     try {
@@ -171,17 +173,19 @@ export default function PengangonDetail({ params }) {
       setRequests({
         id: 0,
         duration: '',
-        cattle_id: '',
+        cattle_id: cattleID,
         status:'pending',
-        peternak_id: '',
+        peternak_id: pengangonID,
         user_id: '',
-      });
-      Swal.fire({
-        icon: 'success',
-        title: 'Request submitted successfully',
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      },
+        Swal.fire({
+          icon: 'success',
+          title: 'Request submitted successfully',
+          showConfirmButton: false,
+          timer: 1500,
+        })
+      );
+      
     } catch (error) {
       console.error('Error submitting request:', error);
       Swal.fire({
@@ -200,6 +204,15 @@ export default function PengangonDetail({ params }) {
   }, [cattleID, pengangonID]);
 
   React.useEffect(() => {
+    if (detailData.pengangon) {
+      setRequests((prevRequests) => ({ ...prevRequests, peternak_id: detailData.pengangon.id }));
+    }
+    if (cattleData.name) {
+      setRequests((prevRequests) => ({ ...prevRequests, cattle_id: cattleData.id }));
+    }
+  }, [detailData, cattleData]);
+  
+  React.useEffect(() => {
     getUserData();
     getUserDataDetail();
     getCattleData();
@@ -210,19 +223,25 @@ export default function PengangonDetail({ params }) {
     return <div>Loading...</div>;
   }
   const categories = ['forum', 'jual'];
-  const handleSelectChange = (event) => {
-    setRequests({ ...requests, duration: event.target.value });
+  // const handleSelectChange = (event) => {
+  //   setRequests({ ...requests, duration: event.target.value });
+  // };
+
+  const handleSelectChange = (e) => {
+    const { name, value } = e.target;
+    console.log('ada',value);
+    setRequests({ ...requests, [name]: parseInt(value, 10) });
   };
+  
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setRequests({ ...requests, [name]: value });
   };
-
+  console.log('detail data pengangon' , detailData.pengangon)
+  console.log('cattle data', cattleData)
+  console.log('data yang disubmit :',submitRequest)
   return (
     <>
-     
-      
-
       <div className="d-flex justify-center">
         <div className="card p-4 w-[650px] ">
           <div className="card-body">
@@ -234,7 +253,7 @@ export default function PengangonDetail({ params }) {
       <div className="s d-flex justify-center ">
         <div className="card w-[650px] p-2">
           <div className="card-body d-flex justify-around">
-            <div id="profile-picture">
+            <div id="</div>profile-picture">
               <img src={detailData.pengangon && detailData.pengangon.full_avatar_url || "https://via.placeholder.com/250"} alt="Descriptive Alt Text" width={250} height={250} />
               <p className="text-lg text-center mt-3 text-black font-thin">Upah : Rp {detailData.pengangon && detailData.pengangon.upah} / Bulan</p>
               <div className="d-flex mt-[-0.5rem] justify-center">
@@ -306,32 +325,50 @@ export default function PengangonDetail({ params }) {
                           Peternak<span className="text-red-600">*</span>
                         </h6>
                       </label>
-                      <Input
+                      <select name="peternak_id" id="peternak_id">
+                        <option selected value={requests.peternak_id}>{detailData.pengangon.name}</option>
+                      </select>
+                      {/* <Input
                         isDisabled
                         id="peternak_id"
                         name="peternak_id"
+                        defaultValue={detailData.pengangon && detailData.pengangon.name}
                         value={requests.peternak_id}
                         variant="bordered"
                         className="w-full h-[2.8rem]"
                         onChange={handleInputChange}
-                      />
+                      /> */}
                     </div>
-
                     <div className="grid grid-cols-1 gap-1">
                       <label htmlFor="cattle_id" className="text-black font-bold">
                         <h6>
                           Sapi<span className="text-red-600">*</span>
                         </h6>
                       </label>
-                      <Input
+                      <select name="cattle_id" id="cattle_id">
+                        <option selected value={requests.cattle_id}>{cattleData.name}</option>
+                      </select>
+                      {/* <Select 
+                        id="cattle_id"
+                        name="cattle_id"
+                        value={requests.cattle_id}
+                        defaultValue={requests.cattle_id}
+                      >
+                        <SelectItem 
+                          value={requests.cattle_id}>
+                          {cattleData.name}
+                        </SelectItem>
+                      </Select> */}
+                      {/* <Input
                         isDisabled
                         id="cattle_id"
                         name="cattle_id"
+                        defaultValue={cattleData && cattleData.name}
                         value={requests.cattle_id}
                         variant="bordered"
                         className="w-full h-[2.8rem]"
                         onChange={handleInputChange}
-                      />
+                      /> */}
                     </div>
                     
                     <div className="grid grid-cols-1 gap-1">
@@ -340,17 +377,30 @@ export default function PengangonDetail({ params }) {
                           Durasi<span className="text-red-600">*</span>
                         </h6>
                       </label>
-                      <Select
+                      <select
+                        name="duration"
+                        id="duration"
+                        value={requests.duration}
+                        onChange={handleSelectChange}
+                        className="w-full h-[2.8rem]"
+                      >
+                        <option value=''>Pilih durasi yang kamu inginkan</option>
+                        <option value={6}>6 Bulan</option>
+                        <option value={12}>12 Bulan</option>
+                      </select>
+                      {/* <Select 
                         id="duration"
                         name="duration"
                         value={requests.duration}
-                        onChange={handleSelectChange}
+                        onChange={(value) => handleSelectChange(value)}
                       >
                         <SelectItem value={6}>6 Bulan</SelectItem>
                         <SelectItem value={12}>12 Bulan</SelectItem>
-                      </Select>
+                      </Select> */}
+
                     </div>
                   </div>
+
                 </form>
               </ModalBody>
               <ModalFooter>

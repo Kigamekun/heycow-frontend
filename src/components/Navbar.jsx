@@ -1,12 +1,11 @@
 'use client';
+import Request from '@/components/request';
 import { useAuth } from '@/lib/hooks/auth';
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
-import axios from "axios";
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-
 export function Navbar() {
     const router = useRouter();
     const pathname = usePathname();
@@ -20,20 +19,6 @@ export function Navbar() {
         '/peternak/cattle/[cattleID]',
         '/peternak/cattle/[cattleID]/details'
     ];
-
-    const fetchUserImage = async () => {
-        try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/me`, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                }
-            });
-            setUserAvatar(response.data.full_avatar_url);
-        } catch (error) {
-            console.error('Error fetching user image:', error);
-        }
-    };
 
     const handleLogout = () => {
         Swal.fire({
@@ -52,32 +37,31 @@ export function Navbar() {
             }
         });
     };
+    const [isPengangon, setIsPengangon] = useState(null);
 
     useEffect(() => {
-        fetchUserImage();
-    }, [pathname]);
+        console.log('User:', user);
+    }, [pathname, user]);
 
     return (
         <header className="header">
-            <nav className="header-menu fixed top-0 px-5 right-0 h-[95px] w-[78rem] bg-white" style={{ zIndex: 10 }}>
+            <nav className="header-menu fixed top-0 px-5 right-0 h-[95px] w-[100%] bg-white" style={{ zIndex: 10 }}>
                 <div className="justify-between py-3 menu d-flex">
                     <div className="header d-flex">
-                        {/* Render the back button only if the current route is in the showBackButtonOnRoutes array */}
                         {showBackButtonOnRoutes.includes(pathname) && (
                             <button onClick={() => router.back()} className="mx-4 text-2xl text-black">
                                 ← Back
                             </button>
                         )}
-                        {/* Other navbar content can go here */}
                     </div>
                     <Popover>
                         <PopoverTrigger>
-                            <div className="profile d-flex align-items-center">
+                            <div className="gap-3 profile d-flex align-items-center">
                                 <div className="text-right profile-info">
                                     <h4>{user ? user.name : 'User'}</h4>
                                     <p>{user ? user.role : 'Role'}</p>
                                 </div>
-                                <img src={userAvatar || 'https://images.unsplash.com/broken'} alt="Profile" className="rounded-full w-[60px]" />
+                                <img src={user ? user.avatar : "https://images.unsplash.com/broken"} alt="Profile" className="rounded-full mt-[-1.5rem] w-[60px]" />
                             </div>
                         </PopoverTrigger>
                         <PopoverContent className="bg-white p-2 mt-[-2rem] cursor-pointer">
@@ -96,6 +80,7 @@ export function Navbar() {
                         </PopoverContent>
                     </Popover>
                 </div>
+                {isPengangon === 0 && <Request />}
             </nav>
         </header>
     );

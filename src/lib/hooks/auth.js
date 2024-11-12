@@ -118,7 +118,6 @@ export const useAuth = ({
                 })
                 .catch(function (error) {
                     console.log('Error:', error);
-
                     Swal.fire({
                         icon: 'error',
                         title: 'Credential is wrong',
@@ -174,7 +173,7 @@ export const useAuth = ({
 
     useEffect(() => {
 
-        if (middleware === 'admin'  && user) {
+        if (middleware === 'admin' && user) {
             if (user.role !== 'admin') {
                 router.push('/peternak');
             }
@@ -199,5 +198,6 @@ export const useAuth = ({
         forgotPassword,
         resendEmailVerification,
         logout,
+        mutate
     };
 };
