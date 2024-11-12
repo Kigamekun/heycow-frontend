@@ -33,15 +33,16 @@ import { Select, SelectItem, SelectSection } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import Link from "next/link";
 
-export default function JualPage() {
+export default function JualPage({params}) {
+    const [cattleID] = [params.cattleID]
     const [jualData, setJualData] = React.useState([]);
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
     const [jual, setJual] = React.useState({
         id: 0,
         title: '',
         content: '',
-        cattle_id: '',
         image: '',
+        cattle_id: '',
         category: 'jual',
     });
     const categories = ['forum', 'jual'];
@@ -83,80 +84,113 @@ export default function JualPage() {
         }
     }
     const createJual = async (e) => {
-      e.preventDefault();
-  
-      Swal.fire({
-        title: 'Loading...',
-        text: 'Mohon tunggu sebentar...',
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        }
-      });
-  
-      const bodyFormData = new FormData();
-      bodyFormData.append('title', jual.title);
-      bodyFormData.append('content', jual.content);
-      bodyFormData.append('image', jual.image);
-      bodyFormData.append('cattle_id', jual.cattle_id);
-      bodyFormData.append('category', jual.category);
-      
-  
-      try {
-        const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts`,
-          bodyFormData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            }
+        e.preventDefault();
+        
+    
+        Swal.fire({
+          title: 'Loading...',
+          text: 'Mohon tunggu sebentar...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
           }
-        );
-        console.log(res.data) ;
-        // Refresh cattle data
-        getForumData();
-  
-        // Reset form fields
-        setJual({
+        });
+    
+        const bodyFormData = new FormData();
+        bodyFormData.append('title', jual.title);
+        bodyFormData.append('content', jual.content);
+        bodyFormData.append('image', jual.image);
+        bodyFormData.append('cattle_id', jual.cattle_id);
+        bodyFormData.append('category', jual.category);
+        
+    
+        try {
+          const res = await axios.post(
+            `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts`,
+            bodyFormData,
+            {
+              headers:{
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+              }
+            }
+          );
+          console.log(res.data) ;
+          // Refresh cattle data
+          getForumData();
+    
+          // Reset form fields
+          setJual({
             id: 0,
             title: '',
             content: '',
-            cattle_id:'',
-            category: '',
+            category: 'jual',
+            cattle_id: '',
             image : ''
-        },
+          });
+    
+          onClose();
+    
           Swal.fire({
             icon: 'success',
-            title: 'Profile updated successfully',
-            showConfirmButton: false,
-            timer: 1500,
-          })
-        );
-  
-        setOpen(false);
-  
-        Swal.fire({
-          icon: 'success',
-          title: 'BlogPost berhasil dibuat',
-          text: 'Data blogpost berhasil dibuat',
-          showConfirmButton: true,
-          timer: 1500
+            title: 'BlogPost berhasil dibuat',
+            text: 'Data blogpost berhasil dibuat',
+            showConfirmButton: true,
+            timer: 1500
+          });
+        
+        } catch (error) {
+          console.error('Error:', error.response);  // Log error lengkap dari response
+          if (error.response && error.response.status === 401) {
+            Swal.fire({
+              icon: 'error',
+              title: error.response.data.message,
+              showConfirmButton: false,
+              timer: 1500
+            });
+            logout();
+          } 
+        }
+    };
+
+    const getCattleData = async () => {
+      console.log('Fetching cattle data...');
+      try {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${params.cattleID}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
         });
-      
+        if (Array.isArray(res.data.data)) {
+          setCattleData(res.data.data);
+          console.log('Ada datanya');
+          console.log(res.data.data);
+        } else {
+          console.error('Data yang diterima bukan array:', res.data.data);
+        }
       } catch (error) {
-        console.error('Error:', error.response);  // Log error lengkap dari response
         if (error.response && error.response.status === 401) {
           Swal.fire({
             icon: 'error',
             title: error.response.data.message,
             showConfirmButton: false,
-            timer: 1500
+            timer: 1500,
           });
           logout();
-        } 
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error occurred',
+            text: 'Please try again later.',
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
       }
-  };
+    }
+  console.log('nama',cattleData.name)
+
     // membuat data blogpost 
     const createCattle = async (e) => {
         e.preventDefault();
@@ -238,35 +272,6 @@ export default function JualPage() {
           }
         }
       };
-
-      const  getCattleData = async() => {
-        console.log(
-          'GET cattle data'
-        )
-
-        try{
-          var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle`, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization' : `Bearer ${localStorage.getItem('token')}`,
-              
-            }
-          })
-          console.log('data cattle',res.data.data);
-          if(res.data.data !==undefined){
-            setCattleData(res.data.data)
-          }
-        }catch(error){
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: error.response.data.message,
-            showConfirmButton: false,
-            timer: 1000
-          })
-        }
-      }
-
       const DeletePosts = async (id) => {
         if (user && user.role === 'admin') {
             try {
@@ -317,15 +322,19 @@ export default function JualPage() {
           setJual({ ...jual, image: event.target.files[0] });
       };
   
-      const handleSelectChange = (event) => {
-        setJual({ ...jual, cattle_id: event.target.value });
-    };
-    console.log('cattleData: ',cattleData);
+      const handleSelectChange = (e) => {
+        const { value } = e.target;
+        setJual({ ...jual, cattle_id: value });
+      };
+    
     console.log('data jualnya: ',jualData);
     React.useEffect(() => {
-        getCattleData();
         getForumData();
-      }, [])
+        getCattleData();
+        if (params.cattleID) {
+          setJual((prevJual) => ({ ...prevJual, cattle_id: params.cattleID }));
+        }
+      }, [params.cattleID]);
   return (
     <>
         <main>
@@ -494,26 +503,26 @@ export default function JualPage() {
                                         </div>
 
                                         <div className="grid grid-cols-1 gap-1">
-                                            <label htmlFor="cattle_id" className="text-black font-bold">
-                                                <h6>
-                                                    Pilih Sapi yang ingin dijual!
-                                                </h6>
-                                            </label>
-                                            <Select
-                                                id="cattle_id"
-                                                name="cattle_id"
-                                                value={jual.cattle_id}
-                                                variant="bordered"
-                                                placeholder="Select your cattle"
-                                                className="w-full h-[2.8rem]"
-                                                onChange={handleSelectChange}
-                                            >
-                                                {cattleData.map((cattle) => (
-                                                    <SelectItem className="bg-white w-full" key={cattle.id} value={cattle.id}>
-                                                        {cattle && cattle.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </Select>
+                                          <label htmlFor="cattle_id" className="text-black font-bold">
+                                            <h6>
+                                              Pilih Sapi yang ingin dijual!
+                                            </h6>
+                                          </label>
+                                          <Select
+                                            id="cattle_id"
+                                            name="cattle_id"
+                                            value={jual.cattle_id}
+                                            variant="bordered"
+                                            placeholder="Select your cattle"
+                                            className="w-full h-[2.8rem]"
+                                            onChange={handleSelectChange}
+                                          >
+                                            {cattleData && cattleData.map((cattle) => (
+                                              <SelectItem className="bg-white w-full" key={cattle.id} value={cattle.id}>
+                                                {cattle.name}
+                                              </SelectItem>
+                                            ))}
+                                          </Select>
                                         </div>
 
                                         <div className="grid grid-cols-1 gap-1">

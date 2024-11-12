@@ -638,7 +638,12 @@ const [cattleData, setCattleData] = React.useState(
                                 </Link>
                            
                                 
-                                <Button className="bg-emerald-600" >Jual</Button>
+                                <Link href={`/peternak/cattle/${cattle.id}/jual`}>
+                                  <Button className="bg-emerald-600" >
+                                    Jual Sapi mu
+                                  </Button>
+                                </Link>
+                           
                             </div>
                         </div>
                         <div className="grid grid-cols-1 gap-3 w-full">

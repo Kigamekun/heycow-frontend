@@ -70,11 +70,9 @@ export default function Cattle() {
       }
     });
   }
-  if  (user? user.role !== 'admin' : true) {
+  if (user === 'cattleman') {
     alert()
-  }else{
-    console.log('admin')
-  } 
+  }
   const [cattleData, setCattleData] = React.useState([]);
   const columns = [
     {
