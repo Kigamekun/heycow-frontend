@@ -80,14 +80,14 @@ export default function Home() {
       cell: ({ row }) => row.index + 1, // Display row index, starting from 1
     },
     {
-      accessorKey: "avatar",
+      accessorKey: "full_avatar_url",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Avatar
+            Avatars
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
@@ -96,7 +96,7 @@ export default function Home() {
 
         <div className="flex px-2 py-1">
           <div className="flex flex-col justify-center">
-            <img src={row.getValue("avatar")} alt="avatar" className="w-10 h-10 rounded-full">
+            <img src={row.getValue("full_avatar_url") ?? 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} alt="avatar" className="w-10 h-10 rounded-full">
             </img>
           </div>
         </div>
@@ -197,37 +197,6 @@ export default function Home() {
       },
       cell: ({ row }) => <div className="lowercase">{row.getValue("role")}</div>,
     },
-    // {
-    //     accessorKey: "status",
-    //     header: ({ column }) => {
-    //       return (
-    //         <Button
-    //           variant="ghost"
-    //           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    //         >
-    //           Status
-    //           <ArrowUpDown className="w-4 h-4 ml-2" />
-    //         </Button>
-    //       )
-    //     },
-    //     cell: ({ row }) => (
-  
-    //       <div className="flex px-2 py-1">
-    //         <div>
-  
-    //         </div>
-    //         <div className="flex flex-col justify-center">
-    //           <h6 className="mb-0 text-sm leading-normal dark:text-white">
-    //             {row.getValue("status") == 'active' ? <span class="badge bg-success">Active</span> : <span class="badge bg-danger">Inactive</span>}
-    //           </h6>
-    //           <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
-    //           </p>
-    //         </div>
-    //       </div>
-    //     ),
-        
-    //   },
-
     {
       accessorKey: 'id',
       header: 'Actions',
@@ -314,6 +283,8 @@ export default function Home() {
       .then(function (response) {
         if (response.data.data != undefined) {
           setUserData(response.data.data);
+          console.log("KOCAK");
+          console.log(response.data.data);
         }
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {

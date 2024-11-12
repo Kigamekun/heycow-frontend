@@ -94,10 +94,8 @@ export default function Home() {
       },
       cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
     },
-
-    
     {
-      accessorKey: "users.address",
+      accessorKey: "address",
       header: ({ column }) => {
         return (
           <Button
@@ -109,34 +107,9 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => {
+      cell: ({ row }) => <div className="lowercase">{row.getValue("address")}</div>,
 
-        if (row.original.users != null) {
-            return <div className="lowercase">{row.original.users.address}</div>
-        }
-        else {
-            
-            return <div className="lowercase">-</div>
-        }
-
-      },
     },
-    // {
-    //   accessorKey: "address",
-    //   header: ({ column }) => {
-    //     return (
-    //       <Button
-    //         variant="ghost"
-    //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    //       >
-    //         Address
-    //         <ArrowUpDown className="w-4 h-4 ml-2" />
-    //       </Button>
-    //     )
-    //   },
-    //   cell: ({ row }) => <div className="lowercase">{row.getValue("address")}</div>,
-    // },
-
     {
       accessorKey: 'id',
       header: 'Actions',
@@ -231,8 +204,8 @@ export default function Home() {
       });
 
       if (response.data.data !== undefined) {
-        setFarmData(response.data.data);
-        console.log('Farm Data:', response.data.data);
+        setFarmData(response.data.data.data);
+        console.log('Farm dsada:', response.data.data.data);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
