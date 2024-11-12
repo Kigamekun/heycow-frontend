@@ -12,7 +12,7 @@ import {
     ModalFooter,
     ModalHeader,
     useDisclosure,
-    Checkbox, 
+    Checkbox,
     Link
 } from '@nextui-org/modal'
 import { Input } from "@/components/ui/input"
@@ -20,44 +20,60 @@ import Swal from 'sweetalert2';
 import { P } from "@/public/assets/extensions/chart.js/chunks/helpers.segment";
 
 export default function Profile() {
-    const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' });
+    const { user, mutate,logout } = useAuth({ middleware: 'cattleman' || 'admin' });
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const [userData, setUserData] = React.useState({
         id: 0,
-        name:'',
+        nama: '',
         phone_number: '',
         email: '',
         bio: '',
         avatar: null,
-        nik:'',
+        nik: '',
         farm: {
             name: '',
             address: '',
-          },
-        farm_id:'',
-        address:'',
+        },
+        farm_id: '',
+        address: '',
         upah: null,
         selfie_ktp: null,
         ktp: null,
         is_pengangon: 0,
-    }, []);
+    });
 
     const getUserData = async () => {
         console.log('fetching user data...');
         try {
             const res = await axios.get(
                 `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/me`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    }
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
+            }
             );
-
-            console.log('data user', res.data.farm);
             if (res.data) {
-                console.log('data kita', res.data);
-                setUserData(res.data);
+                setUserData({
+                    id: res.data.id,
+                    nama: res.data.name,
+                    phone_number: res.data.phone_number,
+                    email: res.data.email,
+                    bio: res.data.bio,
+                    avatar: res.data.avatar,
+                    nik: res.data.nik,
+                    farm: {
+                        name: res.data.farm ? res.data.farm.name : '',
+                        address: res.data.farm ? res.data.farm.address : '',
+                    },
+                    farm_id: res.data.farm_id,
+                    address: res.data.address,
+                    upah: res.data.upah,
+                    selfie_ktp: res.data.selfie_ktp,
+                    ktp: res.data.ktp,
+                    is_pengangon: res.data.is_pengangon,
+                }
+                );
             }
         } catch (error) {
             console.error('Error fetching user data:', error);
@@ -66,24 +82,43 @@ export default function Profile() {
 
     const updateMe = async (e) => {
         e.preventDefault();
-        
-        // const formData = new FormData();
-        // if (userData.avatar instanceof File) {
-        //     formData.append('avatar', userData.avatar);
-        // }
         try {
             console.log('updating profile...', userData);
+            const formData = new FormData();
+
+            formData.append('nama', userData.nama);
+            formData.append('phone_number', userData.phone_number);
+            formData.append('email', userData.email);
+            formData.append('address', userData.address);
+            formData.append('farm_name', userData.farm.name);
+            formData.append('farm_address', userData.farm.address);
+            formData.append('upah', userData.upah ?? 0);
+
+            if (userData.avatar && typeof userData.avatar !== 'string') {
+                formData.append('avatar', userData.avatar);
+            }
+
+
             const res = await axios.post(
-                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/update-profile`, userData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    }
+                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/update-profile`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
+            }
             )
             if (res.data) {
-                console.log('data kita', res.data);
-                setUserData(res.data);
+                // getUserData();
+                await mutate(); // This will refetch `/api/me` data in `useAuth`
+                
+
+                setUserAvatar(res.data.user.full_avatar_url);
+
+                setUserData(prevUserData => ({
+                    ...prevUserData,
+                    avatar: res.data.user.full_avatar_url // Assuming the response includes the updated avatar URL
+                }));
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Profile updated successfully',
@@ -92,7 +127,7 @@ export default function Profile() {
                 });
             }
 
-            
+
         } catch (error) {
             console.error('Error updating profile:', error);
             Swal.fire({
@@ -105,32 +140,30 @@ export default function Profile() {
         }
     }
 
-    // const handleFileChange = (event) => {
-    //     setUserData({ ...userData, avatar: event.target.files[0] });
-    // };
-
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         setUserData((prevUserData) => ({
-          ...prevUserData,
-          avatar: file ? file : prevUserData.avatar,
+            ...prevUserData,
+            avatar: file ? file : prevUserData.avatar,
         }));
-      };
+    };
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setUserData({ ...userData, [name]: value });
     };
+
     const handleInputChangeFarm = (event) => {
         const { name, value } = event.target;
         setUserData((prevUserData) => ({
-          ...prevUserData,
-          farm: {
-            ...prevUserData.farm,
-            [name]: value,
-          },
+            ...prevUserData,
+            farm: {
+                ...prevUserData.farm,
+                [name]: value,
+            },
         }));
-      };
+    };
+
     const handleSelectChange = (event) => {
         const name = event.target.name;
         const { value } = event.target.selectedOptions[0];
@@ -148,16 +181,16 @@ export default function Profile() {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
             })
-            
-            console.log('ada:', response.data.avatar); // Log the response to inspect its structure
-            console.log('Response:', response.data);
+
+            // console.log('ada:', response.data.avatar); // Log the response to inspect its structure
+            // console.log('Response:', response.data);
             // Ensure the user object exists and has the full_image_url property
             if (response.data.avatar && response.data.avatar) {
                 setUserAvatar(response.data.avatar);
             } else {
                 console.error('User object or full_avatar_url is undefined');
             }
-            console.log('User Avatar URL:', userAvatar);   
+            console.log('User Avatar URL:', userAvatar);
         } catch (error) {
             Swal.fire({
                 icon: 'error',
@@ -186,8 +219,8 @@ export default function Profile() {
 
     return (
         <main>
-            <Modal 
-                isOpen={isOpen} 
+            <Modal
+                isOpen={isOpen}
                 onOpenChange={onOpenChange}
                 scrollBehavior="inside"
                 placement="center"
@@ -215,8 +248,8 @@ export default function Profile() {
                                                 id="nama"
                                                 autoFocus
                                                 type="text"
-                                                name="name"
-                                                value={userData.name ? userData.name : ''} 
+                                                name="nama"
+                                                value={userData.nama ? userData.nama : ''}
                                                 variant="bordered"
                                                 className="w-full h-[2.8rem] "
                                                 onChange={handleInputChange}
@@ -243,37 +276,37 @@ export default function Profile() {
 
                                         <div className="grid grid-cols-1 gap-1">
                                             <label htmlFor="farm_id" className="text-black font-bold">
-                                            <h6>
-                                                Farm Name
-                                            </h6>
+                                                <h6>
+                                                    Farm Name
+                                                </h6>
                                             </label>
                                             <Input
-                                            id="farm_id"
-                                            name="name"
-                                            autoFocus
-                                            type="text"
-                                            value={userData.farm.name || ''}
-                                            variant="bordered"
-                                            className="w-full h-[2.8rem] "
-                                            onChange={handleInputChangeFarm}
+                                                id="farm_id"
+                                                name="name"
+                                                autoFocus
+                                                type="text"
+                                                value={userData.farm.name || ''}
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleInputChangeFarm}
                                             />
                                         </div>
-                                        
+
                                         <div className="grid grid-cols-1 gap-1">
                                             <label htmlFor="farm" className="text-black font-bold">
-                                            <h6>
-                                                Farm Address
-                                            </h6>
+                                                <h6>
+                                                    Farm Address
+                                                </h6>
                                             </label>
                                             <Input
-                                            id="farm"
-                                            name="address"
-                                            autoFocus
-                                            type="text"
-                                            value={userData.farm.address || ''}
-                                            variant="bordered"
-                                            className="w-full h-[2.8rem] "
-                                            onChange={handleInputChangeFarm}
+                                                id="farm"
+                                                name="address"
+                                                autoFocus
+                                                type="text"
+                                                value={userData.farm.address || ''}
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleInputChangeFarm}
                                             />
                                         </div>
 
@@ -362,7 +395,7 @@ export default function Profile() {
                                             </div>
                                         )}
                                     </div>
-                                    
+
                                     <div className="grid grid-cols-1 gap-1">
                                         <label htmlFor="avatar" className="text-black font-bold">
                                             <h6>
@@ -393,7 +426,7 @@ export default function Profile() {
                 <div className='card w-[650px]'>
                     <div className='card-body mb-[-1.5rem] '>
                         <Button className='bg-emerald-600 float-end ' onClick={onOpen}>
-                            <i className='bi mr-3 text-white bi-pencil-fill'/> 
+                            <i className='bi mr-3 text-white bi-pencil-fill' />
                             Edit Profile
                         </Button>
                         <div>
@@ -490,7 +523,7 @@ export default function Profile() {
                                 </div>
                             </div>
                         </div>
-                    
+
                     </div>
                 </div>
             </div>
