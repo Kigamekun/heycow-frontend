@@ -81,12 +81,12 @@ export function Navbar() {
                     </div>
                     <Popover>
                         <PopoverTrigger>
-                            <div className="profile d-flex align-items-center">
+                            <div className="profile d-flex align-items-center gap-3">
                                 <div className="text-right profile-info">
                                     <h4>{user ? user.name : 'User'}</h4>
                                     <p>{user ? user.role : 'Role'}</p>
                                 </div>
-                                <img src={userAvatar || 'https://images.unsplash.com/broken'} alt="Profile" className="rounded-full w-[60px]" />
+                                <img src={userAvatar || 'https://images.unsplash.com/broken'} alt="Profile" className="rounded-full mt-[-1.5rem] w-[60px]" />
                             </div>
                         </PopoverTrigger>
                         <PopoverContent className="bg-white p-2 mt-[-2rem] cursor-pointer">

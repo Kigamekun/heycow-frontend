@@ -31,18 +31,6 @@ import {
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogDescription,
-//   DialogHeader,
-//   DialogTitle
-// } from "@/components/ui/dialog"
-
-
-
-
-
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 import { Select, SelectItem } from "@nextui-org/react"
 
@@ -59,7 +47,7 @@ export default function Home() {
     []
   );
   
-
+  const [statusData, setStatusData] = React.useState(['sehat', 'sakit', 'dijual', 'mati']);
   const [cattle, setCattle] = React.useState({
     id: 0,
     name: "",
@@ -331,11 +319,22 @@ export default function Home() {
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
+ 
+
   const handleSelectChange1 = (value) => {
     setCattle({ ...cattle, breed_id: value });
   };
+  
   const handleSelectChange2 = (value) => {
     setCattle({ ...cattle, iot_device_id: value });
+  };
+  
+  const handleStatusChange = (value) => {
+    setCattle({ ...cattle, status: value });
+  };
+  
+  const handleTypeChange = (value) => {
+    setCattle({ ...cattle, type: value });
   };
   const filteredCattleData = cattleData.filter(cattle =>
     cattle.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -388,10 +387,10 @@ export default function Home() {
                           <Input
                             isRequired
                             id="name"
+                            name="name"
                             autoFocus
                             value={cattle.name}
                             type="text"
-                            label="text"
                             placeholder="Input your cattle name"
                             variant="bordered"
                             className="w-full h-[2.8rem] "
@@ -401,18 +400,17 @@ export default function Home() {
 
                         {/* Breed */}
                         <div className="grid grid-cols-1">
-                          <label htmlFor="breed" className="font-bold text-black mb-[-1rem] ">
+                          <label htmlFor="breed" className="font-bold text-black mb-[-1rem]">
                             <h6>Breed</h6>
                           </label>
                           <Select
                             id="breed"
                             variant="bordered"
                             autoFocus
-                            items={breedsData}
                             value={cattle.breed_id}
                             placeholder="Select an animal"
-                            onChange={handleSelectChange1}
-                            className="w-full mt-[-10px] "
+                            onChange={(e) => handleSelectChange1(e.target.value)}
+                            className="w-full mt-[-10px]"
                           >
                             {breedsData && breedsData.map((breed) => (
                               <SelectItem key={breed.id} value={breed.id} className="bg-white">
@@ -533,19 +531,17 @@ export default function Home() {
                         
                         {/* Breed */}
                         <div className="grid grid-cols-1">
-                          <label htmlFor="iot_devices" className="font-bold text-black mb-[-1rem] ">
-                            <h6>Iot Device</h6>
+                          <label htmlFor="iot_devices" className="font-bold text-black mb-[-1rem]">
+                            <h6>Iot Devices</h6>
                           </label>
                           <Select
                             id="iot_devices"
                             variant="bordered"
-                            name="iot_devices"
                             autoFocus
-                            items={IotDeviceData}
                             value={cattle.iot_device_id}
                             placeholder="Select an animal"
-                            onChange={handleSelectChange2}
-                            className="w-full mt-[-10px] "
+                            onChange={(e) => handleSelectChange2(e.target.value)}
+                            className="w-full mt-[-10px]"
                           >
                             {IotDeviceData && IotDeviceData.map((iot_devices) => (
                               <SelectItem key={iot_devices.id} value={iot_devices.id} className="bg-white">
@@ -554,8 +550,77 @@ export default function Home() {
                             ))}
                           </Select>
                         </div>
-                    
+
+                          {/* status */}
                       
+                        <div className="grid grid-cols-1">
+                          <label htmlFor="status" className="font-bold text-black mb-[1rem]">
+                            <h6>Status</h6>
+                          </label>
+                          <Select
+                            id="status"
+                            variant="bordered"
+                            name="status"
+                            autoFocus
+                            value={cattle.status}
+                            placeholder="Select status"
+                            onChange={(e) => handleStatusChange(e.target.value)}
+                            className="w-full mt-[-10px]"
+                          >
+                            {statusData.map((status) => (
+                              <SelectItem key={status} value={status} className="bg-white">
+                                {status}
+                              </SelectItem>
+                            ))}
+                          </Select>
+                        </div>
+
+                        
+                        
+                        <div className="grid grid-cols-1">
+                          <label htmlFor="type" className="font-bold text-black mb-[1rem]">
+                            <h6>Type</h6>
+                          </label>
+                          <Select
+                            id="type"
+                            variant="bordered"
+                            name="type"
+                            autoFocus
+                            value={cattle.type}
+                            placeholder="Select type"
+                            onChange={(e) => handleTypeChange(e.target.value)}
+                            className="w-full mt-[-10px]"
+                          >
+                            {['pedaging', 'perah', 'peranakan', 'lainnya'].map((type) => (
+                              <SelectItem key={type} value={type} className="bg-white">
+                                {type}
+                              </SelectItem>
+                            ))}
+                          </Select>
+                        </div>        
+                          
+
+                        
+                        <div className="grid grid-cols-1 gap-1">
+                          <label htmlFor="last_vaccination" className="font-bold text-black">
+                            <h6>
+                              Last Vaccination<span className="text-red-600">*</span>
+                            </h6>
+                          </label>
+                          <Input
+                            isRequired
+                            id="last_vaccination"
+                            name="last_vaccination"
+                            autoFocus
+                            type="date"
+                            value={cattle.last_vaccination}
+                            placeholder="Input your cattle birth date"
+                            variant="bordered"
+                            className="w-full h-[2.8rem]"
+                            onChange={handleInputChange}
+                          />
+                        </div>
+
                       </ModalBody>
                       <ModalFooter>
 

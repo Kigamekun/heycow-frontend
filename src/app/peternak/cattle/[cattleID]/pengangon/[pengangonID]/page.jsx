@@ -28,7 +28,9 @@ import {
 import { Select, SelectItem, SelectSection } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import duration from "@/public/assets/extensions/dayjs/plugin/duration";
-import { C } from "@/public/assets/extensions/chart.js/chunks/helpers.segment";
+
+
+
 export default function PengangonDetail({ params }) {
   const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' });
   const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
@@ -145,7 +147,7 @@ export default function PengangonDetail({ params }) {
       }
     }
   }
-
+console.log('nama',cattleData.name)
   const submitRequest = async (e) => {
     e.preventDefault();
     
@@ -175,13 +177,15 @@ export default function PengangonDetail({ params }) {
         status:'pending',
         peternak_id: '',
         user_id: '',
-      });
-      Swal.fire({
-        icon: 'success',
-        title: 'Request submitted successfully',
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      },
+        Swal.fire({
+          icon: 'success',
+          title: 'Request submitted successfully',
+          showConfirmButton: false,
+          timer: 1500,
+        })
+      );
+      
     } catch (error) {
       console.error('Error submitting request:', error);
       Swal.fire({
@@ -200,6 +204,15 @@ export default function PengangonDetail({ params }) {
   }, [cattleID, pengangonID]);
 
   React.useEffect(() => {
+    if (detailData.pengangon) {
+      setRequests((prevRequests) => ({ ...prevRequests, peternak_id: detailData.pengangon.name }));
+    }
+    if (cattleData.name) {
+      setRequests((prevRequests) => ({ ...prevRequests, cattle_id: cattleData.name }));
+    }
+  }, [detailData, cattleData]);
+  
+  React.useEffect(() => {
     getUserData();
     getUserDataDetail();
     getCattleData();
@@ -210,8 +223,13 @@ export default function PengangonDetail({ params }) {
     return <div>Loading...</div>;
   }
   const categories = ['forum', 'jual'];
-  const handleSelectChange = (event) => {
-    setRequests({ ...requests, duration: event.target.value });
+  // const handleSelectChange = (event) => {
+  //   setRequests({ ...requests, duration: event.target.value });
+  // };
+
+  const handleSelectChange = (e) => {
+    const { name, value } = e.target;
+    setRequests({ ...requests, [name]: parseInt(value, 10) });
   };
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -220,9 +238,6 @@ export default function PengangonDetail({ params }) {
 
   return (
     <>
-     
-      
-
       <div className="d-flex justify-center">
         <div className="card p-4 w-[650px] ">
           <div className="card-body">
@@ -234,7 +249,7 @@ export default function PengangonDetail({ params }) {
       <div className="s d-flex justify-center ">
         <div className="card w-[650px] p-2">
           <div className="card-body d-flex justify-around">
-            <div id="profile-picture">
+            <div id="</div>profile-picture">
               <img src={detailData.pengangon && detailData.pengangon.full_avatar_url || "https://via.placeholder.com/250"} alt="Descriptive Alt Text" width={250} height={250} />
               <p className="text-lg text-center mt-3 text-black font-thin">Upah : Rp {detailData.pengangon && detailData.pengangon.upah} / Bulan</p>
               <div className="d-flex mt-[-0.5rem] justify-center">
@@ -310,13 +325,13 @@ export default function PengangonDetail({ params }) {
                         isDisabled
                         id="peternak_id"
                         name="peternak_id"
+                        defaultValue={detailData.pengangon && detailData.pengangon.name}
                         value={requests.peternak_id}
                         variant="bordered"
                         className="w-full h-[2.8rem]"
                         onChange={handleInputChange}
                       />
                     </div>
-
                     <div className="grid grid-cols-1 gap-1">
                       <label htmlFor="cattle_id" className="text-black font-bold">
                         <h6>
@@ -327,6 +342,7 @@ export default function PengangonDetail({ params }) {
                         isDisabled
                         id="cattle_id"
                         name="cattle_id"
+                        defaultValue={cattleData && cattleData.name}
                         value={requests.cattle_id}
                         variant="bordered"
                         className="w-full h-[2.8rem]"

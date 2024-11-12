@@ -555,6 +555,7 @@ export default function Page() {
                                                 id="category"
                                                 name="category"
                                                 value={blogPost.category}
+                                                items={categories}
                                                 variant="bordered"
                                                 placeholder="Select a category"
                                                 className="w-full h-[2.8rem]"

@@ -1,6 +1,6 @@
 'use client'
 
-
+import React from 'react';
 // Import untuk form 
 import { Editor } from '@tinymce/tinymce-react';
 import { useRef } from "react";
@@ -13,6 +13,9 @@ import { Input } from "@/components/ui/input";
 
 
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
+import Swal from 'sweetalert2';
+import axios from 'axios';
+import { Button } from '@nextui-org/react';
 
 
 
@@ -20,6 +23,57 @@ export default function Home() {
   const { user, logout } = useAuth({ middleware: 'cattleman' })
 //   new Uppy().use(Dashboard, { inline: true, target: '#uppy-dashboard' });
     const editorRef = useRef();
+    const handleEditorChange = (content, editor) => {
+        console.log('Content was updated:', content);
+
+    }
+    const [helpCenterData, setHelpCenterData] = React.useState({
+        name: '',
+        email: '',
+        question_details: ''
+    }, [])
+    const postHelpCenter = async () => {
+        console.log('mengirim data....')
+        const bodyFormData = new FormData();
+        bodyFormData.append('name', helpCenterData.name);
+        bodyFormData.append('email', helpCenterData.email);
+        bodyFormData.append('question-details', helpCenterData.question_details);
+
+        
+        try{
+            var response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/help-center`, bodyFormData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            console.log('Response:', response.data)
+            if(response.data.status === 'success'){
+                setHelpCenterData({
+                    name: '',
+                    email: '',
+                    question_details: ''
+                })
+                ,
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Your question has been sent!',
+                    showConfirmButton: false,
+                    timer: 1000
+                })
+            }
+        }catch(error){
+            console.log('Error:', error)
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+                showConfirmButton: false,
+                timer: 1000
+            })
+        }
+    }
   return (
     <>
         
@@ -31,30 +85,18 @@ export default function Home() {
         <div className="justify-center mt-10 d-flex">
             <div className="card p-5 w-[50rem] ">
                 <div className="card-boy " >
-                    <form>
+                    <form onSubmit={postHelpCenter}>
                         <div className="mb-3">
-                            <label htmlFor="name" className="form-label">Name</label>
-                            <Input type="text" className="form-control" id="name" placeholder="Name" />
+                            <label htmlFor="name" className="form-label text-xl">Name</label>
+                            <Input type="text" className="form-control h-10" id="name" placeholder="Name" />
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="email" className="form-label">Email</label>
-                            <Input type="email" className="form-control" id="email" placeholder="Email" />
+                            <label htmlFor="email" className="form-label text-xl">Email</label>
+                            <Input type="email" className="form-control h-10" id="email" placeholder="Email" />
                         </div>
+                       
                         <div className="mb-3">
-                            <label htmlFor="subject" className="form-label">Jenis Masalah</label>
-                            <select className="form-select" id="subject">
-                                <option value="">Pilih Keluhan mu</option>
-                                <option value="2">Kerusakan Aplikasi</option>
-                                <option value="2">Pengiriman</option>
-                                <option value="3">Lainnya</option>
-                            </select>
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="image" className="form-label">Lampirkan Bukti</label>
-                            {/* <Dashboard id="uppy-dashboard" /> */}
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="message" className="form-label">Message</label>
+                            <label htmlFor="message" className="form-label text-xl">Message</label>
                             <Editor  
                                 apiKey='vbch5as7kp2v4czumq6x79pj95t4gpblp8wb90gijtnke8n4'
                                 init={{
@@ -79,10 +121,13 @@ export default function Home() {
                                     exportword_converter_options: { 'document': { 'size': 'Letter' } },
                                     importword_converter_options: { 'formatting': { 'styles': 'inline', 'resets': 'inline',	'defaults': 'inline', } },
                                   }}
+
                                   initialValue="Masukkan Keluhan Anda"
+                                  value={helpCenterData.question_details}
+                                    onEditorChange={handleEditorChange}
                             />
                         </div>
-                        <button type="submit" className="btn btn-primary">Submit</button>
+                        <Button type="submit" className="text-white rounded-xl text-xl bg-emerald-600">Submit</Button>
                     </form>
                 </div>
             </div>   
