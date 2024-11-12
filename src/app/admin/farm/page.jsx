@@ -38,7 +38,8 @@ import Swal from "sweetalert2"
 export default function Home() {
 
 
-  const { user, logout } = useAuth({ middleware: 'admin' })
+  const { user, logout } = useAuth({ middleware: 'admin' });
+  const [loading, setLoading] = React.useState(true);
 
   //security by role
   const alert = () => {
@@ -91,21 +92,7 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => (
-
-        <div className="flex px-2 py-1">
-          <div>
-
-          </div>
-          <div className="flex flex-col justify-center">
-            <h6 className="mb-0 text-sm leading-normal dark:text-white">
-              {row.getValue("name")}
-            </h6>
-            <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
-            </p>
-          </div>
-        </div>
-      ),
+      cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
     },
 
     
@@ -117,14 +104,14 @@ export default function Home() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Jenis Sapi
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            Address
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
       cell: ({ row }) => {
 
-        if (row.original.breed != null) {
+        if (row.original.users != null) {
             return <div className="lowercase">{row.original.users.address}</div>
         }
         else {
@@ -164,8 +151,8 @@ export default function Home() {
 
   const [farm, setFarm] = React.useState({
     id: 0,
-    name: '',
-    address: '',
+    name: "",
+    address: "",
   });
 
 
@@ -208,6 +195,7 @@ export default function Home() {
       .then(function (response) {
         if (response.data.data != undefined) {
           setUserData(response.data.data);
+        console.log(response.data.data);
         }
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
@@ -234,38 +222,40 @@ export default function Home() {
 
   
   const getFarmData = async () => {
-    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
-      headers: {
-        'content-type': 'text/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      });
+
+      if (response.data.data !== undefined) {
+        setFarmData(response.data.data);
+        console.log('Farm Data:', response.data.data);
       }
-    })
-      .then(function (response) {
-        if (response.data.data != undefined) {
-          setFarmData(response.data.data);
-        }
-      }).catch(function (error) {
-        if (error.response && error.response.status === 401) {
-          Swal.fire({
-            icon: 'error',
-            title: error.response.data.message,
-            showConfirmButton: false,
-            timer: 1500
-          })
-
-          logout()
-
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'error terjadi',
-            text: 'mohon coba lagi nanti.',
-            showConfirmButton: false,
-            timer: 1500
-          });
-        }
-      })
-  }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500
+        });
+        logout();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'error terjadi',
+          text: 'mohon coba lagi nanti.',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const createFarm = async (e) => {
     e.preventDefault();
@@ -301,8 +291,8 @@ export default function Home() {
       // Reset form fields
       setFarm({
         id: 0,
-        name: '',
-        address: '',
+        name: "",
+        address: ""
       });
 
       setOpen(false);
@@ -346,8 +336,8 @@ export default function Home() {
   const createData = async () => {
     setFarm({
       id: 0,
-      name: '',
-      address: '',
+      name: "",
+      address: "",
     });
     setOpen(true);
   }
@@ -389,8 +379,8 @@ export default function Home() {
         getFarmData();
         setFarm({
           id: 0,
-          name: '',
-          address: '',
+          name: "",
+          address: ""
 
         })
         Swal.close()
@@ -530,7 +520,7 @@ export default function Home() {
                 />
               </div>
               <div className="border rounded-md">
-                <Table>
+              <Table>
                   <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                       <TableRow key={headerGroup.id}>

@@ -1,9 +1,5 @@
 'use client'
-import { useState } from 'react';
-import * as React from "react"
-import { useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,24 +7,22 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
+import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
+import * as React from "react";
 
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+  useReactTable
+} from "@tanstack/react-table";
+import { ArrowUpDown } from "lucide-react";
 
 
-import { Input } from "@/components/ui/input"
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -36,15 +30,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import axios from "axios"
-import { useRouter } from "next/navigation"
-import Swal from "sweetalert2"
+} from "@/components/ui/table";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 
 export default function Cattle() {
   const { user, logout } = useAuth({ middleware: 'admin' })
   const [sorting, setSorting] = React.useState([])
+  const variable = [];
   const [columnFilters, setColumnFilters] = React.useState(
     []
   )
@@ -88,28 +82,13 @@ export default function Cattle() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            Name
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => (
-
-        <div className="flex px-2 py-1">
-          <div>
-
-          </div>
-          <div className="flex text-center flex-col justify-center">
-            <h6 className="mb-0 text-sm leading-normal dark:text-white">
-              {row.getValue("name")}
-            </h6>
-            <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
-            </p>
-          </div>
-        </div>
-      ),
+      cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
     },
-
     {
       accessorKey: "breed.name",
       header: ({ column }) => {
@@ -119,7 +98,7 @@ export default function Cattle() {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Jenis Sapi
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
@@ -145,7 +124,7 @@ export default function Cattle() {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             status
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
@@ -162,7 +141,7 @@ export default function Cattle() {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             gender
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
@@ -178,7 +157,7 @@ export default function Cattle() {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             type
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
@@ -194,7 +173,7 @@ export default function Cattle() {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
            Adrress
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
@@ -221,7 +200,7 @@ export default function Cattle() {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             birth_date
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
@@ -237,7 +216,7 @@ export default function Cattle() {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             birth_weight
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
@@ -254,7 +233,7 @@ export default function Cattle() {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             birth_height
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
@@ -270,7 +249,7 @@ export default function Cattle() {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             iot_device
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
@@ -297,7 +276,7 @@ export default function Cattle() {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             last_vaccination
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
@@ -309,8 +288,8 @@ export default function Cattle() {
       header: 'Actions',
       cell: info => (
         <div>
-          <button className="btn btn-warning text-white text-xs" onClick={() => editCattle(Number(info.getValue()))}>Edit</button>
-          <button className="btn btn-danger text-xs ml-2" onClick={() => deleteCattle(Number(info.getValue()))}>Delete</button>
+          <button className="text-xs text-white btn btn-warning" onClick={() => editCattle(Number(info.getValue()))}>Edit</button>
+          <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteCattle(Number(info.getValue()))}>Delete</button>
         </div>
       ),
     }
@@ -495,8 +474,8 @@ const [farmData, setFarmData] = React.useState([]);
     })
       .then(function (response) {
         if (response.data.data != undefined) {
-          setCattleData(response.data.data.data);
-        console.log(response.data.data.data);
+          setCattleData(response.data.data);
+        console.log(response.data.data);
         }
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
@@ -815,11 +794,11 @@ const [farmData, setFarmData] = React.useState([]);
                 {/* Add a ref to the dialog */}
                 <DialogContent  className={"lg:max-w-[200px]-lg overflow-y-scroll max-h-screen"} >
                   <DialogHeader>
-                    <DialogTitle>{cattle.id != 0 ? 'Update' :'Create'} Cattle</DialogTitle>
+                    <DialogTitle className="mb-4">{cattle.id != 0 ? 'Update' :'Create'} Cattle</DialogTitle>
                     <DialogDescription>
                       <form method="dialog" onSubmit={cattle.id != 0 ? updateCattle : createCattle}>
                         <input
-                          className="input input-bordered w-full mt-5"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={cattle.name}
                           type="text"
                           name="name"
@@ -829,11 +808,11 @@ const [farmData, setFarmData] = React.useState([]);
 
 
                         <div>
-                          <label className="mt-5 input-bordered w-full">
+                          <label className="w-full input-bordered">
                             <select
                               name="breed_id"
                               onChange={handleSelectChange}
-                              className="input input-bordered w-full mt-1"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                             >
                               <option value="">Breed</option>
                               {breedsData && breedsData.map((b) => (
@@ -843,12 +822,12 @@ const [farmData, setFarmData] = React.useState([]);
                           </label>
                         </div>
                        
-                        <label className="mt-5 input-bordered w-full">
+                        <label className="w-full input-bordered">
                             <select
                                 name="status"
                                 // value={cattle.status}
                                 onChange={handleSelectChange}
-                                className="input input-bordered w-full mt-1"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                             >
                                 <option value="">Pilih Status Sapimu</option>
                                 <option value="sehat">Sehat</option>
@@ -857,7 +836,7 @@ const [farmData, setFarmData] = React.useState([]);
                             </select>
                         </label>
                        
-                        <div className="mt-5 input-bordered w-full flex justify-start gap-3     ">
+                        <div className="flex justify-start w-full gap-3 mb-3 input-bordered ">
                             <label>
                                 <input
                                 type="radio"
@@ -880,12 +859,12 @@ const [farmData, setFarmData] = React.useState([]);
                             </label>
                         </div>
 
-                        <label className="mt-5 input-bordered w-full">
+                        <label className="w-full input-bordered">
                             <select
                                 name="type"
                                 // value={cattle.type}
                                 onChange={handleSelectChange}
-                                className="input input-bordered w-full mt-1"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                             >
                                 <option value="">Pilih Jenis Sapimu</option>
                                 <option value="pedaging">Sapi Pedaging</option>
@@ -895,11 +874,11 @@ const [farmData, setFarmData] = React.useState([]);
                         </label>
 
                         <div>
-                          <label className="mt-5 input-bordered w-full">
+                          <label className="w-full input-bordered">
                             <select
                               name="farm"
                               onChange={handleSelectChange}
-                              className="input input-bordered w-full mt-1"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                             >
                               <option value="">Pilih nama farm mu</option>
                               {/* {farmData && farmData.map((b) => (
@@ -913,7 +892,7 @@ const [farmData, setFarmData] = React.useState([]);
                         </div>
 
                         <input
-                          className="input input-bordered w-full mt-5"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={cattle.birth_date}
                           type="date"
                           name="birth_date"
@@ -921,7 +900,7 @@ const [farmData, setFarmData] = React.useState([]);
                           onChange={handleInputChange}
                         />
                         <input
-                          className="input input-bordered w-full mt-5"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={cattle.birth_weight}
                           type="text"
                           name="birth_weight"
@@ -929,7 +908,7 @@ const [farmData, setFarmData] = React.useState([]);
                           onChange={handleInputChange}
                         />
                          <input
-                          className="input input-bordered w-full mt-5"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={cattle.birth_height}
                           type="text"
                           name="birth_height"
@@ -937,11 +916,11 @@ const [farmData, setFarmData] = React.useState([]);
                           onChange={handleInputChange}
                         />
 
-                        <label className="mt-5 input-bordered w-full">
+                        <label className="w-full input-bordered">
                             <select
                                 name="iot_device_id"
                                 onChange={handleSelectChange}
-                                className="input input-bordered w-full mt-1"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                             >
                                 <option value="">iot device</option>
 
@@ -954,10 +933,10 @@ const [farmData, setFarmData] = React.useState([]);
                             </select>
                         </label>
                  
-                        <div className="flex flex-col items-start mt-5">
+                        <div className="flex flex-col items-start ">
                           <label htmlFor="last_vaccination" className="w-full">Last Vaccination</label>
                           <input
-                            className="input input-bordered w-full"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                             id="last_vaccination"
                             value={cattle.last_vaccination}
                             type="date"
@@ -967,7 +946,7 @@ const [farmData, setFarmData] = React.useState([]);
                           />
                         </div>
                         
-                        <div className="mt-5 flex justify-end gap-3">
+                        <div className="flex justify-end gap-3 ">
                           <button type="submit" className="btn">{cattle.id != 0 ? 'Update' :'Create'} Cattle</button>
                         </div>
                       </form>
@@ -990,7 +969,7 @@ const [farmData, setFarmData] = React.useState([]);
                   className="max-w-sm"
                 />
               </div>
-              <div className="rounded-md border">
+              <div className="border rounded-md">
                 <Table>
                   <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -1012,35 +991,38 @@ const [farmData, setFarmData] = React.useState([]);
                   </TableHeader>
                   <TableBody>
                     {table.getRowModel().rows?.length ? (
-                      table.getRowModel().rows.map((row) => (
-                        <TableRow
-                          key={row.id}
-                          data-state={row.getIsSelected() && "selected"}
-                        >
-                          {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
-                            </TableCell>
-                          ))}
+                        table.getRowModel().rows.map((row) => (
+                          <TableRow
+                            key={row.id}
+                            data-state={row.getIsSelected() && "selected"}
+                          >
+                            {row.getVisibleCells().map((cell) => (
+                              <TableCell key={cell.id}>
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        ))
+
+                        
+                      ) : (
+                        <TableRow>
+                          <TableCell
+                            colSpan={columns.length}
+                            className="h-24 text-center"
+                          >
+                            No results.
+                          </TableCell>
                         </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell
-                          colSpan={columns.length}
-                          className="h-24 text-center"
-                        >
-                          No results.
-                        </TableCell>
-                      </TableRow>
-                    )}
+                      )
+                      }
                   </TableBody>
                 </Table>
               </div>
-              <div className="flex items-center justify-end space-x-2 py-4">
+              <div className="flex items-center justify-end py-4 space-x-2">
                 <div className="flex-1 text-sm text-muted-foreground">
                   {table.getFilteredSelectedRowModel().rows.length} of{" "}
                   {table.getFilteredRowModel().rows.length} row(s) selected.

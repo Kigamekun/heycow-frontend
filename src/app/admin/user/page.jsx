@@ -24,12 +24,12 @@ import * as React from "react"
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 
 import {
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable
 } from "@tanstack/react-table"
 import { ArrowUpDown, Files } from "lucide-react"
 
@@ -96,10 +96,8 @@ export default function Home() {
 
         <div className="flex px-2 py-1">
           <div className="flex flex-col justify-center">
-            <img className="mb-0 text-sm leading-normal dark:text-white">
-              {row.getValue()}
+            <img src={row.getValue("avatar")} alt="avatar" className="w-10 h-10 rounded-full">
             </img>
-            
           </div>
         </div>
       ),
@@ -236,7 +234,7 @@ export default function Home() {
       cell: info => (
         <div>
           <button className="text-xs text-white btn btn-warning" onClick={() => editUser(Number(info.getValue()))}>Edit</button>
-          <button className="ml-2 text-xs btn btn-danger" onClick={() => delete(Number(info.getValue()))}>Delete</button>
+          <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteUser(Number(info.getValue()))}>Delete</button>
         </div>
       ),
     }
@@ -305,6 +303,7 @@ export default function Home() {
   }
   const [open, setOpen] = React.useState(false)
 
+  //Mengambil user data
   const getUserData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
       headers: {
@@ -339,6 +338,7 @@ export default function Home() {
       })
   }
 
+  //Membuat User Data
   const createUser = async (e) => {
     e.preventDefault();
 
@@ -356,7 +356,6 @@ export default function Home() {
     if (selectedFile) {
       bodyFormData.append('avatar', selectedFile);
   }
-  
     bodyFormData.append('name', User.name);
     bodyFormData.append('address', User.address);
     bodyFormData.append('phone_number', User.phone_number);
@@ -415,17 +414,21 @@ export default function Home() {
     }
   };
 
+  //Mengedit dan mengupdate data user
   const editUser = async (id) => {
-    let fr = UserData.find((f) => f.id === id);
+    const fr = UserData.find((f) => f.id === id);
     console.log(fr)
     if (fr) {
       setUser({
         id: fr.id,
-        avatar: fr.avatar,
+        avatar: fr.avatar || '',
         name: fr.name,
         status: fr.status,
+        role: fr.role || ''
       });
       setOpen(true);
+    } else {
+      console.log("user not found for id", id);
     }
   }
 
@@ -446,25 +449,15 @@ export default function Home() {
   }
 
   const updateUser = async (e) => {
-
-
     e.preventDefault();
     Swal.fire({
       title: 'Loading...',
-
       text: 'Mohon tunggu sebentar...',
       allowOutsideClick: false,
       didOpen: () => {
         Swal.showLoading();
       }
     });
-
-    var bodyFormData = new FormData();
-    bodyFormData.append('avatar', User.avatar);
-    bodyFormData.append('name', User.name);
-    bodyFormData.append('status', User.address);
-    bodyFormData.append('phone_number', User.phone_number);
-    bodyFormData.append('role', User.role);
 
     var res = await axios.put(
       `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${User.id}`,
@@ -494,11 +487,9 @@ export default function Home() {
           phone_number: '',
           role: ''
 
-        })
+        });
         Swal.close()
-
         setOpen(false);
-
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
           Swal.fire({
@@ -647,7 +638,7 @@ export default function Home() {
                           onChange={handleInputChange}
                         />
 
-                        <label className=" input-bordered w-full">
+                        <label className="w-full input-bordered">
                             <select
                                 name="role"
                                 // value={cattle.status}
@@ -661,7 +652,7 @@ export default function Home() {
                             </select>
                         </label>
                         
-                        <div className="mt-5 flex justify-end gap-3">
+                        <div className="flex justify-end gap-3 mt-5">
                           <button type="submit" className="btn">{User.id != 0 ? 'Update' :'Create'} User</button>
                         </div>
                       </form>
@@ -677,9 +668,9 @@ export default function Home() {
               <div className="flex items-end w-full py-4" style={{ justifyContent: 'end' }}>
                 <Input
                   placeholder="Filter User..."
-                  value={(table.getColumn("avatar")?.getFilterValue()) ?? ""}
+                  value={(table.getColumn("name")?.getFilterValue()) ?? ""}
                   onChange={(event) =>
-                    table.getColumn("avatar")?.setFilterValue(event.target.value)
+                    table.getColumn("name")?.setFilterValue(event.target.value)
                   }
                   className="max-w-sm"
                 />

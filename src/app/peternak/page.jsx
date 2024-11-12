@@ -1,7 +1,6 @@
 'use client';
 
 import { useAuth } from "@/lib/hooks/auth"; // Hook for authentication
-import { Cow, Scroll, Toolbox, User } from "@phosphor-icons/react";
 import axios from 'axios';
 import Chart from 'chart.js/auto';
 import Link from "next/link";
@@ -14,7 +13,6 @@ export default function Home() {
   const doughnutCanvas = useRef();
   const barCanvas = useRef();
   const [chartData, setChartData] = useState([])
-  const [doughnutData, setdoughnutData] = useState([0])
 
   // get Cattle Data
   const getCattleData = async () => {
@@ -81,24 +79,6 @@ export default function Home() {
     };
     fetchData()
   }, [])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("https://dummyjson.com/users");
-        if (!response.ok) {
-          console.error("Bad Response");
-          return;
-        }
-        const data = await response.json();
-        const countData = data.users.length; // Get the count of users
-        setdoughnutData(countData); // Set the count to state
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-  }, []);
 
   useEffect(() => {
     getCattleData();
@@ -200,9 +180,9 @@ export default function Home() {
           <div className="col-sm-3">
               <div className="border border-success card">
                 <div className="gap-10 float-start card-body d-flex">
-                  <Cow className="text-emerald-600" size={50} />
+                  <i className="bi bi-emoji-laughing-fill text-emerald-600 text-[2rem]" />
                     <div className="flex-col d-flex ">
-                      <h6 className="text-emerald-600">Sapi</h6>
+                      <h6 className="text-emerald-600">Sehat</h6>
                       <p>15</p>
                     </div>
                 </div>
@@ -211,9 +191,9 @@ export default function Home() {
           <div className="col-sm-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
-              <Scroll className="text-emerald-600" size={50} />
+                <i className="bi bi-emoji-dizzy-fill text-red-400 text-[2rem]" />
                   <div className="flex-col d-flex ">
-                    <h6 className="text-emerald-600">Contract</h6>
+                    <h6 className="text-red-400">Sakit</h6>
                     <p>2</p>
                   </div>
               </div>
@@ -222,9 +202,9 @@ export default function Home() {
           <div className="col-sm-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
-              <Toolbox className="text-emerald-600" size={50} />
+                <i className="bi bi-emoji-sunglasses-fill text-yellow-600 text-[2rem]" />
                   <div className="flex-col d-flex ">
-                    <h6 className="text-emerald-600">Device</h6>
+                    <h6 className="text-yellow-600">Dijual</h6>
                     <p>7</p>
                   </div>
               </div>
@@ -233,9 +213,9 @@ export default function Home() {
           <div className="col-sm-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
-              <User className="text-emerald-600" size={50} />
+                <i className="bi bi-emoji-dizzy-fill text-red-800 text-[2rem]" />
                   <div className="flex-col d-flex ">
-                    <h6 className="text-emerald-600">Pengangon</h6>
+                    <h6 className="text-red-600">Mati</h6>
                     <p>15</p>
                   </div>
               </div>

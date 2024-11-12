@@ -1,11 +1,12 @@
 'use client';
+import heycow from '@/images/heycow_img.svg';
+import { useAuth } from '@/lib/hooks/auth';
+import { Barn, Cow } from '@phosphor-icons/react';
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
-import { useAuth } from '@/lib/hooks/auth';
-import Image from "next/image";
-import heycow from '@/images/heycow_img.svg';
-import Swal from "sweetalert2"
+import Swal from "sweetalert2";
 
 export function Sidebar() {
     const [activePage, setActivePage] = useState('');
@@ -40,7 +41,7 @@ export function Sidebar() {
     }, [pathname]);
 
     return (
-        // <div className="sidebar-menu h-full overflow-x-hidden bg-white" style={{zIndex: 600}}>
+        // <div className="h-full overflow-x-hidden bg-white sidebar-menu" style={{zIndex: 600}}>
         //     <ul className="menu">
         //         <li className="sidebar-title">Menu</li>
         //         <li className={`sidebar-item ${pathname === "/admin" ? "active" : ""}`}>
@@ -128,7 +129,7 @@ export function Sidebar() {
                 </li>
                 <li className={`sidebar-item ${pathname === "/admin/blog" ? "active" : ""}`}>
                     <Link className="sidebar-link" href="/admin/blog">
-                        <i className="bi bi-grid-fill" />
+                        <i className="bi bi-chat-dots" />
                         <span>Community</span>
                     </Link>
                 </li>
@@ -142,13 +143,13 @@ export function Sidebar() {
                 <li className="sidebar-title">Farm</li>
                 <li className={`sidebar-item ${pathname === "/admin/farm" ? "active" : ""}`}>
                     <Link className="sidebar-link" href="/admin/farm">
-                        <i className="bi bi-grid-fill" />
+                    <Barn className="ph-barn" size={20} />
                         <span>Farm</span>
                     </Link>
                 </li>
                 <li className={`sidebar-item ${pathname === "/admin/cattle" ? "active" : ""}`}>
                     <Link className="sidebar-link" href="/admin/cattle">
-                        <i className="bi bi-grid-fill" />
+                        <Cow className="ph-cow" size={20} />
                         <span>Cattle</span>
                     </Link>
                 </li>
@@ -158,8 +159,8 @@ export function Sidebar() {
                         <span>Devices</span>
                     </Link>
                 </li>
-                <li className={`sidebar-item ${pathname === "/" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/">
+                <li className={`sidebar-item ${pathname === "/admin/history" ? "active" : ""}`}>
+                    <Link className="sidebar-link" href="/admin/history">
                         <i className="bi bi-grid-fill" />
                         <span>History</span>
                     </Link>
