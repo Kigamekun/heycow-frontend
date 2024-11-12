@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-
+import Request from '@/components/request';
 export function Navbar() {
     const router = useRouter();
     const pathname = usePathname();
@@ -61,14 +61,38 @@ export function Navbar() {
             }
         });
     };
+    const [isPengangon, setIsPengangon] = useState(null);
 
+    const fetchUserData = async () => {
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/me`, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
+            console.log('pengangon' , response.data.is_pengangon);
+            if (response.data.is_pengangon !== undefined) {
+                setIsPengangon(response.data.is_pengangon);
+            } else {
+                console.error('is_pengangon is undefined');
+            }
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    };
+
+    
+
+   
     useEffect(() => {
         fetchUserImage();
+        fetchUserData();
     }, [pathname]);
 
     return (
         <header className="header">
-            <nav className="header-menu fixed top-0 px-5 right-0 h-[95px] w-[78rem] bg-white" style={{ zIndex: 10 }}>
+            <nav className="header-menu fixed top-0 px-5 right-0 h-[95px] w-[72.3rem] bg-white" style={{ zIndex: 10 }}>
                 <div className="justify-between py-3 menu d-flex">
                     <div className="header d-flex">
                         {/* Render the back button only if the current route is in the showBackButtonOnRoutes array */}
@@ -105,6 +129,7 @@ export function Navbar() {
                         </PopoverContent>
                     </Popover>
                 </div>
+                {isPengangon === 0 && <Request />}
             </nav>
         </header>
     );

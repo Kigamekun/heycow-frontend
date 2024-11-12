@@ -24,12 +24,22 @@ export default function Profile() {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const [userData, setUserData] = React.useState({
         id: 0,
-        name: '',
+        name:'',
         phone_number: '',
         email: '',
         bio: '',
         avatar: null,
+        nik:'',
+        farm: {
+            name: '',
+            address: '',
+          },
+        farm_id:'',
+        address:'',
+        upah: null,
         selfie_ktp: null,
+        ktp: null,
+        is_pengangon: 0,
     }, []);
 
     const getUserData = async () => {
@@ -44,7 +54,7 @@ export default function Profile() {
                 }
             );
 
-            console.log('data user', res.data);
+            console.log('data user', res.data.farm);
             if (res.data) {
                 console.log('data kita', res.data);
                 setUserData(res.data);
@@ -56,7 +66,13 @@ export default function Profile() {
 
     const updateMe = async (e) => {
         e.preventDefault();
+        
+        // const formData = new FormData();
+        // if (userData.avatar instanceof File) {
+        //     formData.append('avatar', userData.avatar);
+        // }
         try {
+            console.log('updating profile...', userData);
             const res = await axios.post(
                 `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/update-profile`, userData, {
                     headers: {
@@ -75,6 +91,8 @@ export default function Profile() {
                     timer: 1500,
                 });
             }
+
+            
         } catch (error) {
             console.error('Error updating profile:', error);
             Swal.fire({
@@ -87,15 +105,32 @@ export default function Profile() {
         }
     }
 
+    // const handleFileChange = (event) => {
+    //     setUserData({ ...userData, avatar: event.target.files[0] });
+    // };
+
     const handleFileChange = (event) => {
-        setUserData({ ...userData, avatar: event.target.files[0] });
-    };
+        const file = event.target.files[0];
+        setUserData((prevUserData) => ({
+          ...prevUserData,
+          avatar: file ? file : prevUserData.avatar,
+        }));
+      };
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setUserData({ ...userData, [name]: value });
     };
-
+    const handleInputChangeFarm = (event) => {
+        const { name, value } = event.target;
+        setUserData((prevUserData) => ({
+          ...prevUserData,
+          farm: {
+            ...prevUserData.farm,
+            [name]: value,
+          },
+        }));
+      };
     const handleSelectChange = (event) => {
         const name = event.target.name;
         const { value } = event.target.selectedOptions[0];
@@ -171,17 +206,17 @@ export default function Profile() {
                                 <form onSubmit={updateMe}>
                                     <div className="grid grid-cols-2 gap-3">
                                         <div className="grid grid-cols-1 gap-1">
-                                            <label htmlFor="name" className="text-black font-bold">
+                                            <label htmlFor="nama" className="text-black font-bold">
                                                 <h6>
                                                     Username<span className="text-red-600">*</span>
                                                 </h6>
                                             </label>
                                             <Input
-                                                id="name"
+                                                id="nama"
                                                 autoFocus
                                                 type="text"
                                                 name="name"
-                                                value={userData.name}
+                                                value={userData.name ? userData.name : ''} 
                                                 variant="bordered"
                                                 className="w-full h-[2.8rem] "
                                                 onChange={handleInputChange}
@@ -199,7 +234,7 @@ export default function Profile() {
                                                 name="email"
                                                 autoFocus
                                                 type="email"
-                                                value={userData.email}
+                                                value={userData.email ? userData.email : ''}
                                                 variant="bordered"
                                                 className="w-full h-[2.8rem] "
                                                 onChange={handleInputChange}
@@ -208,19 +243,37 @@ export default function Profile() {
 
                                         <div className="grid grid-cols-1 gap-1">
                                             <label htmlFor="farm_id" className="text-black font-bold">
-                                                <h6>
-                                                    Farm
-                                                </h6>
+                                            <h6>
+                                                Farm Name
+                                            </h6>
                                             </label>
                                             <Input
-                                                id="farm_id"
-                                                name="farm_id"
-                                                isDisabled
-                                                autoFocus
-                                                type="text"
-                                                value={userData.farm}
-                                                variant="bordered"
-                                                className="w-full h-[2.8rem] "
+                                            id="farm_id"
+                                            name="name"
+                                            autoFocus
+                                            type="text"
+                                            value={userData.farm.name || ''}
+                                            variant="bordered"
+                                            className="w-full h-[2.8rem] "
+                                            onChange={handleInputChangeFarm}
+                                            />
+                                        </div>
+                                        
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <label htmlFor="farm" className="text-black font-bold">
+                                            <h6>
+                                                Farm Address
+                                            </h6>
+                                            </label>
+                                            <Input
+                                            id="farm"
+                                            name="address"
+                                            autoFocus
+                                            type="text"
+                                            value={userData.farm.address || ''}
+                                            variant="bordered"
+                                            className="w-full h-[2.8rem] "
+                                            onChange={handleInputChangeFarm}
                                             />
                                         </div>
 
@@ -235,14 +288,14 @@ export default function Profile() {
                                                 autoFocus
                                                 name="address"
                                                 type="text"
-                                                value={userData.address}
+                                                value={userData.address ? userData.address : ''}
                                                 variant="bordered"
                                                 className="w-full h-[2.8rem] "
                                                 onChange={handleInputChange}
                                             />
                                         </div>
 
-                                        <div className="grid grid-cols-1 my-3 gap-1">
+                                        <div className="grid grid-cols-1 gap-1">
                                             <label htmlFor="phone_number" className="text-black font-bold">
                                                 <h6>
                                                     No. Telp
@@ -253,14 +306,42 @@ export default function Profile() {
                                                 autoFocus
                                                 name="phone_number"
                                                 type="text"
-                                                value={userData.phone_number}
+                                                value={userData.phone_number ? userData.phone_number : ''}
                                                 variant="bordered"
                                                 className="w-full h-[2.8rem] "
                                                 onChange={handleInputChange}
                                             />
                                         </div>
 
-                                        
+                                        <div className="grid grid-cols-1 mb-3 gap-1">
+                                            <label htmlFor="gender" className="text-black font-bold">
+                                                <h6>
+                                                    Gender
+                                                </h6>
+                                            </label>
+                                            <select
+                                                name="gender"
+                                                id="gender"
+                                                value={userData.gender}
+                                                onChange={handleSelectChange}
+                                                className="w-full h-[2.8rem] px-2 shadow-sm border border-gray-300 rounded-md"
+                                            >
+                                                <option value=''>Pilih Gender</option>
+                                                <option value='male'>Laki-laki</option>
+                                                <option value='female'>Perempuan</option>
+                                            </select>
+                                            {/* <Input
+                                                id="phone_number"
+                                                autoFocus
+                                                name="phone_number"
+                                                type="text"
+                                                value={userData.phone_number ? userData.phone_number : ''}
+                                                variant="bordered"
+                                                className="w-full h-[2.8rem] "
+                                                onChange={handleInputChange}
+                                            /> */}
+                                        </div>
+
                                         {userData.is_pengangon === 1 && (
                                             <div className="grid grid-cols-1 my-3 gap-1">
                                                 <label htmlFor="upah" className="text-black font-bold">
@@ -317,9 +398,9 @@ export default function Profile() {
                         </Button>
                         <div>
                             <div className='profile-picture d-flex justify-center'>
-                                <img src={userAvatar} width={120} height={120} alt="Profile" className="rounded-full ml-[9rem]" onLoad={handleImageLoad} />
+                                <img src={userAvatar ? userAvatar : 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} width={120} height={120} alt="Profile" className="rounded-full ml-[9rem]" onLoad={handleImageLoad} />
                             </div>
-                            <h5 className='mt-3 text-black font-bold text-center'>{user ? user.name : "mulyono"}</h5>
+                            <h5 className='mt-3 text-black font-bold text-center'>{user ? user.name : "N/A"}</h5>
                         </div>
                     </div>
                     <div className='profile-data card-body  px-5'>
@@ -330,7 +411,7 @@ export default function Profile() {
                                 </p>
                                 <div className='border rounded-md h-[3rem] py-2 px-1'>
                                     <p className='text-md text-black font-light'>
-                                        {user ? user.phone_number : "081282520510"}
+                                        {user ? user.phone_number : 'N/A'}
                                     </p>
                                 </div>
                             </div>
@@ -341,7 +422,7 @@ export default function Profile() {
                                 </p>
                                 <div className='border rounded-md h-[3rem] py-2 px-1'>
                                     <p className='text-md text-black font-light'>
-                                        {user ? user.email : "mulyono25@gmail.com"}
+                                        {user ? user.email : 'N/A'}
                                     </p>
                                 </div>
                             </div>
@@ -352,18 +433,29 @@ export default function Profile() {
                                 </p>
                                 <div className='border rounded-md bg-gray-300 h-[3rem] py-2 px-1'>
                                     <p className='text-md text-black font-light'>
-                                        {user ? user.role : 'user'}
+                                        {user ? user.role : 'N/A'}
                                     </p>
                                 </div>
                             </div>
 
                             <div>
                                 <p className='text-md mb-[-0.2rem] text-black font-bold'>
-                                    Farm
+                                    Farm Name
                                 </p>
                                 <div className='border rounded-md h-[3rem] py-2 px-1'>
                                     <p className='text-md text-black font-light'>
-                                        {user && user.farm}
+                                        {user && user.farm ? user.farm.name : 'N/A'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className='text-md mb-[-0.2rem] text-black font-bold'>
+                                    Farm Address
+                                </p>
+                                <div className='border rounded-md h-[3rem] py-2 px-1'>
+                                    <p className='text-md text-black font-light'>
+                                        {user && user.farm ? user.farm.address : 'N/A'}
                                     </p>
                                 </div>
                             </div>
@@ -373,7 +465,7 @@ export default function Profile() {
                                 </p>
                                 <div className='border rounded-md h-[3rem] py-2 px-1'>
                                     <p className='text-md text-black font-light'>
-                                        Rp {user && user.upah} / Bulan
+                                        Rp {user && user.upah ? user.upah : 'N/A'} / Bulan
                                     </p>
                                 </div>
                             </div>
@@ -383,7 +475,17 @@ export default function Profile() {
                                 </p>
                                 <div className='border rounded-md h-[3rem] py-2 px-1'>
                                     <p className='text-md text-black font-light'>
-                                        {user && user.address}
+                                        {user && user.address ? user.address : 'N/A'}
+                                    </p>
+                                </div>
+                            </div>
+                            <div>
+                                <p className='text-md mb-[-0.2rem] text-black font-bold'>
+                                    Gender
+                                </p>
+                                <div className='border rounded-md h-[3rem] py-2 px-1'>
+                                    <p className='text-md text-black font-light'>
+                                        {user && user.gender ? user.gender : 'N/A'}
                                     </p>
                                 </div>
                             </div>
