@@ -30,7 +30,7 @@ export function Navbar() {
                 }
             })
     
-            console.log('ada:', response.data.avatar); // Log the response to inspect its structure
+            console.log('ada:', response.data.full_avatar_url); // Log the response to inspect its structure
             console.log('Response:', response.data);
             // Ensure the user object exists and has the avatar property
             if (response.data.avatar && response.data.avatar) {

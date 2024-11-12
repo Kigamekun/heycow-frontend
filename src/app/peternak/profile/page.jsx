@@ -27,7 +27,6 @@ export default function Profile() {
         name:'',
         phone_number: '',
         email: '',
-        bio: '',
         avatar: null,
         nik:'',
         farm: {
@@ -67,12 +66,21 @@ export default function Profile() {
     const updateMe = async (e) => {
         e.preventDefault();
         
-        // const formData = new FormData();
-        // if (userData.avatar instanceof File) {
-        //     formData.append('avatar', userData.avatar);
-        // }
+        const formData = new FormData(
+            formData.append('nama', userData.name),
+            formData.append('phone_number', userData.phone_number),
+            formData.append('email', userData.email),
+            formData.append('address', userData.address),
+            formData.append('farm_id', userData.farm_id),
+            formData.append('farm', userData.farm),
+            formData.append('upah', userData.upah ? userData.upah : 0),
+        );
+
+        if (userData.avatar instanceof File) {
+            formData.append('avatar', userData.avatar);
+        }
         try {
-            console.log('updating profile...', userData);
+            console.log('updating profile...', formData);
             const res = await axios.post(
                 `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/update-profile`, userData, {
                     headers: {
@@ -83,7 +91,7 @@ export default function Profile() {
             )
             if (res.data) {
                 console.log('data kita', res.data);
-                setUserData(res.data);
+                setUserData();
                 Swal.fire({
                     icon: 'success',
                     title: 'Profile updated successfully',
