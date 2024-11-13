@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: ['127.0.0.1'], // Menambahkan domain untuk gambar
+        domains: ['heycow.my.id'], // Menambahkan domain untuk gambar
     },
 };
 

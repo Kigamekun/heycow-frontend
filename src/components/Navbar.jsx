@@ -81,7 +81,7 @@ export function Navbar() {
                         </PopoverContent>
                     </Popover>
                 </div>
-                {isPengangon === 0 && <Request />}
+                {user && user.is_pengangon === 0 && <Request />}
             </nav>
         </header>
     );

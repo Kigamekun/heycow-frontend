@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/popover";
 
 import { useAuth } from "@/lib/hooks/auth";
+import Link from "next/link";
 export default function ForumPage() {
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
     const [forumData, setForumData] = React.useState([]);
@@ -121,7 +122,14 @@ export default function ForumPage() {
             content: '',
             category: '',
             image : ''
-          });
+          },
+            Swal.fire({
+              icon: 'success',
+              title: 'Blog published successfully',
+              showConfirmButton: false,
+              timer: 1500,
+            })
+          );
     
           setOpen(false);
     
@@ -330,6 +338,7 @@ export default function ForumPage() {
             <div className="d-flex justify-center">
             <div className="grid grid-cols-1 container-post">
                     {forumData?.map((post, index) => (
+                      <Link href={`/peternak/komunitas/forum/${post.id}`}>
                         <div key={index} className="card mt-3 w-[800px] grid grid-cols-1 gap-6">
                             <div className="card-body">
                               <div className="settings post float-end">
@@ -364,7 +373,7 @@ export default function ForumPage() {
                                     {/* <img src={post.image} alt="post" className="w-[100%] max-h-[400px] border" /> */}
                                     <img src={post.full_image_url || 'https://icons.iconarchive.com/icons/fa-team/fontawesome/256/FontAwesome-Image-icon.png'} alt="post" className="w-[30rem]"/>
                                 </div>
-                                <div className="gap-4 mt-3 container-post-action d-flex">
+                                <div className="gap-4 mt-10 container-post-action d-flex">
                                     <div className="gap-2 Likes-count d-flex text-md">
                                         <i class="bi bi-heart-fill text-red-600"></i>
                                         <p className="text-black">{post.likes_count}</p>
@@ -376,8 +385,9 @@ export default function ForumPage() {
                                 </div>
                             </div>
                         </div>
+                       </Link>
                     ))}
-                    
+                 
                 </div>
             </div>
         </main>

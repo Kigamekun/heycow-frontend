@@ -63,10 +63,9 @@ export default function Request() {
             bodyFormData.append('ktp', userData.ktp);
             bodyFormData.append('nik', userData.nik);
             bodyFormData.append('upah', userData.upah);
-            bodyFormData.append('address', userData.address);
             bodyFormData.append('selfie_ktp', userData.selfie_ktp);
 
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/submit-request-form/${user.id}`, bodyFormData, {
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/submit-request-form`, bodyFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -151,23 +150,7 @@ export default function Request() {
                                     onChange={handleInputChange}
                                     />
                         </div>
-                        <div className="">
-                            <label htmlFor="address" >
-                                <h5>Alamat <span className="text-red-700">*</span></h5>
-                            </label>
-                            <Input
-                                    isRequired
-                                    id="address"
-                                    name="address"
-                                    autoFocus
-                                    type="text"
-                                    value={userData.address}
-                                    placeholder="Edit NIK mu"
-                                    variant="bordered"
-                                    className="w-full h-[2.8rem] "
-                                    onChange={handleInputChange}
-                                    />
-                        </div>
+
                         <div className="">
                             <label htmlFor="upah" >
                                 <h5>Upah Gaji / Bulan <span className="text-red-700">*</span></h5>

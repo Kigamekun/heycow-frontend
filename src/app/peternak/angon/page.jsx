@@ -30,15 +30,14 @@ export default function Angon() {
  
 const getUserData = async () => {
   try {
-    const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/pengangon`, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     });
     if (res.data.data) {
-      const filteredUsers = res.data.data.filter(user => user.is_pengangon === 1);
-      setUserData(filteredUsers);
+      setUserData(res.data.data);
       console.log('Filtered user data:', filteredUsers);
     }
   } catch (error) {
@@ -50,15 +49,8 @@ const getUserData = async () => {
         timer: 1500,
       });
       logout();
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error occurred',
-        text: 'Please try again later.',
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    }
+    } 
+    
   }
 }
 
@@ -85,16 +77,17 @@ const getUserData = async () => {
         {userData.map((user, index) => (
           <div key={index} className="card">
             <div className="card-body image dan profile d-flex gap-4">
-              <img src={user.full_avatar_url || "https://via.placeholder.com/130"} alt="user" className="w-[130px]" />
+              <img src={user && user.avatar|| "https://via.placeholder.com/130"} alt="user" className="w-[130px]" />
               <div className="d-flex flex-col grid grid-rows-3 gap-3">
                 <h4 className="text-black font-bold">{user.name}</h4>
                 <p className="text-r">{user.address}</p>
-                <p className="text-sm font-bold">{user.farm_name}</p>
+                <p className="text-sm font-bold">{user.farm_name ? user.farm_name : 'No Farm'}</p>
+                <p className="text-sm font-bold">Rp {user.upah}</p>
               </div>
             </div>
             <div className="rating card-body mt-[-20px] d-flex justify-between">
               {/* rating */}
-              <ReactStars count={5} size={24} color2={'#ffd700'} />
+              <ReactStars count={5} size={24} value={user.rate} color2={'#ffd700'} />
               
               {/* button */}
               <button className="btn btn-success" onClick={() => window.location.href = `/peternak/angon/${user.id}`}>Pilih</button>

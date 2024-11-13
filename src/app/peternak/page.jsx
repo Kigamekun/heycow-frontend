@@ -179,7 +179,7 @@ export default function Home() {
       
       <h3 className="mb-4 ml-2 text-emerald-600">Home</h3>
         <div className="row">
-          <div className="col-sm-3">
+          <div className="col-sm-6 col-md-3 mb-3">
               <div className="border border-success card">
                 <div className="gap-10 float-start card-body d-flex">
                   <Cow className="text-emerald-600" size={50} />
@@ -190,7 +190,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          <div className="col-sm-3">
+          <div className="col-sm-6 col-md-3 mb-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
                 <i className="bi bi-emoji-dizzy-fill text-red-400 text-[2rem]" />
@@ -201,7 +201,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="col-sm-3">
+          <div className="col-sm-6 col-md-3 mb-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
               <Toolbox className="text-emerald-600" size={50} />
@@ -212,7 +212,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="col-sm-3">
+          <div className="col-sm-6 col-md-3 mb-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
               <User className="text-emerald-600" size={50} />
@@ -226,7 +226,7 @@ export default function Home() {
         </div>
 
       <div className="row">
-        <div className="col-sm-8 ">
+        <div className="col-md-8 mb-3">
           <div className="card">
             <div className="justify-center card-body">
               <div className="justify-center">
@@ -238,7 +238,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="col-sm-4">
+        <div className="col-md-4 mb-3">
           <div className="card">
             <div className="card-body">
               <div className="justify-center">
@@ -253,7 +253,7 @@ export default function Home() {
       </div>
       <h3 className="mb-4 ml-2 text-emerald-600">Daftar Ternak</h3>
       <div className="row">
-        <div className="container grid grid-cols-3 gap-3 mt-5 cursor-pointer">
+        <div className="container flex-col max-w-screen-xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mt-5 cursor-pointer">
           {cattleData && cattleData.map((cattle) => (
             <Link key={cattle.id} href={`/peternak/cattle/${cattle.id}?user=${user && user.id}`}>
               <div className="card">
