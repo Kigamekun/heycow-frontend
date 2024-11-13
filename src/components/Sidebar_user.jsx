@@ -40,9 +40,8 @@ export function Sidebar() {
     }, [pathname]);
 
     return (
-        <div className="fixed top-0 bottom-0 left-0 h-full overflow-x-hidden sidebar-menu bg-emerald-600">
+        <div className="fixed top-0 bottom-0 left-0 h-full overflow-x-hidden lg:block md:hidden sidebar-menu bg-emerald-600">
            
-
             <div className="image-container w-[300px] px-4 mt-3">
                 <Link href="/peternak">
                     <Image
@@ -53,7 +52,7 @@ export function Sidebar() {
                     />
                 </Link>
             </div>
-             <ul className=" menu">
+             <ul className="menu mt-[-4rem]">
                  <li className=" sidebar-title">Menu</li>
                  <li className={`sidebar-item ${pathname === "/peternak" ? "active" : ""}`}>
                      <Link href="/peternak" className="sidebar-link">
@@ -96,6 +95,12 @@ export function Sidebar() {
                      <Link className="sidebar-link" href="/peternak/help-center">
                          <i className=" bi bi-telephone-fill" />
                          <span className="">Help Center</span>
+                     </Link>
+                 </li>
+                 <li className={`sidebar-item ${pathname === "/peternak/contract" ? "active" : ""}`}>
+                     <Link className="sidebar-link" href="/peternak/contract">
+                            <i class="bi bi-clock-history "></i>
+                            <span className="">contract</span>
                      </Link>
                  </li>
                  <li className={`sidebar-item ${pathname === "/peternak/history" ? "active" : ""}`}>

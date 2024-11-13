@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input"
 import Swal from 'sweetalert2';
 import { P } from "@/public/assets/extensions/chart.js/chunks/helpers.segment";
+import Image from "next/image";
 
 export default function Profile() {
     const { user, mutate,logout } = useAuth({ middleware: 'cattleman' || 'admin' });
@@ -27,7 +28,6 @@ export default function Profile() {
         nama: '',
         phone_number: '',
         email: '',
-        bio: '',
         avatar: null,
         nik: '',
         farm: {
@@ -182,9 +182,6 @@ export default function Profile() {
                 }
             })
 
-            // console.log('ada:', response.data.avatar); // Log the response to inspect its structure
-            // console.log('Response:', response.data);
-            // Ensure the user object exists and has the full_image_url property
             if (response.data.avatar && response.data.avatar) {
                 setUserAvatar(response.data.avatar);
             } else {
@@ -431,7 +428,7 @@ export default function Profile() {
                         </Button>
                         <div>
                             <div className='profile-picture d-flex justify-center'>
-                                <img src={userAvatar ? userAvatar : 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} width={120} height={120} alt="Profile" className="rounded-full ml-[9rem]" onLoad={handleImageLoad} />
+                                <img src={user && user.avatar} width={120} height={120} alt="Profile" className="rounded-full ml-[9rem]" onLoadingComplete={handleImageLoad} />
                             </div>
                             <h5 className='mt-3 text-black font-bold text-center'>{user ? user.name : "N/A"}</h5>
                         </div>
@@ -498,7 +495,7 @@ export default function Profile() {
                                 </p>
                                 <div className='border rounded-md h-[3rem] py-2 px-1'>
                                     <p className='text-md text-black font-light'>
-                                        Rp {user && user.upah ? user.upah : 'N/A'} / Bulan
+                                        {user && user.upah ? user.upah : 'N/A'} / Bulan
                                     </p>
                                 </div>
                             </div>

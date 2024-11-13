@@ -529,7 +529,7 @@ export default function Home() {
                           />
                         </div>
                         
-                        {/* Breed */}
+                        {/* IoT devices */}
                         <div className="grid grid-cols-1">
                           <label htmlFor="iot_devices" className="font-bold text-black mb-[-1rem]">
                             <h6>Iot Devices</h6>

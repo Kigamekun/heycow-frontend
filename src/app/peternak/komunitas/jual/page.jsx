@@ -41,6 +41,7 @@ export default function JualPage() {
         title: '',
         content: '',
         cattle_id: '',
+        price: '',
         image: '',
         category: 'jual',
     });
@@ -98,6 +99,7 @@ export default function JualPage() {
       bodyFormData.append('title', jual.title);
       bodyFormData.append('content', jual.content);
       bodyFormData.append('image', jual.image);
+      bodyFormData.append('price', jual.price);
       bodyFormData.append('cattle_id', jual.cattle_id);
       bodyFormData.append('category', jual.category);
       
@@ -124,6 +126,7 @@ export default function JualPage() {
             content: '',
             cattle_id:'',
             category: '',
+            price:'',
             image : ''
         },
           Swal.fire({
@@ -355,16 +358,20 @@ export default function JualPage() {
                       </div>  
                       
                       <Divider orientation="vertical" color="black"/>
-                      <div className="gap-3 cursor-pointer d-flex" onClick={() => window.location.href = '/peternak/komunitas/forum'}>
-                        <i class="bi bi-question-circle text-black text-xl"></i>
-                        <p className="text-lg text-black">Tanyakan</p>
-                      </div>
+                      <Link href="/peternak/komunitas/forum">
+                        <div className="gap-3 cursor-pointer d-flex" >
+                          <i class="bi bi-question-circle text-black text-xl"></i>
+                          <p className="text-lg text-black">Tanyakan</p>
+                        </div>
+                      </Link>
 
                       <Divider orientation="vertical"/>
-                      <div className="gap-3 cursor-pointer d-flex" onClick={() => window.location.href = '/peternak/komunitas/jual'}>
-                        <i class="bi bi-currency-exchange  text-black text-xl"></i>
-                        <p className="text-lg text-black">Jual</p>
-                      </div>
+                      <Link href="/peternak/komunitas/jual">
+                        <div className="gap-3 cursor-pointer d-flex">
+                          <i class="bi bi-currency-exchange  text-black text-xl"></i>
+                          <p className="text-lg text-black">Jual</p>
+                        </div>
+                      </Link>
                   </div>
                 </div>
             </div>
