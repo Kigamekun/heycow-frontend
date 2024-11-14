@@ -48,17 +48,16 @@ const [cattleData, setCattleData] = React.useState(
   );
   
   const [cattle, setCattle] = React.useState({
-    id: 0,
-    name: "",
-    farm: "",
-    breed_id: "" ,
-    type : "",
-    status : "",
-    birth_date : "",
-    birth_weight : "",
-    birth_height : "",
-    iot_device_id : "",
-    last_vaccination : ""
+    name: '',
+    breed: {
+      name: '',
+    },
+    birth_date: '',
+    birth_height: '',
+    birth_weight: '',
+    farm: {
+      name: '',
+    },
   });
   // State IOT DEVICE
   const [IotDeviceData, setIotDeviceData] = React.useState(
@@ -218,7 +217,7 @@ const [cattleData, setCattleData] = React.useState(
   
 
   // Membuat cattle data
-  const createCattle = async (e) => {
+  const updateCattle = async (e) => {
     e.preventDefault();
 
     Swal.fire({
@@ -244,8 +243,8 @@ const [cattleData, setCattleData] = React.useState(
     bodyFormData.append('last_vaccination', cattle.last_vaccination);
 
     try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle`,
+      const res = await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${params.cattleID}`,
         bodyFormData,
         {
           headers: {
@@ -307,13 +306,7 @@ const [cattleData, setCattleData] = React.useState(
     getIotDeviceData();
 
   }, []);
-    const handleInputChange = (event) => {
-
-        const { name, value } = event.target;
-        setCattle({ ...cattle, [name]: value });
-      
-      }
-      
+ 
       const handleSelectChange = (event) => {
         
         const name = event.target.name;
@@ -411,7 +404,16 @@ const [cattleData, setCattleData] = React.useState(
             }
       }
     };
-  
+    const handleSelectChange1 = (value) => {
+      setCattle({ ...cattle, breed_id: value });
+    };
+    const handleInputChange = (event) => {
+      const { name, value } = event.target;
+      setCattle((prevCattle) => ({
+        ...prevCattle,
+        [name]: value,
+      }));
+    };
     return (
         <>
             {/* card 1 untuk destroy dan edit */}
@@ -432,189 +434,155 @@ const [cattleData, setCattleData] = React.useState(
                     backdrop: "bg-black bg-opacity-50"
                     }}
                     >
-                    <ModalContent className="w-[800px] h-[650px] bg-white rounded-xl ">
-                    {(onClose) => (
-                    <>
-                    <ModalHeader className="dialog-title flex flex-col gap-1 px-6 mt-6">
-                        <h3 className="text-black font-bold text-center">Edit Cattle</h3>
-                    </ModalHeader>
-                    <ModalBody className="grid grid-cols-2">
-                        {/* Cattle Name */}
-                        <div className="grid grid-cols-1 gap-1">
-                            <label htmlFor="name" className="text-black font-bold">
-                            <h6>
-                                Cattle Name<span className="text-red-600">*</span>
-                            </h6>
-                            </label>
-                            <Input
-                            isRequired
-                            id="name"
-                            autoFocus
-                            type="text"
-                            label="text"
-                            placeholder="Input your cattle name"
-                            variant="bordered"
-                            className="w-full h-[2.8rem] "
-                            onChange={handleInputChange}
-                            />
-                        </div>
-
-                        {/* Breed */}
-                        <div className="grid grid-cols-1 gap-1">
-                            <label htmlFor="breed" className="text-black font-bold">
-                            <h6>Breed</h6>
-                            </label>
-                            <Select
-                            id="breed"
-                            variant="bordered"
-                            autoFocus
-                            items={animals}
-                            label="Select an animal" 
-                            size
-                            onChange={handleSelectChange}
-                            className=" w-ful">
-                            {(animal) => <SelectItem className="bg-white"
-                            variant="bordered">{animal.label}</SelectItem>}
-                            </Select>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 gap-1">
-                            <label htmlFor="date" className="text-black font-bold">
-                            <h6>
-                                Birth Date<span className="text-red-600">*</span>
-                            </h6>
-                            </label>
-                            <Input
-                            isRequired
-                            id="date"
-                            autoFocus
-                            type="date"
-                            label="text"
-                            placeholder="Input your cattle name"
-                            variant="bordered"
-                            className="w-full h-[2.8rem] "
-                            onChange={handleInputChange}
-                            />
-                        </div>
-
-                        {/* Gender Date */}
-                        <div className="grid grid-cols-1 gap-1">
-                            <label htmlFor="birth" className="text-black font-bold">
-                            <h6>
-                                Gender Date<span className="text-red-600">*</span>
-                            </h6>
-                            </label>
-                            <div className="input-bordered w-full flex justify-start gap-3     ">
-                                <label>
-                                    <input
-                                    type="radio"
-                                    name="gender"
-                                    value="jantan"
-                                    checked={cattle.gender === 'jantan'}
-                                    onChange={handleInputChange}
-                                    />
-                                    Jantan
-                                </label>
-                                <label>
-                                    <input
-                                    type="radio"
-                                    name="gender"
-                                    value="betina"
-                                    checked={cattle.gender === 'betina'}
-                                    onChange={handleInputChange}
-                                    />
-                                    Betina
-                                </label>
-                            </div>
-                           
-                        </div>
-                        {/* Farm */}
-                        <div className="grid grid-cols-1">
-                            <label htmlFor="farm" className="text-black font-bold">
-                            <h6>Farm</h6>
-                            </label>
-                            <Select
-                              id="category"
-                              name="category"
+                    <form onSubmit={updateCattle}>
+                      <ModalContent className="w-[800px] h-[650px] bg-white rounded-xl ">
+                      {(onClose) => (
+                      <>
+                      <ModalHeader className="dialog-title flex flex-col gap-1 px-6 mt-6">
+                          <h3 className="text-black font-bold text-center">Edit Cattle</h3>
+                      </ModalHeader>
+                      <ModalBody className="grid grid-cols-2">
+                          {/* Cattle Name */}
+                          <div className="grid grid-cols-1 gap-1">
+                              <label htmlFor="name" className="text-black font-bold">
+                              <h6>
+                                  Cattle Name<span className="text-red-600">*</span>
+                              </h6>
+                              </label>
+                              <Input
+                              id="name"
+                              name="name"
+                              autoFocus
+                              type="text"
+                              value={cattle.name}
+                              label="text"
+                              placeholder="Input your cattle name"
                               variant="bordered"
-                              placeholder="Select a category"
-                              className="w-full h-[2.8rem]"
-                              value={cattle.farm && cattle.farm.name}
-                              onChange={handleSelectChange}
+                              className="w-full h-[2.8rem] "
+                              onChange={handleInputChange}
+                              />
+                          </div>
+
+                          {/* Breed */}
+                          <div className="grid grid-cols-1">
+                            <label htmlFor="breed" className="font-bold text-black mb-[-1rem]">
+                              <h6>Breed</h6>
+                            </label>
+                            <Select
+                              id="breed"
+                              name="breed_id"
+                              variant="bordered"
+                              autoFocus
+                              defaultValue={cattle.breed.name}
+                              value={cattle.breed_id}
+                              placeholder="Select an animal"
+                              onChange={(e) => handleSelectChange1(e.target.value)}
+                              className="w-full mt-[0.5rem] h-[2.8rem]"
                             >
-                              {cattleData && cattleData.map((cattle) => (
-                                <SelectItem key={cattle && cattle.id} value={cattle.farm && cattle.farm.name}>
-                                  {cattle.farm && cattle.farm.name}
+                              {breedsData && breedsData.map((breed) => (
+                                <SelectItem key={breed.id} value={breed.id} className="bg-white">
+                                  {breed.name}
                                 </SelectItem>
                               ))}
                             </Select>
-                        </div>
-                        {/* Cattle Height */}
-                        <div className="grid grid-cols-1 gap-1">
-                            <label htmlFor="height" className="text-black font-bold">
-                            <h6>
-                                Cattle Height<span className="text-red-600">*</span>
-                            </h6>
-                            </label>
-                            <Input
-                            id="height"
-                            autoFocus
-                            type="text"
-                            label="text"
-                            placeholder="Input your cattle weight"
-                            variant="bordered"
-                            className="w-full h-[2.8rem] "
-                            onChange={handleInputChange}
-                            />
-                        </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 gap-1">
+                              <label htmlFor="date" className="text-black font-bold">
+                              <h6>
+                                  Birth Date<span className="text-red-600">*</span>
+                              </h6>
+                              </label>
+                              <Input
+                              name="birth_date"
+                              id="date"
+                              autoFocus
+                              value={cattle.birth_date}
+                              type="date"
+                              label="text"
+                              placeholder="Input your cattle name"
+                              variant="bordered"
+                              className="w-full h-[2.8rem] "
+                              onChange={handleInputChange}
+                              />
+                          </div>
+                          
+                          {/* Farm */}
+                          <div className="grid grid-cols-1=">
+                              <label htmlFor="farm" className="text-black font-bold">
+                              <h6>Farm</h6>
+                              </label>
+                              <Select
+                                id="farm"
+                                name="farm"
+                                variant="bordered"
+                                placeholder="Select a category"
+                                className="w-full h-[2.8rem]"
+                                value={cattle.farm && cattle.farm.name}
+                                onChange={handleSelectChange}
+                              >
+                                {cattleData && cattleData.map((cattle) => (
+                                  <SelectItem key={cattle && cattle.id} value={cattle.farm && cattle.farm.name}>
+                                    {cattle.farm && cattle.farm.name}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                          </div>
+                          {/* Cattle Height */}
+                          <div className="grid grid-cols-1 gap-1">
+                              <label htmlFor="height" className="text-black font-bold">
+                              <h6>
+                                  Cattle Height<span className="text-red-600">*</span>
+                              </h6>
+                              </label>
+                              <Input
+                              id="height"
+                              name="birth_height"
+                              autoFocus
+                              type="text"
+                              label="text"
+                              value={cattle.birth_height}
+                              placeholder="Input your cattle weight"
+                              variant="bordered"
+                              className="w-full h-[2.8rem] "
+                              onChange={handleInputChange}
+                              />
+                          </div>
 
-                        {/* Cattle Weight */}
-                        <div className="grid grid-cols-1 gap-1">
-                            <label htmlFor="weight" className="text-black font-bold">
-                            <h6>
-                                Cattle Weight<span className="text-red-600">*</span>
-                            </h6>
-                            </label>
-                            <Input
-                            id="weight"
-                            autoFocus
-                            type="text"
-                            label="text"
-                            placeholder="Input your cattle weight"
-                            variant="bordered"
-                            className="w-full h-[2.8rem] "
-                            onChange={handleInputChange}
-                            />
-                        </div>
-                        {/* IoT Devices */}
-                        <div className="grid grid-cols-1 gap-1">
-                            <label htmlFor="iot" className="text-black font-bold">
-                            <h6>IoT Device</h6>
-                            </label>
-                            <Select
-                            id="iot"
-                            variant="bordered"
-                            autoFocus
-                            items={animals}
-                            // label="Select an animal" 
-                            placeholder="Select an animal"
-                            size
-                            className=" w-ful">
-                            {(animal) => <SelectItem className="bg-white"
-                            variant="bordered">{animal.label}</SelectItem>}
-                            </Select>
-                        </div>
-                        </ModalBody>
-                        <ModalFooter>
+                          {/* Cattle Weight */}
+                          <div className="grid grid-cols-1 gap-1">
+                              <label htmlFor="weight" className="text-black font-bold">
+                              <h6>
+                                  Cattle Weight<span className="text-red-600">*</span>
+                              </h6>
+                              </label>
+                              <Input
+                              id="weight"
+                              autoFocus
+                              type="text"
+                              name="birth_weight"
+                              label="text"
+                              value={cattle.birth_weight}
+                              placeholder="Input your cattle weight"
+                              variant="bordered"
+                              className="w-full h-[2.8rem] "
+                              onChange={handleInputChange}
+                              />
+                          </div>
+                        
+                          </ModalBody>
+                          <ModalFooter>
 
-                        <Button isSubmit className="bg-emerald-600 text-md" onPress={onClose}>
-                        Submit
-                        </Button>
-                        </ModalFooter>
-                    </>
-                    )}
-                </ModalContent>
+                          <Button isSubmit className="bg-emerald-600 text-md" onPress={onClose}>
+                          Submit
+                          </Button>
+                          </ModalFooter>
+                      </>
+                      )}
+                  </ModalContent>
+                </form>
                 </Modal>
+                
                 </div>
             </div>
             {/* card 2 untuk detail cattle */}  

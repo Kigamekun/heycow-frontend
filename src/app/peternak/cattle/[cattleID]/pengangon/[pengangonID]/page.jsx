@@ -90,7 +90,7 @@ export default function PengangonDetail({ params }) {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      console.log('User data lengkap:', res.data.data);
+      console.log('User data lengkap:', res.data);
       if (res.data.data) {
         setDetailData(res.data.data);
       }
@@ -232,12 +232,12 @@ console.log('nama',cattleData.name)
     console.log('ada',value);
     setRequests({ ...requests, [name]: parseInt(value, 10) });
   };
-  
+  console.log('avatar', detailData.pengangon && detailData.pengangon.avatar && detailData.pengangon.avatar)
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setRequests({ ...requests, [name]: value });
   };
-  console.log('detail data pengangon' , detailData.pengangon)
+  console.log('detail data pengangon' , detailData)
   console.log('cattle data', cattleData)
   console.log('data yang disubmit :',submitRequest)
   return (
@@ -254,7 +254,7 @@ console.log('nama',cattleData.name)
         <div className="card w-[650px] p-2">
           <div className="card-body d-flex justify-around">
             <div id="</div>profile-picture">
-              <img src={detailData.pengangon && detailData.pengangon.full_avatar_url || "https://via.placeholder.com/250"} alt="Descriptive Alt Text" width={250} height={250} />
+              <img src={detailData.pengangon && detailData.pengangon.avatar && detailData.pengangon.avatar|| "https://via.placeholder.com/250"} alt="Descriptive Alt Text" width={250} height={250} />
               <p className="text-lg text-center mt-3 text-black font-thin">Upah : Rp {detailData.pengangon && detailData.pengangon.upah} / Bulan</p>
               <div className="d-flex mt-[-0.5rem] justify-center">
                 <ReactStars count={5} size={50} color2={'#ffd700'} value={detailData.pengangon && detailData.pengangon.rate}/>
@@ -328,16 +328,7 @@ console.log('nama',cattleData.name)
                       <select name="peternak_id" id="peternak_id">
                         <option selected value={requests.peternak_id}>{detailData.pengangon.name}</option>
                       </select>
-                      {/* <Input
-                        isDisabled
-                        id="peternak_id"
-                        name="peternak_id"
-                        defaultValue={detailData.pengangon && detailData.pengangon.name}
-                        value={requests.peternak_id}
-                        variant="bordered"
-                        className="w-full h-[2.8rem]"
-                        onChange={handleInputChange}
-                      /> */}
+                      
                     </div>
                     <div className="grid grid-cols-1 gap-1">
                       <label htmlFor="cattle_id" className="text-black font-bold">
@@ -348,27 +339,7 @@ console.log('nama',cattleData.name)
                       <select name="cattle_id" id="cattle_id">
                         <option selected value={requests.cattle_id}>{cattleData.name}</option>
                       </select>
-                      {/* <Select 
-                        id="cattle_id"
-                        name="cattle_id"
-                        value={requests.cattle_id}
-                        defaultValue={requests.cattle_id}
-                      >
-                        <SelectItem 
-                          value={requests.cattle_id}>
-                          {cattleData.name}
-                        </SelectItem>
-                      </Select> */}
-                      {/* <Input
-                        isDisabled
-                        id="cattle_id"
-                        name="cattle_id"
-                        defaultValue={cattleData && cattleData.name}
-                        value={requests.cattle_id}
-                        variant="bordered"
-                        className="w-full h-[2.8rem]"
-                        onChange={handleInputChange}
-                      /> */}
+                      
                     </div>
                     
                     <div className="grid grid-cols-1 gap-1">

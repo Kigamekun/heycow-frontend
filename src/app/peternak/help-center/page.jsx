@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 import Swal from 'sweetalert2';
 import axios from 'axios';
-import { Button } from '@nextui-org/react';
+import { Button, Textarea } from '@nextui-org/react';
 
 
 
@@ -31,7 +31,7 @@ export default function Home() {
         name: '',
         email: '',
         question_details: ''
-    }, [])
+    },[])
     const postHelpCenter = async () => {
         console.log('mengirim data....')
         const bodyFormData = new FormData();
@@ -41,7 +41,7 @@ export default function Home() {
 
         
         try{
-            var response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/help-center`, bodyFormData, {
+            var response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/help_centers`, bodyFormData, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -53,26 +53,26 @@ export default function Home() {
                     name: '',
                     email: '',
                     question_details: ''
-                })
-                ,
+                },
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Your question has been sent!',
-                    showConfirmButton: false,
-                    timer: 1000
-                })
+                    title: "Success",
+                    text: "Pertanyaan Anda berhasil terkirim",
+                    icon: "success",
+                    confirmButtonText: "OK"
+                }))
+                
             }
         }catch(error){
             console.log('Error:', error)
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Something went wrong!',
-                showConfirmButton: false,
-                timer: 1000
-            })
         }
+    }
+
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setHelpCenterData({
+            ...helpCenterData,
+            [name]: value
+        })
     }
   return (
     <>
@@ -88,16 +88,17 @@ export default function Home() {
                     <form onSubmit={postHelpCenter}>
                         <div className="mb-3">
                             <label htmlFor="name" className="form-label text-xl">Name</label>
-                            <Input type="text" className="form-control h-10" id="name" placeholder="Name" />
+                            <Input type="text" value={helpCenterData.name} className="form-control h-10" id="name" name="name" placeholder="Name" onChange={handleInputChange} />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="email" className="form-label text-xl">Email</label>
-                            <Input type="email" className="form-control h-10" id="email" placeholder="Email" />
+                            <Input type="email" value={helpCenterData.email} className="form-control h-10" id="email" name="email" onChange={handleInputChange} placeholder="Email" />
                         </div>
                        
                         <div className="mb-3">
-                            <label htmlFor="message" className="form-label text-xl">Message</label>
-                            <Editor  
+                            <label htmlFor="message" className="form-label text-xl">Pertanyaan</label>
+                            <Textarea className="form-control h-[20rem]" name="question" value={setHelpCenterData.question} onChange={handleInputChange} id="message" placeholder="Masukkan Pertanyaan Anda" />
+                            {/* <Editor  
                                 apiKey='vbch5as7kp2v4czumq6x79pj95t4gpblp8wb90gijtnke8n4'
                                 init={{
                                     plugins: [
@@ -125,9 +126,9 @@ export default function Home() {
                                   initialValue="Masukkan Keluhan Anda"
                                   value={helpCenterData.question_details}
                                     onEditorChange={handleEditorChange}
-                            />
+                            /> */}
                         </div>
-                        <Button type="submit" className="text-white rounded-xl text-xl bg-emerald-600">Submit</Button>
+                        <Button type="submit" className="text-white rounded-xl text-xl bg-emerald-600" onClick={postHelpCenter}>Submit</Button>
                     </form>
                 </div>
             </div>   

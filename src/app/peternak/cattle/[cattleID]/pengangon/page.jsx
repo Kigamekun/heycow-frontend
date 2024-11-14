@@ -46,8 +46,6 @@ export default function Pengangon( {params} ) {
   const filteredUserData = userData.filter(user =>
     user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  
   const getUserData = async () => {
     try {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/pengangon`, {
@@ -151,7 +149,7 @@ const handleSearchChange = (event) => {
                 <div className="d-flex flex-col grid ">
                   <h4 className="text-black font-bold">{user.name}</h4>
                   <p className="text-md text-black font-bold">{user.farm}</p>
-                  <p className="text-">{user.upah}</p>
+                  <p className="text-bold ">{user.upah}</p>
                   <p className="font-bold">{user.address}</p>
                 </div>
               </div>
