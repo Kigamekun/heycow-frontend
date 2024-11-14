@@ -65,7 +65,7 @@ export default function Home() {
         alert()
     }
 
-    const [RequestData, setRequestData] = React.useState([]);
+    const [RequestPengangonData, setRequestPengangonData] = React.useState([]);
     const columns = [
         {
             accessorKey: "no",
@@ -73,54 +73,164 @@ export default function Home() {
             cell: ({ row }) => row.index + 1, // Display row index, starting from 1
         },
         {
-            accessorKey: "user_id",
+            accessorKey: "full_avatar_url",
             header: ({ column }) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        User ID
+                        Avatars
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                     </Button>
                 )
             },
             cell: ({ row }) => (
 
-                <div className="lowercase">{row.getValue("user_id")}</div>
+                <div className="flex px-2 py-1">
+                    <div className="flex flex-col justify-center">
+                        <img src={row.getValue("full_avatar_url") ?? 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} alt="avatar" className="w-10 h-10">
+                        </img>
+                    </div>
+                </div>
             ),
 
         },
 
         {
-            accessorKey: "peternak_id",
+            accessorKey: "name",
             header: ({ column }) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Peternak ID
+                        Nama
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("peternak_id")}</div>,
+            cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
         },
         {
-            accessorKey: "cattle_id",
+            accessorKey: "address",
             header: ({ column }) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Cattle ID
+                        Address
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("cattle_id")}</div>,
+            cell: ({ row }) => <div className="lowercase">{row.getValue("address")}</div>,
+        },
+        {
+            accessorKey: "phone_number",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Nomor Telpon
+                        <ArrowUpDown className="w-4 h-4 ml-2" />
+                    </Button>
+                )
+            },
+            cell: ({ row }) => <div className="lowercase">{row.getValue("phone_number")}</div>,
+        },
+
+        {
+            accessorKey: "email",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Email
+                        <ArrowUpDown className="w-4 h-4 ml-2" />
+                    </Button>
+                )
+            },
+            cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+        },
+
+        {
+            accessorKey: "nik",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        NIK
+                        <ArrowUpDown className="w-4 h-4 ml-2" />
+                    </Button>
+                )
+            },
+            cell: ({ row }) => <div className="lowercase">{row.getValue("nik")}</div>,
+        },
+
+        {
+            accessorKey: "upah",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Upah
+                        <ArrowUpDown className="w-4 h-4 ml-2" />
+                    </Button>
+                )
+            },
+            cell: ({ row }) => <div className="lowercase">Rp {row.getValue("upah")}</div>,
+        },
+        {
+            accessorKey: "ktp",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Upah
+                        <ArrowUpDown className="w-4 h-4 ml-2" />
+                    </Button>
+                )
+            },
+            cell: ({ row }) =>
+                <div className="flex px-2 py-1">
+                    <div className="flex flex-col justify-center">
+                        <img src={row.getValue("ktp") ?? 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} alt="ktp">
+                        </img>
+                    </div>
+                </div>
+        },
+        {
+            accessorKey: "selfie_ktp",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Selfie KTP
+                        <ArrowUpDown className="w-4 h-4 ml-2" />
+                    </Button>
+                )
+            },
+            cell: ({ row }) =>
+                <div className="flex px-2 py-1">
+                    <div className="flex flex-col justify-center">
+                        <img src={row.getValue("selfie_ktp") ?? 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} alt="ktp">
+                        </img>
+                    </div>
+                </div>
         },
         {
             accessorKey: "status",
@@ -130,37 +240,14 @@ export default function Home() {
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Status
+                        Status Approval
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                     </Button>
                 )
             },
             cell: ({ row }) => <div className="lowercase">{row.getValue("status")}</div>,
         },
-        {
-            accessorKey: "duration",
-            header: ({ column }) => {
-                return (
-                    <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    >
-                        Duration
-                        <ArrowUpDown className="w-4 h-4 ml-2" />
-                    </Button>
-                )
-            },
-            cell: ({ row }) =>
-                <div className="flex px-2 py-1">
-                    <div className="flex flex-col justify-center">
-                        <h6 className="mb-0 text-sm leading-normal dark:text-white">
-                            {row.getValue("status") == '6' ? <div className="lowercase">6 bulan</div> : <div className="lowercaese">1 tahun</div>}
-                        </h6>
-                        <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                        </p>
-                    </div>
-                </div>,
-        },
+
         {
             accessorKey: 'id',
             header: 'Actions',
@@ -184,7 +271,7 @@ export default function Home() {
     ];
 
     const table = useReactTable({
-        data: RequestData,
+        data: RequestPengangonData,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -204,8 +291,8 @@ export default function Home() {
 
 
 
-    const getRequestData = async () => {
-        var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/request-angon`, {
+    const getRequestPengangonData = async () => {
+        var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
             headers: {
                 'content-type': 'text/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -213,7 +300,7 @@ export default function Home() {
         })
             .then(function (response) {
                 if (response.data.data != undefined) {
-                    setRequestData(response.data.data);
+                    setRequestPengangonData(response.data.data);
                     console.log(response.data.data);
                 }
             }).catch(function (error) {
@@ -240,7 +327,7 @@ export default function Home() {
     }
 
 
-    const deleteRequestData = async (id) => {
+    const deleteRequestPengangon = async (id) => {
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -262,7 +349,7 @@ export default function Home() {
 
                 try {
                     await axios.delete(
-                        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/request-angon/${id}`,
+                        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${id}`,
                         {
                             headers: {
                                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -283,7 +370,7 @@ export default function Home() {
     };
 
     React.useEffect(() => {
-        getRequestData();
+        getRequestPengangonData();
     }, []);
 
     // Ini untuk Modal dialog ketika membuat data dengan form
@@ -297,17 +384,17 @@ export default function Home() {
             <div className="card">
                 <div className="card-body">
                     <div className="d-flex justify-content-between align-items-center">
-                        <h3>Request</h3>
+                        <h3>Request Menjadi Pengangon</h3>
                     </div>
                     <br />
                     <div className="flex-auto px-0 pt-0 pb-2">
                         <div className="">
                             <div className="flex items-end w-full py-4" style={{ justifyContent: 'end' }}>
                                 <Input
-                                    placeholder="Filter User ID..."
-                                    value={(table.getColumn("user_id")?.getFilterValue()) ?? ""}
+                                    placeholder="Filter User..."
+                                    value={(table.getColumn("name")?.getFilterValue()) ?? ""}
                                     onChange={(event) =>
-                                        table.getColumn("user_id")?.setFilterValue(event.target.value)
+                                        table.getColumn("name")?.setFilterValue(event.target.value)
                                     }
                                     className="max-w-sm"
                                 />

@@ -41,8 +41,7 @@ export function Sidebar() {
 
     return (
         <div className="fixed top-0 bottom-0 left-0 h-full overflow-x-hidden sidebar-menu bg-emerald-600">
-           
-
+        
             <div className="image-container w-[300px] px-4 mt-3">
                 <Link href="/peternak">
                     <Image

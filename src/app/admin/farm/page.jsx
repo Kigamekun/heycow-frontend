@@ -157,7 +157,7 @@ export default function Home() {
   const [open, setOpen] = React.useState(false)
 
 
-  
+
   const getUserData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
       headers: {
@@ -168,7 +168,7 @@ export default function Home() {
       .then(function (response) {
         if (response.data.data != undefined) {
           setUserData(response.data.data);
-        console.log(response.data.data);
+          console.log(response.data.data);
         }
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
@@ -193,7 +193,7 @@ export default function Home() {
       })
   }
 
-  
+
   const getFarmData = async () => {
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
@@ -493,22 +493,20 @@ export default function Home() {
                 />
               </div>
               <div className="border rounded-md">
-              <Table>
+                <Table className="border border-collapse border-gray-300">
                   <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                       <TableRow key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => {
-                          return (
-                            <TableHead key={header.id}>
-                              {header.isPlaceholder
-                                ? null
-                                : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                            </TableHead>
-                          )
-                        })}
+                        {headerGroup.headers.map((header) => (
+                          <TableHead key={header.id} className="border border-gray-300">
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                          </TableHead>
+                        ))}
                       </TableRow>
                     ))}
                   </TableHeader>
@@ -520,7 +518,7 @@ export default function Home() {
                           data-state={row.getIsSelected() && "selected"}
                         >
                           {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
+                            <TableCell key={cell.id} className="border border-gray-300">
                               {flexRender(
                                 cell.column.columnDef.cell,
                                 cell.getContext()
@@ -533,7 +531,7 @@ export default function Home() {
                       <TableRow>
                         <TableCell
                           colSpan={columns.length}
-                          className="h-24 text-center"
+                          className="h-24 text-center border border-gray-300"
                         >
                           No results.
                         </TableCell>
@@ -541,6 +539,7 @@ export default function Home() {
                     )}
                   </TableBody>
                 </Table>
+
               </div>
               <div className="flex items-center justify-end py-4 space-x-2">
                 <div className="flex-1 text-sm text-muted-foreground">

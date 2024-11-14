@@ -23134,6 +23134,23 @@ body .bi:before,
     transition: 10ms;
 }
 
+.sidebar-wrapper .menu .sidebar-link:hover .ph .ph-scroll {
+    color: #20A577;
+    transition: 10ms;
+}
+
+.sidebar-wrapper .menu .sidebar-link:hover .ph .ph-lasso {
+    color: #20A577;
+    transition: 10ms;
+}
+
+.sidebar-wrapper .menu .sidebar-link:hover .ph .ph-listb {
+    color: #20A577;
+    transition: 10ms;
+}
+
+
+
 
 .sidebar-wrapper .menu .sidebar-item {
     list-style: none;

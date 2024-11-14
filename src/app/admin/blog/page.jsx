@@ -24,14 +24,14 @@ import * as React from "react"
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 
 import {
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable
 } from "@tanstack/react-table"
-import { ArrowUpDown, Files } from "lucide-react"
+import { ArrowUpDown } from "lucide-react"
 
 
 import axios from "axios"
@@ -71,7 +71,7 @@ export default function Home() {
   const [selectedFile, setSelectedFile] = React.useState();
 
 
-  const [UserData, setUserData] = React.useState([]);
+  const [BlogPostData, setBlogPostData] = React.useState([]);
   const columns = [
     {
       accessorKey: "no",
@@ -79,14 +79,14 @@ export default function Home() {
       cell: ({ row }) => row.index + 1, // Display row index, starting from 1
     },
     {
-      accessorKey: "avatar",
+      accessorKey: "full_image_url",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Avatar
+            Image
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
@@ -95,167 +95,205 @@ export default function Home() {
 
         <div className="flex px-2 py-1">
           <div className="flex flex-col justify-center">
-            <img className="mb-0 text-sm leading-normal dark:text-white">
-              {row.getValue()}
+            <img src={row.getValue("full_image_url") ?? 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} alt="image" className="w-10 h-10 rounded-full">
             </img>
-            
           </div>
         </div>
       ),
-      
+
     },
 
     {
-      accessorKey: "name",
+      accessorKey: "user_id",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Nama
+            User ID
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
+      cell: ({ row }) => <div className="lowercase">{row.getValue("user_id")}</div>,
     },
     {
-      accessorKey: "address",
+      accessorKey: "title",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Address
+            Title
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("address")}</div>,
+      cell: ({ row }) => <div className="lowercase">{row.getValue("title")}</div>,
     },
     {
-      accessorKey: "phone_number",
+      accessorKey: "content",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Nomor Telpon
+            Content
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("phone_number")}</div>,
-    },
-    
-    {
-      accessorKey: "email",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Email
-            <ArrowUpDown className="w-4 h-4 ml-2" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+      cell: ({ row }) => <div className="lowercase">{row.getValue("content")}</div>,
     },
 
     {
-      accessorKey: "password",
+      accessorKey: "category",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Password
+            Category
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("password")}</div>,
+      cell: ({ row }) =>
+        <div className="flex px-2 py-1">
+          <div className="flex flex-col justify-center">
+            <h6 className="mb-0 text-sm leading-normal dark:text-white">
+              {row.getValue("category") == 'jual' ? <span class="badge bg-warning">Jual</span> : <span class="badge bg-primary">Forum</span>}
+            </h6>
+            <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
+            </p>
+          </div>
+        </div>,
     },
-    
-    {
-      accessorKey: "role",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Role
-            <ArrowUpDown className="w-4 h-4 ml-2" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("role")}</div>,
-    },
-    // {
-    //     accessorKey: "status",
-    //     header: ({ column }) => {
-    //       return (
-    //         <Button
-    //           variant="ghost"
-    //           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    //         >
-    //           Status
-    //           <ArrowUpDown className="w-4 h-4 ml-2" />
-    //         </Button>
-    //       )
-    //     },
-    //     cell: ({ row }) => (
-  
-    //       <div className="flex px-2 py-1">
-    //         <div>
-  
-    //         </div>
-    //         <div className="flex flex-col justify-center">
-    //           <h6 className="mb-0 text-sm leading-normal dark:text-white">
-    //             {row.getValue("status") == 'active' ? <span class="badge bg-success">Active</span> : <span class="badge bg-danger">Inactive</span>}
-    //           </h6>
-    //           <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
-    //           </p>
-    //         </div>
-    //       </div>
-    //     ),
-        
-    //   },
 
+    {
+      accessorKey: "price",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Price
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("price")}</div>,
+    },
+
+    {
+      accessorKey: "cattle_id",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Cattle ID
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("cattle_id")}</div>,
+    },
+    {
+      accessorKey: "published",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Published Status
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("published")}</div>,
+    },
+    {
+      accessorKey: "published_at",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Published Date
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("published_at")}</div>,
+    },
+    {
+      accessorKey: "comments_count",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Comments Count
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("comments_count")}</div>,
+    },
+    {
+      accessorKey: "likes_count",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Likes Count
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("likes_count")}</div>,
+    },
     {
       accessorKey: 'id',
       header: 'Actions',
       cell: info => (
         <div>
-          <button className="text-xs text-white btn btn-warning" onClick={() => editUser(Number(info.getValue()))}>Edit</button>
-          <button className="ml-2 text-xs btn btn-danger" onClick={() => delete(Number(info.getValue()))}>Delete</button>
+          <button className="text-xs text-white btn btn-warning" onClick={() => editBlogPost(Number(info.getValue()))}>Edit</button>
+          <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteBlogPost(Number(info.getValue()))}>Delete</button>
         </div>
       ),
     }
-
   ];
-  const [User, setUser] = React.useState({
+  const [BlogPost, setBlogPost] = React.useState({
     id: 0,
-    avatar: '',
-    name: '',
-    address: '',
-    phone_number: '',
-    email: '',
-    password: '',
-    role: ''
-
+    user_id: '',
+    title: '',
+    content: '',
+    category: '',
+    image: '',
+    price: '',
+    cattle_id: '',
+    published: '',
+    published_at: '',
+    comments_count: '',
+    likes_count: ''
   });
 
 
   const table = useReactTable({
-    data: UserData,
+    data: BlogPostData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -277,14 +315,14 @@ export default function Home() {
   const handleInputChange = (event) => {
     const { name, value, files } = event.target;
     if (name === 'avatar') {
-      setUser((prevUser) => ({
-        ...prevUser,
+      setBlogPost((prevBlogPost) => ({
+        ...prevBlogPost,
         [name]: files[0], // Handle file input
       }));
       console.log(`Updated ${name}: ${files[0].name}`); // Log file name
     } else {
-      setUser((prevUser) => ({
-        ...prevUser,
+      setBlogPost((prevBlogPost) => ({
+        ...prevBlogPost,
         [name]: value,
       }));
       console.log(`Updated ${name}: ${value}`); // Log value
@@ -293,9 +331,9 @@ export default function Home() {
 
   const handleSelectChange = (event) => {
     const name = event.target.name;
-    const {value} = event.target.selectedOptions[0];
+    const { value } = event.target.selectedOptions[0];
     console.log(value);
-    setUser({ ...User, [name]: value });
+    setBlogPost({ ...User, [name]: value });
 
   }
 
@@ -304,8 +342,8 @@ export default function Home() {
   }
   const [open, setOpen] = React.useState(false)
 
-  const getUserData = async () => {
-    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
+  const getBlogPostData = async () => {
+    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts`, {
       headers: {
         'content-type': 'text/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -313,7 +351,8 @@ export default function Home() {
     })
       .then(function (response) {
         if (response.data.data != undefined) {
-          setUserData(response.data.data);
+          setBlogPostData(response.data.data.data);
+          console.log(response.data.data.data)
         }
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
@@ -338,7 +377,7 @@ export default function Home() {
       })
   }
 
-  const createUser = async (e) => {
+  const createBlogPost = async (e) => {
     e.preventDefault();
 
     Swal.fire({
@@ -353,19 +392,23 @@ export default function Home() {
     const bodyFormData = new FormData();
     // bodyFormData.append('avatar', User.avatar);
     if (selectedFile) {
-      bodyFormData.append('avatar', selectedFile);
-  }
-  
-    bodyFormData.append('name', User.name);
-    bodyFormData.append('address', User.address);
-    bodyFormData.append('phone_number', User.phone_number);
-    bodyFormData.append('email', User.email);
-    bodyFormData.append('password', User.password);
-    bodyFormData.append('role', User.role);
+      bodyFormData.append('image', selectedFile);
+    }
+
+    bodyFormData.append('user_id', BlogPost.user_id);
+    bodyFormData.append('title', BlogPost.title);
+    bodyFormData.append('content', BlogPost.content);
+    bodyFormData.append('category', BlogPost.category);
+    bodyFormData.append('price', BlogPost.price);
+    bodyFormData.append('cattle_id', BlogPost.cattle_id);
+    bodyFormData.append('published', BlogPost.published);
+    bodyFormData.append('published_at', BlogPost.published_at);
+    bodyFormData.append('comments_count', BlogPost.comments_count);
+    bodyFormData.append('likes_count', BlogPost.likes_count);
 
     try {
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`,
+        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts`,
         bodyFormData,
         {
           headers: {
@@ -376,18 +419,22 @@ export default function Home() {
       );
 
       // Refresh User data
-      getUserData();
+      getBlogPostData();
 
       // Reset form fields
-      setUser({
+      setBlogPost({
         id: 0,
-        avatar: Files || undefined,
-        name: '',
-        address: '',
-        phone_number: '',
-        email: '',
-        password: '',
-        role: ''
+        user_id: '',
+        title: '',
+        content: '',
+        category: '',
+        image: '',
+        price: '',
+        cattle_id: '',
+        published: '',
+        published_at: '',
+        comments_count: '',
+        likes_count: ''
       });
 
       setOpen(false);
@@ -414,15 +461,23 @@ export default function Home() {
     }
   };
 
-  const editUser = async (id) => {
-    let fr = UserData.find((f) => f.id === id);
-    console.log(fr)
-    if (fr) {
-      setUser({
-        id: fr.id,
-        avatar: fr.avatar,
-        name: fr.name,
-        status: fr.status,
+  const editBlogPost = async (id) => {
+    let bp = BlogPostData.find((f) => f.id === id);
+    console.log(bp)
+    if (bp) {
+      setBlogPost({
+        id: bp.id,
+        user_id: bp.user_id,
+        title: bp.title,
+        content: bp.content,
+        category: bp.category,
+        image: bp.image,
+        price: bp.price,
+        cattle_id: bp.cattle_id,
+        published: bp.published,
+        published_at: bp.published_at,
+        comments_count: bp.comments_count,
+        likes_count: bp.likes_count
       });
       setOpen(true);
     }
@@ -430,21 +485,25 @@ export default function Home() {
 
 
   const createData = async () => {
-    setUser({
+    setBlogPost({
       id: 0,
-      avatar: '',
-      name: '',
-      address: '',
-      phone_number: '',
-      email: '',
-      password: '',
-      role: ''
+      user_id: '',
+      title: '',
+      content: '',
+      category: '',
+      image: '',
+      price: '',
+      cattle_id: '',
+      published: '',
+      published_at: '',
+      comments_count: '',
+      likes_count: ''
 
     });
     setOpen(true);
   }
 
-  const updateUser = async (e) => {
+  const updateBlogPost = async (e) => {
 
 
     e.preventDefault();
@@ -459,20 +518,35 @@ export default function Home() {
     });
 
     var bodyFormData = new FormData();
-    bodyFormData.append('avatar', User.avatar);
-    bodyFormData.append('name', User.name);
-    bodyFormData.append('status', User.address);
-    bodyFormData.append('phone_number', User.phone_number);
-    bodyFormData.append('role', User.role);
+    // bodyFormData.append('avatar', User.avatar);
+    if (selectedFile) {
+      bodyFormData.append('image', selectedFile);
+    }
+
+    bodyFormData.append('user_id', BlogPost.user_id);
+    bodyFormData.append('title', BlogPost.title);
+    bodyFormData.append('content', BlogPost.content);
+    bodyFormData.append('category', BlogPost.category);
+    bodyFormData.append('price', BlogPost.price);
+    bodyFormData.append('cattle_id', BlogPost.cattle_id);
+    bodyFormData.append('published', BlogPost.published);
+    bodyFormData.append('published_at', BlogPost.published_at);
+    bodyFormData.append('comments_count', BlogPost.comments_count);
+    bodyFormData.append('likes_count', BlogPost.likes_count);
 
     var res = await axios.put(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${User.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${BlogPost.id}`,
       {
-        avatar: User.avatar,
-        name: User.name,
-        address: User.address,
-        phone_number: User.phone_number,
-        role: User.role
+        user_id: BlogPost.user_id,
+        title: BlogPost.title,
+        content: BlogPost.content,
+        category: BlogPost.category,
+        price: BlogPost.price,
+        cattle_id: BlogPost.cattle_id,
+        published: BlogPost.published,
+        published_at: BlogPost.published_at,
+        comments_count: BlogPost.comments_count,
+        likes_count: BlogPost.likes_count,
 
       },
       {
@@ -484,14 +558,20 @@ export default function Home() {
       }
     )
       .then(function (response) {
-        getUserData();
-        setUser({
+        getBlogPostData();
+        setBlogPost({
           id: 0,
-          avatar: '',
-          name: '',
-          address: '',
-          phone_number: '',
-          role: ''
+          user_id: '',
+          title: '',
+          content: '',
+          category: '',
+          image: '',
+          price: '',
+          cattle_id: '',
+          published: '',
+          published_at: '',
+          comments_count: '',
+          likes_count: ''
 
         })
         Swal.close()
@@ -521,7 +601,7 @@ export default function Home() {
       })
   }
 
-  const deleteUser = async (id) => {
+  const deleteBlogPost = async (id) => {
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -543,14 +623,14 @@ export default function Home() {
 
         try {
           await axios.delete(
-            `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${id}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${id}`,
             {
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
               }
             }
           );
-          await getUserData();
+          await getBlogPostData();
           Swal.fire(
             'Deleted!',
             'Your User has been deleted.',
@@ -564,7 +644,7 @@ export default function Home() {
   };
 
   React.useEffect(() => {
-    getUserData();
+    getBlogPostData();
   }, []);
 
   // Ini untuk Modal dialog ketika membuat data dengan form
@@ -578,78 +658,110 @@ export default function Home() {
       <div className="card">
         <div className="card-body">
           <div className="d-flex justify-content-between align-items-center">
-            <h3>User Account</h3>
+            <h3>Community Blog Post</h3>
             <div>
-            <Button variant="outline" onClick={createData}>Create Account</Button>
+              <Button variant="outline" onClick={createData}>Create Blog Post</Button>
 
 
               <Dialog open={open} onOpenChange={setOpen}>
-               
+
 
                 {/* Add a ref to the dialog */}
-                <DialogContent >
+                <DialogContent className={"lg:max-w-[200px]-lg overflow-y-scroll max-h-screen"} >
                   <DialogHeader>
-                    <DialogTitle className="mb-4">{User.id != 0 ? 'Update' :'Create'} User</DialogTitle>
+                    <DialogTitle className="mb-4">{BlogPost.id != 0 ? 'Update' : 'Create'} Blog Post</DialogTitle>
                     <DialogDescription>
-                      <form method="dialog" onSubmit={User.id != 0 ? updateUser : createUser}>
+                      <form method="dialog" onSubmit={BlogPost.id != 0 ? updateBlogPost : createBlogPost}>
                         {/* untuk masukkan file, gunakan dropify */}
                         <input
                           className="file-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          // value={User.avatar}
+                          // value={BlogPost.image}
                           type="file"
-                          name="avatar"
-                          placeholder="Chose your avatar"
+                          name="image"
+                          placeholder="Chose your image"
                           onChange={handleFileSelect}
                         />
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={User.name}
+                          value={BlogPost.user_id}
                           type="text"
-                          name="name"
-                          placeholder="Username"
+                          name="user_id"
+                          placeholder="user_id"
                           onChange={handleInputChange}
                         />
-                       
+
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={User.address}
+                          value={BlogPost.title}
                           type="text"
-                          name="address"
+                          name="title"
                           placeholder="Masukkan Alamatmu"
                           onChange={handleInputChange}
                         />
 
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={User.phone_number}
+                          value={BlogPost.content}
                           type="text"
-                          name="phone_number"
+                          name="content"
                           placeholder="Masukkan Nomor Telponmu"
                           onChange={handleInputChange}
                         />
 
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={User.email}
-                          type="email"
-                          name="email"
+                          value={BlogPost.category}
+                          type="text"
+                          name="category"
                           placeholder="Masukkan Emailmu"
                           onChange={handleInputChange}
                         />
 
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={User.password}
+                          value={BlogPost.price}
                           type="text"
-                          name="password"
+                          name="price"
+                          placeholder="Masukkan Passwordmu! minimal 8 karakter"
+                          onChange={handleInputChange}
+                        />
+                        <input
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                          value={BlogPost.published}
+                          type="text"
+                          name="published"
+                          placeholder="Masukkan Passwordmu! minimal 8 karakter"
+                          onChange={handleInputChange}
+                        />
+                        <input
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                          value={BlogPost.published_at}
+                          type="text"
+                          name="published_at"
+                          placeholder="Masukkan Passwordmu! minimal 8 karakter"
+                          onChange={handleInputChange}
+                        />
+                        <input
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                          value={BlogPost.comments_count}
+                          type="text"
+                          name="comment_count"
+                          placeholder="Masukkan Passwordmu! minimal 8 karakter"
+                          onChange={handleInputChange}
+                        />
+                        <input
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                          value={BlogPost.likes_count}
+                          type="text"
+                          name="likes_count"
                           placeholder="Masukkan Passwordmu! minimal 8 karakter"
                           onChange={handleInputChange}
                         />
 
-                        <label className=" input-bordered w-full">
+                        {/* <label className="w-full input-bordered">
                             <select
                                 name="role"
-                                // value={cattle.status}
+                                value={cattle.status}
                                 onChange={handleSelectChange}
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                             >
@@ -658,10 +770,10 @@ export default function Home() {
                                 <option value="cattleman">Peternak</option>
 
                             </select>
-                        </label>
-                        
-                        <div className="mt-5 flex justify-end gap-3">
-                          <button type="submit" className="btn">{User.id != 0 ? 'Update' :'Create'} User</button>
+                        </label> */}
+
+                        <div className="flex justify-end gap-3 mt-5">
+                          <button type="submit" className="btn">{BlogPost.id != 0 ? 'Update' : 'Create'} Blog Post</button>
                         </div>
                       </form>
                     </DialogDescription>
@@ -676,30 +788,28 @@ export default function Home() {
               <div className="flex items-end w-full py-4" style={{ justifyContent: 'end' }}>
                 <Input
                   placeholder="Filter User..."
-                  value={(table.getColumn("avatar")?.getFilterValue()) ?? ""}
+                  value={(table.getColumn("title")?.getFilterValue()) ?? ""}
                   onChange={(event) =>
-                    table.getColumn("avatar")?.setFilterValue(event.target.value)
+                    table.getColumn("title")?.setFilterValue(event.target.value)
                   }
                   className="max-w-sm"
                 />
               </div>
               <div className="border rounded-md">
-                <Table>
+                <Table className="border border-collapse border-gray-300">
                   <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                       <TableRow key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => {
-                          return (
-                            <TableHead key={header.id}>
-                              {header.isPlaceholder
-                                ? null
-                                : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                            </TableHead>
-                          )
-                        })}
+                        {headerGroup.headers.map((header) => (
+                          <TableHead key={header.id} className="border border-gray-300">
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                          </TableHead>
+                        ))}
                       </TableRow>
                     ))}
                   </TableHeader>
@@ -711,7 +821,7 @@ export default function Home() {
                           data-state={row.getIsSelected() && "selected"}
                         >
                           {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
+                            <TableCell key={cell.id} className="border border-gray-300">
                               {flexRender(
                                 cell.column.columnDef.cell,
                                 cell.getContext()
@@ -724,7 +834,7 @@ export default function Home() {
                       <TableRow>
                         <TableCell
                           colSpan={columns.length}
-                          className="h-24 text-center"
+                          className="h-24 text-center border border-gray-300"
                         >
                           No results.
                         </TableCell>
