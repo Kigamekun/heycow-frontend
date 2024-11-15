@@ -109,8 +109,8 @@ export function Sidebar() {
                         <span>Assign Device</span>
                     </Link>
                 </li>
-                <li className={`sidebar-item ${pathname === "/admin/report" ? "active" : ""}`}>
-                    <Link className="sidebar-link" href="/admin/report">
+                <li className={`sidebar-item ${pathname === "/admin/contract" ? "active" : ""}`}>
+                    <Link className="sidebar-link" href="/admin/contract">
                         <div className='ph'>
                             <Scroll className='ph-scroll' />
                         </div>

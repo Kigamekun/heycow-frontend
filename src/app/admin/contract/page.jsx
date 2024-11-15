@@ -1,6 +1,6 @@
 'use client'
-
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
     Table,
     TableBody,
@@ -8,14 +8,8 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
-
-
-import { Button } from "@/components/ui/button"
-import { useEffect, useState } from "react"
-
+} from "@/components/ui/table";
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
-
 import {
     flexRender,
     getCoreRowModel,
@@ -23,28 +17,17 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable
-} from "@tanstack/react-table"
-import { ArrowUpDown } from "lucide-react"
+} from "@tanstack/react-table";
+import axios from "axios";
+import { ArrowUpDown } from "lucide-react";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
+export default function Contract() {
 
-import axios from "axios"
-import Swal from "sweetalert2"
-
-
-export default function Home() {
-    const { user, logout } = useAuth({ middleware: 'admin' })
-    const [sorting, setSorting] = useState([])
-    const [columnFilters, setColumnFilters] = useState(
-        []
-    )
-    const [columnVisibility, setColumnVisibility] =
-        useState({
-            image: false,
-
-        })
-    const [rowSelection, setRowSelection] = useState({})
-
-    //  security by role 
+    const { user, logout } = useAuth({ middleware: 'admin' });
+    const [loading, setLoading] = useState(true);
+    //security by role
     const alert = () => {
         Swal.fire({
             title: "Anda bukan admin!",
@@ -63,7 +46,17 @@ export default function Home() {
         alert()
     }
 
-    const [RequestData, setRequestData] = useState([]);
+    const [sorting, setSorting] = useState([])
+    const [columnFilters, setColumnFilters] = useState([])
+    const [columnVisibility, setColumnVisibility] =
+        useState({
+            image: false,
+        })
+
+    const [rowSelection, setRowSelection] = useState({})
+
+    const [contractData, setcontractData] = useState([]);
+
     const columns = [
         {
             accessorKey: "no",
@@ -71,39 +64,35 @@ export default function Home() {
             cell: ({ row }) => row.index + 1, // Display row index, starting from 1
         },
         {
-            accessorKey: "user_id",
+            accessorKey: "contract_code",
             header: ({ column }) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        User ID
+                        Contract Code
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                     </Button>
                 )
             },
-            cell: ({ row }) => (
-
-                <div className="lowercase">{row.getValue("user_id")}</div>
-            ),
-
+            cell: ({ row }) => <div className="lowercase">{row.getValue("contract_code")}</div>,
         },
-
         {
-            accessorKey: "peternak_id",
+            accessorKey: "request_id",
             header: ({ column }) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Peternak ID
+                        Request ID
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("peternak_id")}</div>,
+            cell: ({ row }) => <div className="lowercase">{row.getValue("request_id")}</div>,
+
         },
         {
             accessorKey: "cattle_id",
@@ -119,70 +108,71 @@ export default function Home() {
                 )
             },
             cell: ({ row }) => <div className="lowercase">{row.getValue("cattle_id")}</div>,
+
         },
         {
-            accessorKey: "status",
+            accessorKey: "farm_id",
             header: ({ column }) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Status
+                        Farm ID
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("status")}</div>,
+            cell: ({ row }) => <div className="lowercase">{row.getValue("farm_id")}</div>,
+
         },
         {
-            accessorKey: "duration",
+            accessorKey: "start_date",
             header: ({ column }) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Duration
+                        Start Date
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                     </Button>
                 )
             },
-            cell: ({ row }) =>
-                <div className="flex px-2 py-1">
-                    <div className="flex flex-col justify-center">
-                        <h6 className="mb-0 text-sm leading-normal dark:text-white">
-                            {row.getValue("status") == '6' ? <div className="lowercase">6 bulan</div> : <div className="lowercaese">1 tahun</div>}
-                        </h6>
-                        <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                        </p>
-                    </div>
-                </div>,
+            cell: ({ row }) => <div className="lowercase">{row.getValue("start_date")}</div>,
+
         },
         {
             accessorKey: 'id',
             header: 'Actions',
             cell: info => (
                 <div>
-                    <button
-                        className="text-xs text-white btn btn-success"
-                        onClick={() => handleApprove(info.getValue())}
-                    >
-                        Approve
-                    </button>
-                    <button
-                        className="ml-2 text-xs btn btn-danger"
-                        onClick={() => handleReject(info.getValue())}
-                    >
-                        Reject
-                    </button>
+                    <button className="text-xs text-white btn btn-warning" onClick={() => editFarm(Number(info.getValue()))}>Edit</button>
+                    <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteFarm(Number(info.getValue()))}>Delete</button>
                 </div>
             ),
         }
     ];
 
+    const [contract, setContract] = useState({
+        id: 0,
+        contract_code: "",
+        request_id: "",
+        cattle_id: "",
+        farm_id: "",
+        start_date: "",
+        end_date: "",
+        rate: "",
+        intial_weight: "",
+        intial_height: "",
+        final_weight: "",
+        status: "",
+        total_cost: "",
+    });
+
+
     const table = useReactTable({
-        data: RequestData,
+        data: contractData,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -200,91 +190,46 @@ export default function Home() {
         },
     })
 
+    const getContractData = async () => {
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/contracts`, {
+                headers: {
+                    'content-type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
 
-
-    const getRequestData = async () => {
-        var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/request-angon`, {
-            headers: {
-                'content-type': 'text/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            if (response.data.data !== undefined) {
+                setcontractData(response.data.data.data);
+                console.log('Contract :', response.data.data.data);
             }
-        })
-            .then(function (response) {
-                if (response.data.data != undefined) {
-                    setRequestData(response.data.data);
-                    console.log(response.data.data);
-                }
-            }).catch(function (error) {
-                if (error.response && error.response.status === 401) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: error.response.data.message,
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-
-                    logout()
-
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'error terjadi',
-                        text: 'mohon coba lagi nanti.',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                }
-            })
-    }
-
-
-    const deleteRequestData = async (id) => {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
+        } catch (error) {
+            if (error.response && error.response.status === 401) {
                 Swal.fire({
-                    title: 'Loading...',
-                    text: 'Mohon tunggu sebentar...',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
+                    icon: 'error',
+                    title: error.response.data.message,
+                    showConfirmButton: false,
+                    timer: 1500
                 });
-
-                try {
-                    await axios.delete(
-                        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/request-angon/${id}`,
-                        {
-                            headers: {
-                                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                            }
-                        }
-                    );
-                    await getUserData();
-                    Swal.fire(
-                        'Deleted!',
-                        'Your User has been deleted.',
-                        'success'
-                    );
-                } catch (error) {
-
-                }
+                logout();
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'error terjadi',
+                    text: 'mohon coba lagi nanti.',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
             }
-        });
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
-        getRequestData();
+        getContractData();
     }, []);
 
-    // Ini untuk Modal dialog ketika membuat data dengan form
     return (
         <>
             <header className="mb-3">
@@ -295,17 +240,17 @@ export default function Home() {
             <div className="card">
                 <div className="card-body">
                     <div className="d-flex justify-content-between align-items-center">
-                        <h3>Request</h3>
+                        <h3>Contract</h3>
                     </div>
                     <br />
                     <div className="flex-auto px-0 pt-0 pb-2">
                         <div className="">
                             <div className="flex items-end w-full py-4" style={{ justifyContent: 'end' }}>
                                 <Input
-                                    placeholder="Filter User ID..."
-                                    value={(table.getColumn("user_id")?.getFilterValue()) ?? ""}
+                                    placeholder="Filter Farm..."
+                                    value={(table.getColumn("name")?.getFilterValue()) ?? ""}
                                     onChange={(event) =>
-                                        table.getColumn("user_id")?.setFilterValue(event.target.value)
+                                        table.getColumn("name")?.setFilterValue(event.target.value)
                                     }
                                     className="max-w-sm"
                                 />
@@ -388,6 +333,8 @@ export default function Home() {
                 </div>
             </div >
         </>
+
+
     )
 }
 

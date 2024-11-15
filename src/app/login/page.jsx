@@ -1,14 +1,12 @@
 /* eslint-disable @next/next/no-sync-scripts */
 'use client';
 
-import heycow from '@/images/hey_cow.svg'
+import { Input } from "@/components/ui/input";
+import heycow from '@/images/hey_cow.svg';
 import { useAuth } from "@/lib/hooks/auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Input } from "@/components/ui/input"
-
-import { MailIcon } from "lucide-react";
 
 import Link from "next/link";
 
@@ -37,10 +35,10 @@ export default function Page() {
     }
     return (
         <>
-            <main className="my-0 mx-auto min-h-full max-w-screen-sm">
+            <main className="max-w-screen-sm min-h-full mx-auto my-0">
 
 
-                <div className="d-flex justify-center my-7">
+                <div className="justify-center d-flex my-7">
                     <Image
                         src={heycow}
                         alt="Descriptive Alt Text"
@@ -48,14 +46,14 @@ export default function Page() {
                         height={50}
                     />
                 </div>
-                <div className="d-flex justify-center">
+                <div className="justify-center d-flex">
                     <div className="card w-[500px] h-[500px] shadow-xl p-4">
                         <div className="p-2 text-center">
-                            <h1 className="card-title text-black">Sign in</h1>
+                            <h1 className="text-black card-title">Sign in</h1>
                             <p>Welcome back Future Farmer, enjoy our app!</p>
                         </div>
                         
-                        <div className="card-body mx-4">
+                        <div className="mx-4 card-body">
                             <form onSubmit={submitHandler} action="" className="space-y-6">
                                 <div>
                                     <label htmlFor="email"><h5>Email</h5></label>       
@@ -87,10 +85,10 @@ export default function Page() {
                                 <button type="submit" className="bg-[#20A577] rounded-xl font-bold text-xl text-white h-[3rem] w-full">
                                     Login
                                 </button> 
-                                {/* <div className="divider text-red-200">atau</div> */}
+                                {/* <div className="text-red-200 divider">atau</div> */}
                                 <div className="text-center">
-                                    <p className="font-bold text-lg"> Belum punya akun?{" "}</p>
-                                    <p className="font-bold text-lg">
+                                    <p className="text-lg font-bold"> Belum punya akun?{" "}</p>
+                                    <p className="text-lg font-bold">
 
                                         <Link href="/register" className="text-[#20A577]">
                                             Sign Up!

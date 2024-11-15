@@ -8,20 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
-import * as React from "react";
-
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable
-} from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
-
-
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -31,23 +17,34 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable
+} from "@tanstack/react-table";
 import axios from "axios";
+import { ArrowUpDown } from "lucide-react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 
 export default function Cattle() {
   const { user, logout } = useAuth({ middleware: 'admin' })
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState(
+  const [sorting, setSorting] = useState([])
+  const [columnFilters, setColumnFilters] = useState(
     []
   )
   // const [error, setError] = useState(false);
   const [columnVisibility, setColumnVisibility] =
-    React.useState({
+    useState({
       image: false,
 
     })
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = useState({})
   //security by role
   const alert = () => {
     Swal.fire({
@@ -66,7 +63,7 @@ export default function Cattle() {
   if (user === 'cattleman') {
     alert()
   }
-  const [cattleData, setCattleData] = React.useState([]);
+  const [cattleData, setCattleData] = useState([]);
   const columns = [
     {
       accessorKey: "no",
@@ -87,6 +84,21 @@ export default function Cattle() {
         )
       },
       cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
+    },
+    {
+      accessorKey: "user_id",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            User ID
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("user_id")}</div>,
     },
     {
       accessorKey: "breed.name",
@@ -324,9 +336,10 @@ export default function Cattle() {
       ),
     }
   ];
-  const [cattle, setCattle] = React.useState({
+  const [cattle, setCattle] = useState({
     id: 0,
     name: "",
+    user_id: "",
     farm: "",
     breed_id: "",
     type: "",
@@ -339,15 +352,15 @@ export default function Cattle() {
   });
 
 
-  const [IotDeviceData, setIotDeviceData] = React.useState(
+  const [IotDeviceData, setIotDeviceData] = useState(
     []
   );
 
-  const [breedsData, setBreedsData] = React.useState(
+  const [breedsData, setBreedsData] = useState(
     []
   );
 
-  const [farmData, setFarmData] = React.useState([]);
+  const [farmData, setFarmData] = useState([]);
 
 
   const table = useReactTable({
@@ -382,7 +395,7 @@ export default function Cattle() {
     setCattle({ ...cattle,  [name]: value });
   }
 
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
 
   // Breed Data
   const getBreedsData = async () => {
@@ -772,7 +785,7 @@ export default function Cattle() {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getCattleData();
     getBreedsData();
     getFarmData();

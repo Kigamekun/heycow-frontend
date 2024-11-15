@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog"
-import * as React from "react"
+import { useEffect, useState } from "react"
 
 import {
   flexRender,
@@ -39,7 +39,7 @@ export default function Home() {
 
 
   const { user, logout } = useAuth({ middleware: 'admin' });
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = useState(true);
 
   //security by role
   const alert = () => {
@@ -60,18 +60,18 @@ export default function Home() {
     alert()
   }
 
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState([])
+  const [sorting, setSorting] = useState([])
+  const [columnFilters, setColumnFilters] = useState([])
   const [columnVisibility, setColumnVisibility] =
-    React.useState({
+    useState({
       image: false,
     })
 
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = useState({})
 
-  const [farmData, setFarmData] = React.useState([]);
+  const [farmData, setFarmData] = useState([]);
 
-  const [userData, setUserData] = React.useState([]);
+  const [userData, setUserData] = useState([]);
 
   const columns = [
     {
@@ -92,7 +92,7 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
+      cell: ({ row }) => <div>{row.getValue("name")}</div>,
     },
     {
       accessorKey: "address",
@@ -107,7 +107,7 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("address")}</div>,
+      cell: ({ row }) => <div>{row.getValue("address")}</div>,
 
     },
     {
@@ -122,10 +122,11 @@ export default function Home() {
     }
   ];
 
-  const [farm, setFarm] = React.useState({
+  const [farm, setFarm] = useState({
     id: 0,
     name: "",
     address: "",
+    user_id: "",
   });
 
 
@@ -154,7 +155,14 @@ export default function Home() {
     setFarm({ ...farm, [name]: value });
   }
 
-  const [open, setOpen] = React.useState(false)
+  const handleSelectChange = (event) => {
+    const name = event.target.name;
+    const { value } = event.target.selectedOptions[0];
+    console.log(value);
+    setFarm({ ...farm, [name]: value });
+  }
+
+  const [open, setOpen] = useState(false)
 
 
 
@@ -245,6 +253,7 @@ export default function Home() {
     const bodyFormData = new FormData();
     bodyFormData.append('name', farm.name);
     bodyFormData.append('address', farm.address);
+    bodyFormData.append('user_id', farm.user_id)
 
     try {
       const res = await axios.post(
@@ -265,7 +274,8 @@ export default function Home() {
       setFarm({
         id: 0,
         name: "",
-        address: ""
+        address: "",
+        user_id: ""
       });
 
       setOpen(false);
@@ -300,6 +310,7 @@ export default function Home() {
         id: fr.id,
         name: fr.name,
         address: fr.address,
+        user_id: fr.user_id
       });
       setOpen(true);
     }
@@ -311,12 +322,12 @@ export default function Home() {
       id: 0,
       name: "",
       address: "",
+      user_id: ""
     });
     setOpen(true);
   }
 
   const updateFarm = async (e) => {
-
 
     e.preventDefault();
     Swal.fire({
@@ -328,17 +339,13 @@ export default function Home() {
         Swal.showLoading();
       }
     });
-    var bodyFormData = new FormData();
-
-    bodyFormData.append('name', farm.name);
-    bodyFormData.append('address', farm.address);
-
+   
     var res = await axios.put(
       `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms/${farm.id}`,
       {
         name: farm.name,
         address: farm.address,
-
+        user_id: farm.user_id
       },
       {
         headers: {
@@ -353,7 +360,8 @@ export default function Home() {
         setFarm({
           id: 0,
           name: "",
-          address: ""
+          address: "",
+          user_id: "",
 
         })
         Swal.close()
@@ -425,8 +433,9 @@ export default function Home() {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getFarmData();
+    getUserData();
   }, []);
 
   return (
@@ -469,6 +478,28 @@ export default function Home() {
                           placeholder="Address"
                           onChange={handleInputChange}
                         />
+                        <select
+                          name="user_id"
+                          // s
+                          onChange={handleSelectChange}
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                        >
+                          <option value="">Pilih Pemilik Farm</option>
+                          {
+                            userData && userData.map((b) => {
+
+                                if (farm.user_id == b.id) {
+                                  return <option key={b.id} value={b.id} selected>{b.name}</option>;
+
+
+                                } else {
+                                  return <option key={b.id} value={b.id} >{b.name}</option>;
+
+                                }
+                            })
+                          }
+
+                        </select>
                         <div className="flex justify-end gap-3 mb-3">
                           <button type="submit" className="btn btn-primary">{farm.id != 0 ? 'Update' : 'Create'}</button>
                         </div>

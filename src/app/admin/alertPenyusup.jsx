@@ -1,8 +1,7 @@
 'use client'
-import * as React from "react";
-import Swal from "sweetalert2";
 import { useAuth } from "@/lib/hooks/auth";
 import { redirect } from "next/dist/server/api-utils";
+import Swal from "sweetalert2";
 
 export default function AlertPenyusup() {
     const { user, logout } = useAuth({ middleware: 'admin' })

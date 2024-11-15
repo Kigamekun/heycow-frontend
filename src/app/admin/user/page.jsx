@@ -19,8 +19,6 @@ import {
 } from "@/components/ui/dialog"
 
 import { Button } from "@/components/ui/button"
-import * as React from "react"
-
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 
 import {
@@ -31,27 +29,26 @@ import {
   getSortedRowModel,
   useReactTable
 } from "@tanstack/react-table"
-import { ArrowUpDown } from "lucide-react"
-
-
 import axios from "axios"
+import { ArrowUpDown } from "lucide-react"
+import { useEffect, useState } from "react"
 import Swal from "sweetalert2"
 
 
 export default function Home() {
   const { user, logout } = useAuth({ middleware: 'admin' })
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState(
+  const [sorting, setSorting] = useState([])
+  const [columnFilters, setColumnFilters] = useState(
     []
   )
   const [columnVisibility, setColumnVisibility] =
-    React.useState({
+    useState({
       image: false,
 
     })
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = useState({})
 
-  const [selectedFile, setSelectedFile] = React.useState();
+  const [selectedFile, setSelectedFile] = useState();
 
   //  security by role 
   const alert = () => {
@@ -72,7 +69,7 @@ export default function Home() {
     alert()
   }
 
-  const [UserData, setUserData] = React.useState([]);
+  const [UserData, setUserData] = useState([]);
   const columns = [
     {
       accessorKey: "no",
@@ -167,22 +164,6 @@ export default function Home() {
     },
 
     {
-      accessorKey: "password",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Password
-            <ArrowUpDown className="w-4 h-4 ml-2" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("password")}</div>,
-    },
-
-    {
       accessorKey: "role",
       header: ({ column }) => {
         return (
@@ -209,7 +190,7 @@ export default function Home() {
     }
 
   ];
-  const [User, setUser] = React.useState({
+  const [User, setUser] = useState({
     id: 0,
     avatar: '',
     name: '',
@@ -260,18 +241,16 @@ export default function Home() {
   }
 
   const handleSelectChange = (event) => {
-    const { name, value } = event.target;
-    setUser(prevUser => ({
-      ...prevUser,
-      [name]: value
-    }));
-    console.log("Selected role:", value); // Log to verify the role selection
-  };
+    const name = event.target.name;
+    const { value } = event.target.selectedOptions[0];
+    console.log(value);
+    setUser({ ...User, [name]: value });
+  }
 
   const handleFileSelect = (event) => {
     setSelectedFile(event.target.files ? event.target.files[0] : undefined);
   }
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
 
   //Mengambil user data
   const getUserData = async () => {
@@ -396,9 +375,13 @@ export default function Home() {
         name: fr.name,
         address: fr.address,
         phone_number: fr.phone_number,
+        email: fr.email,
         status: fr.status,
-        role: fr.role
+        role: fr.role,
+        password: fr.password
       });
+      setSelectedFile(null);
+
       setOpen(true);
     } else {
       console.log("user not found for id", id);
@@ -418,6 +401,8 @@ export default function Home() {
       role: ''
 
     });
+
+    setSelectedFile(null);
     setOpen(true);
   }
 
@@ -432,19 +417,26 @@ export default function Home() {
       }
     });
 
-    var res = await axios.put(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${User.id}`,
-      {
-        avatar: User.avatar,
-        name: User.name,
-        address: User.address,
-        phone_number: User.phone_number,
-        role: User.role
+    
+    const bodyFormData = new FormData();
+    // bodyFormData.append('avatar', User.avatar);
+    if (selectedFile) {
+      bodyFormData.append('avatar', selectedFile);
+    }
+    bodyFormData.append('name', User.name);
+    bodyFormData.append('address', User.address);
+    bodyFormData.append('phone_number', User.phone_number);
+    bodyFormData.append('email', User.email);
+    bodyFormData.append('password', User.password);
+    bodyFormData.append('role', User.role);
 
-      },
+
+    var res = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${User.id}`,
+      bodyFormData,
       {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
 
         },
@@ -458,7 +450,9 @@ export default function Home() {
           name: '',
           address: '',
           phone_number: '',
-          role: ''
+          email: '',
+          role: '',
+          password: '',
 
         });
         Swal.close()
@@ -528,7 +522,7 @@ export default function Home() {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getUserData();
   }, []);
 

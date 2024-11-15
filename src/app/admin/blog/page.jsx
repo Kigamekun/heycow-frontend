@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dialog"
 
 import { Button } from "@/components/ui/button"
-import * as React from "react"
+import { useEffect, useState } from "react"
 
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 
@@ -40,8 +40,8 @@ import Swal from "sweetalert2"
 
 export default function Home() {
   const { user, logout } = useAuth({ middleware: 'admin' })
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState(
+  const [sorting, setSorting] = useState([])
+  const [columnFilters, setColumnFilters] = useState(
     []
   )
   const alert = () => {
@@ -62,16 +62,16 @@ export default function Home() {
     alert()
   }
   const [columnVisibility, setColumnVisibility] =
-    React.useState({
+    useState({
       image: false,
 
     })
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = useState({})
 
-  const [selectedFile, setSelectedFile] = React.useState();
+  const [selectedFile, setSelectedFile] = useState();
 
 
-  const [BlogPostData, setBlogPostData] = React.useState([]);
+  const [BlogPostData, setBlogPostData] = useState([]);
   const columns = [
     {
       accessorKey: "no",
@@ -276,7 +276,7 @@ export default function Home() {
       ),
     }
   ];
-  const [BlogPost, setBlogPost] = React.useState({
+  const [BlogPost, setBlogPost] = useState({
     id: 0,
     user_id: '',
     title: '',
@@ -340,7 +340,7 @@ export default function Home() {
   const handleFileSelect = (event) => {
     setSelectedFile(event.target.files ? event.target.files[0] : undefined);
   }
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
 
   const getBlogPostData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts`, {
@@ -643,7 +643,7 @@ export default function Home() {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getBlogPostData();
   }, []);
 

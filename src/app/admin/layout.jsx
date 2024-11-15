@@ -1,20 +1,19 @@
 'use client'
 
-import localFont from "next/font/local";
-import "../globals.css";
 import { Navbar } from '@/components/Navbar'; // Import Navbar
 import '@/styles/app.css';
 import '@/styles/iconly.css';
+import { useState } from 'react';
+import "../globals.css";
 
-import { useRouter } from "next/navigation"; // Import router untuk redirect
-import * as React from "react"
 import { Sidebar } from '@/components/Sidebar';
+import { useRouter } from "next/navigation"; // Import router untuk redirect
 
 export default function RootLayout({ children }) {
 
     const router = useRouter();
 
-    const [loading, setLoading] = React.useState(true); // Tambahkan state loading
+    const [loading, setLoading] = useState(true); // Tambahkan state loading
 
     const navbarStyle = {
         
@@ -48,31 +47,11 @@ export default function RootLayout({ children }) {
         padding: '20px',
         position: 'relative',
     };
-    // className="d-flex justify-between"
+    // className="justify-between d-flex"
     return (
         <main>
             <div id="app"  >
                 <Navbar /> 
-                {/* <div id="sidebar" style={sidebarStyle}>
-                    <div className="sidebar-wrapper active">
-                        <div className="sidebar-header " >
-                            <div className="d-flex justify-content-between align-items-center">
-                                <div className="logo">
-                                    <a href="index.html">
-                                    </a>
-                                </div>
-                                <div className="sidebar-toggler x">
-                                    <a href="#" className="sidebar-hide d-xl-none d-block">
-                                        <i className="bi bi-x bi-middle" />
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <Sidebar />
-                    </div>
-
-                </div> */}
-                
                 <div id="sidebar" style={sidebarStyle} className="overflox-x-hidden">
                     <div className="sidebar-wrapper active w-[300px]">
                         <div className="sidebar-header w-[300px]">
@@ -90,13 +69,9 @@ export default function RootLayout({ children }) {
                         <Sidebar />
                     </div>
                 </div>
-
-                
-                
-                
             </div>
             <div id="main" className="mt-24">
-                {children}  
+                {children}
             </div>
         </main>
     );

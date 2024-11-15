@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog"
-import * as React from "react"
+import { useEffect, useState } from "react"
 
 import {
   flexRender,
@@ -35,18 +35,18 @@ import axios from "axios"
 import Swal from "sweetalert2"
 
 
-export default function Home() {
+export default function Device() {
   const { user, logout } = useAuth({ middleware: 'admin' })
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState(
+  const [sorting, setSorting] = useState([])
+  const [columnFilters, setColumnFilters] = useState(
     []
   )
   const [columnVisibility, setColumnVisibility] =
-    React.useState({
+    useState({
       image: false,
 
     })
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = useState({})
   //security by role
   const alert = () => {
     Swal.fire({
@@ -65,7 +65,7 @@ export default function Home() {
   if (user === 'cattleman') {
     alert()
   }
-  const [deviceData, setDeviceData] = React.useState([]);
+  const [deviceData, setDeviceData] = useState([]);
   const columns = [
     {
       accessorKey: "no",
@@ -161,7 +161,7 @@ export default function Home() {
     }
 
   ];
-  const [device, setDevice] = React.useState({
+  const [device, setDevice] = useState({
     id: 0,
     serial_number: '',
     installation_date: '',
@@ -194,15 +194,7 @@ export default function Home() {
     setDevice({ ...device, [name]: value });
   }
 
-  const [open, setOpen] = React.useState(false)
-
-
-
-
-
-
-
-
+  const [open, setOpen] = useState(false)
 
   const getDeviceData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices`, {
@@ -440,7 +432,7 @@ export default function Home() {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getDeviceData();
   }, []);
 
@@ -468,6 +460,7 @@ export default function Home() {
                     <DialogTitle className="mb-4">{device.id != 0 ? 'Update' : 'Create'} Device</DialogTitle>
                     <DialogDescription>
                       <form method="dialog" onSubmit={device.id != 0 ? updateDevice : createDevice}>
+                        <label className="mb-2 text-black float-start"> Serial Number </label>
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={device.serial_number}
@@ -476,6 +469,7 @@ export default function Home() {
                           placeholder="Serial Number"
                           onChange={handleInputChange}
                         />
+                        <label className="mb-2 text-black float-start"> Installation Date </label>
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={device.installation_date}
@@ -484,6 +478,7 @@ export default function Home() {
                           placeholder="Installation Date"
                           onChange={handleInputChange}
                         />
+                        <label className="mb-2 text-black float-start"> Status </label>
                         <select
                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           name="status"
@@ -518,7 +513,7 @@ export default function Home() {
                 />
               </div>
               <div className="border rounded-md">
-                <Table className="border-collapse border border-gray-300">
+                <Table className="border border-collapse border-gray-300">
                   <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                       <TableRow key={headerGroup.id}>

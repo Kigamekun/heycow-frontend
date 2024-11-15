@@ -1,9 +1,8 @@
 'use client'
-import Head from 'next/head';
+import { heycow } from '@/images/hey_cow.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/globals.css';
 import Image from 'next/image';
-import {heycow} from '@/images/hey_cow.svg'
+import '../styles/globals.css';
 export default function Home() {
   return (
     <>
@@ -24,7 +23,7 @@ export default function Home() {
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ml-auto">
+            <ul className="ml-auto navbar-nav">
               <li className="nav-item"><a className="nav-link" href="#about">About</a></li>
               <li className="nav-item"><a className="nav-link" href="#services">Services</a></li>
               <li className="nav-item"><a className="nav-link" href="#contact">Contact</a></li>
@@ -50,7 +49,7 @@ export default function Home() {
             <div className="col-lg-6">
               <img src="/assets_lp/img/about.jpg" className="img-fluid" alt="About" />
             </div>
-            <div className="col-lg-6 pt-4 pt-lg-0">
+            <div className="pt-4 col-lg-6 pt-lg-0">
               <h3>About HeyCow!</h3>
               <p>HeyCow! is an app designed to simplify cattle management through technology and IoT.</p>
               <ul>
@@ -78,14 +77,14 @@ export default function Home() {
                 <p>Track your cattle in real-time with our advanced IoT solutions.</p>
               </div>
             </div>
-            <div className="col-lg-4 col-md-6 mt-4 mt-md-0">
+            <div className="mt-4 col-lg-4 col-md-6 mt-md-0">
               <div className="icon-box">
                 <div className="icon"><i className="bi bi-heart-pulse"></i></div>
                 <h4><a href="">Health Monitoring</a></h4>
                 <p>Monitor the health and activity levels of your cattle to ensure well-being.</p>
               </div>
             </div>
-            <div className="col-lg-4 col-md-6 mt-4 mt-lg-0">
+            <div className="mt-4 col-lg-4 col-md-6 mt-lg-0">
               <div className="icon-box">
                 <div className="icon"><i className="bi bi-box"></i></div>
                 <h4><a href="">Grazing Services</a></h4>
@@ -123,7 +122,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="col-lg-8 mt-5 mt-lg-0">
+            <div className="mt-5 col-lg-8 mt-lg-0">
               <form action="forms/contact.php" method="post" role="form" className="php-email-form">
                 <div className="row">
                   <div className="col-md-6 form-group">

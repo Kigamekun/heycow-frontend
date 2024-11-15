@@ -93,7 +93,8 @@
 }
 
 .sidebar-wrapper .menu .sidebar-item.active>.sidebar-link {
-  background-color: #435ebe
+  background-color: white;
+  color: #20A577
 }
 
 .sidebar-wrapper .menu .sidebar-item.active>.sidebar-link span {
@@ -101,9 +102,9 @@
 }
 
 .sidebar-wrapper .menu .sidebar-item.active>.sidebar-link svg,
-.sidebar-wrapper .menu .sidebar-item.active>.sidebar-link i {
-  fill: #fff;
-  color: #fff
+.sidebar-wrapper .menu .sidebar-item.active>.sidebar-link span {
+  fill: #20A577;
+  color: #20A577
 }
 
 /* .card .card-body .container{

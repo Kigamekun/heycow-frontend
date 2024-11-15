@@ -8,8 +8,6 @@ import {
     DialogHeader,
     DialogTitle
 } from "@/components/ui/dialog"
-import * as React from "react"
-
 import {
     flexRender,
     getCoreRowModel,
@@ -19,6 +17,7 @@ import {
     useReactTable
 } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
+import { useEffect, useState } from "react"
 
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 
@@ -37,16 +36,16 @@ import Swal from "sweetalert2"
 
 export default function Home() {
     const { user, logout } = useAuth({ middleware: 'admin' })
-    const [sorting, setSorting] = React.useState([])
-    const [columnFilters, setColumnFilters] = React.useState(
+    const [sorting, setSorting] = useState([])
+    const [columnFilters, setColumnFilters] = useState(
         []
     )
     const [columnVisibility, setColumnVisibility] =
-        React.useState({
+        useState({
             image: false,
 
         })
-    const [rowSelection, setRowSelection] = React.useState({})
+    const [rowSelection, setRowSelection] = useState({})
     //security by role
     const alert = () => {
         Swal.fire({
@@ -65,7 +64,7 @@ export default function Home() {
     if (user === 'cattleman') {
         alert()
     }
-    const [breedsData, setBreedsData] = React.useState([]);
+    const [breedsData, setBreedsData] = useState([]);
     const columns = [
         {
             accessorKey: "no",
@@ -146,7 +145,7 @@ export default function Home() {
         }
 
     ];
-    const [breeds, setBreeds] = React.useState({
+    const [breeds, setBreeds] = useState({
         id: 0,
         name: '',
         country: '',
@@ -180,7 +179,7 @@ export default function Home() {
         setBreeds({ ...breeds, [name]: value });
     }
 
-    const [open, setOpen] = React.useState(false)
+    const [open, setOpen] = useState(false)
 
     const getBreedsData = async () => {
         var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/breeds`, {
@@ -416,7 +415,7 @@ export default function Home() {
         });
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         getBreedsData();
     }, []);
 

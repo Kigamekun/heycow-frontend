@@ -12,7 +12,7 @@ import {
 
 
 import { Button } from "@/components/ui/button"
-import * as React from "react"
+import { useEffect, useState } from "react"
 
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 
@@ -33,18 +33,16 @@ import Swal from "sweetalert2"
 
 export default function Home() {
     const { user, logout } = useAuth({ middleware: 'admin' })
-    const [sorting, setSorting] = React.useState([])
-    const [columnFilters, setColumnFilters] = React.useState(
+    const [sorting, setSorting] = useState([])
+    const [columnFilters, setColumnFilters] = useState(
         []
     )
     const [columnVisibility, setColumnVisibility] =
-        React.useState({
+        useState({
             image: false,
 
         })
-    const [rowSelection, setRowSelection] = React.useState({})
-
-    const [selectedFile, setSelectedFile] = React.useState();
+    const [rowSelection, setRowSelection] = useState({})
 
     //  security by role 
     const alert = () => {
@@ -65,7 +63,19 @@ export default function Home() {
         alert()
     }
 
-    const [RequestPengangonData, setRequestPengangonData] = React.useState([]);
+    const [RequestPengangonData, setRequestPengangonData] = useState([]);
+    const [request, setRequest] = useState({
+        id: 0,
+        avatar: '',
+        name: '',
+        address: '',
+        phone_number: '',
+        email: '',
+        nik: '',
+        upah: '',
+        ktp: '',
+        selfie_ktp: '',
+    });
     const columns = [
         {
             accessorKey: "no",
@@ -198,7 +208,7 @@ export default function Home() {
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Upah
+                        KTP
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                     </Button>
                 )
@@ -231,21 +241,6 @@ export default function Home() {
                         </img>
                     </div>
                 </div>
-        },
-        {
-            accessorKey: "status",
-            header: ({ column }) => {
-                return (
-                    <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    >
-                        Status Approval
-                        <ArrowUpDown className="w-4 h-4 ml-2" />
-                    </Button>
-                )
-            },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("status")}</div>,
         },
 
         {
@@ -300,9 +295,85 @@ export default function Home() {
         })
             .then(function (response) {
                 if (response.data.data != undefined) {
-                    setRequestPengangonData(response.data.data);
-                    console.log(response.data.data);
+                    // Filter out users with "admin" role and where "nik" is null
+                    const nonAdminUsers = response.data.data.filter(user => user.role !== 'admin' && user.nik !== null);
+                    setRequestPengangonData(nonAdminUsers); // Update state with filtered data
+                    console.log(nonAdminUsers);
                 }
+            }).catch(function (error) {
+                if (error.response && error.response.status === 401) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: error.response.data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    logout();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'error terjadi',
+                        text: 'mohon coba lagi nanti.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            });
+    }
+
+    const handleApprove = async (e) => {
+        e.preventDefault();
+        Swal.fire({
+            title: 'Loading...',
+
+            text: 'Mohon tunggu sebentar...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        var res = await axios.patch(
+            `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${id}/approve}`,
+            {
+                avatar: request.avatar,
+                name: request.name,
+                address: request.address,
+                phone_number: request.phone_number,
+                email: request.email,
+                nik: request.nik,
+                upah: request.upah,
+                ktp: request.ktp,
+                selfie_ktp: request.selfie_ktp,
+
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+
+                },
+            }
+        )
+            .then(function (response) {
+                getRequestPengangonData();
+                setRequest({
+                    id: 0,
+                    avatar: '',
+                    name: '',
+                    address: '',
+                    phone_number: '',
+                    email: '',
+                    nik: '',
+                    upah: '',
+                    ktp: '',
+                    selfie_ktp: '',
+
+                })
+                Swal.close()
+
+                setOpen(false);
+
             }).catch(function (error) {
                 if (error.response && error.response.status === 401) {
                     Swal.fire({
@@ -326,8 +397,7 @@ export default function Home() {
             })
     }
 
-
-    const deleteRequestPengangon = async (id) => {
+    const handleReject = async (id) => {
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -348,18 +418,18 @@ export default function Home() {
                 });
 
                 try {
-                    await axios.delete(
-                        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${id}`,
+                    await axios.put(
+                        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${id}/reject`,
                         {
                             headers: {
                                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
                             }
                         }
                     );
-                    await getUserData();
+                    await getRequestPengangonData();
                     Swal.fire(
-                        'Deleted!',
-                        'Your User has been deleted.',
+                        'Unnasign!',
+                        'The device has been unassigned.',
                         'success'
                     );
                 } catch (error) {
@@ -369,7 +439,7 @@ export default function Home() {
         });
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         getRequestPengangonData();
     }, []);
 

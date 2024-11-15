@@ -1,22 +1,21 @@
 'use client'
-
 import { Button } from "@/components/ui/button"
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle
 } from "@/components/ui/dialog"
-import * as React from "react"
+import { useEffect, useState } from "react"
 
 import {
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable
 } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
 
@@ -24,29 +23,29 @@ import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 
 import { Input } from "@/components/ui/input"
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table"
 import axios from "axios"
 import Swal from "sweetalert2"
 
 
-export default function Home() {
+export default function AsignDevice() {
   const { user, logout } = useAuth({ middleware: 'admin' })
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState(
+  const [sorting, setSorting] = useState([])
+  const [columnFilters, setColumnFilters] = useState(
     []
   )
   const [columnVisibility, setColumnVisibility] =
-    React.useState({
+    useState({
       image: false,
 
     })
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = useState({})
   //security by role
   const alert = () => {
     Swal.fire({
@@ -65,7 +64,7 @@ export default function Home() {
   if (user === 'cattleman') {
     alert()
   }
-  const [deviceData, setDeviceData] = React.useState([]);
+  const [deviceData, setDeviceData] = useState([]);
   const columns = [
     {
       accessorKey: "no",
@@ -148,25 +147,51 @@ export default function Home() {
       ),
 
     },
+    {
+      accessorKey: "user_name",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            User Assigned
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("user_name")}</div>,
+    },
 
     {
       accessorKey: 'id',
       header: 'Actions',
       cell: info => (
         <div>
-          <button className="text-xs text-white btn btn-warning" onClick={() => editDevice(Number(info.getValue()))}>Edit</button>
-          <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteDevice(Number(info.getValue()))}>Delete</button>
+          <button className="text-xs text-white btn btn-success" onClick={() => editDevice(Number(info.getValue()))}>Assign</button>
+          <button className="text-xs text-white btn btn-danger" onClick={() => deleteDevice(Number(info.getValue()))}>Unassign</button>
         </div>
       ),
     }
 
   ];
-  const [device, setDevice] = React.useState({
+
+  
+  const handleSelectChange = (event) => {
+    const name = event.target.name;
+    const { value } = event.target.selectedOptions[0];
+    console.log(value);
+    setDevice({ ...device, [name]: value });
+  }
+
+  const [device, setDevice] = useState({
     id: 0,
     serial_number: '',
     installation_date: '',
     status: '',
+    user_id: '',
   });
+  const [UserData, setUserData] = useState([]);
 
 
   const table = useReactTable({
@@ -194,15 +219,7 @@ export default function Home() {
     setDevice({ ...device, [name]: value });
   }
 
-  const [open, setOpen] = React.useState(false)
-
-
-
-
-
-
-
-
+  const [open, setOpen] = useState(false)
 
   const getDeviceData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices`, {
@@ -238,6 +255,41 @@ export default function Home() {
       })
   }
 
+  const getUserData = async () => {
+    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
+      headers: {
+        'content-type': 'text/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      }
+    })
+      .then(function (response) {
+        if (response.data.data != undefined) {
+          setUserData(response.data.data);
+        }
+      }).catch(function (error) {
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          })
+
+          logout()
+
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'error terjadi',
+            text: 'mohon coba lagi nanti.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      })
+  }
+
+
   const createDevice = async (e) => {
     e.preventDefault();
 
@@ -254,6 +306,7 @@ export default function Home() {
     bodyFormData.append('serial_number', device.serial_number);
     bodyFormData.append('installation_date', device.installation_date);
     bodyFormData.append('status', device.status);
+    bodyFormData.append('user_id', device.user_id);
 
     try {
       const res = await axios.post(
@@ -276,6 +329,7 @@ export default function Home() {
         serial_number: '',
         installation_date: '',
         status: '',
+        user_id: '',
       });
 
       setOpen(false);
@@ -311,6 +365,7 @@ export default function Home() {
         serial_number: fr.serial_number,
         installation_date: fr.installation_date,
         status: fr.status,
+        user_id: fr.user_id
       });
       setOpen(true);
     }
@@ -323,6 +378,7 @@ export default function Home() {
       serial_number: '',
       installation_date: '',
       status: '',
+      user_id: ''
     });
     setOpen(true);
   }
@@ -340,18 +396,13 @@ export default function Home() {
         Swal.showLoading();
       }
     });
-    var bodyFormData = new FormData();
-
-    bodyFormData.append('serial_number', device.serial_number);
-    bodyFormData.append('installation_date', device.installation_date);
-    bodyFormData.append('status', device.status);
-
-    var res = await axios.put(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices/${device.id}`,
+   
+    var res = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices/assign-iot-devices`,
       {
-        serial_number: device.serial_number,
-        installation_date: device.installation_date,
-        status: device.status,
+        user_id: device.user_id,
+        iot_device_id : device.id,
+        device_id : device.id
 
       },
       {
@@ -369,6 +420,7 @@ export default function Home() {
           serial_number: '',
           installation_date: '',
           status: '',
+          user_id: ''
 
         })
         Swal.close()
@@ -420,7 +472,7 @@ export default function Home() {
 
         try {
           await axios.delete(
-            `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices/${id}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices/remove_devices/${id}`,
             {
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -429,8 +481,8 @@ export default function Home() {
           );
           await getDeviceData();
           Swal.fire(
-            'Deleted!',
-            'Your device has been deleted.',
+            'Unnasign!',
+            'The device has been unassigned.',
             'success'
           );
         } catch (error) {
@@ -440,8 +492,9 @@ export default function Home() {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getDeviceData();
+    getUserData();
   }, []);
 
   return (
@@ -456,7 +509,6 @@ export default function Home() {
           <div className="d-flex justify-content-between align-items-center">
             <h3>Device</h3>
             <div>
-              <Button variant="outline" onClick={createData}>Create Device</Button>
 
 
               <Dialog open={open} onOpenChange={setOpen}>
@@ -474,25 +526,47 @@ export default function Home() {
                           type="text"
                           name="serial_number"
                           placeholder="Serial Number"
+                          disabled
                           onChange={handleInputChange}
                         />
                         <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                          className="bg-gray-50 mb-4 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={device.installation_date}
                           type="date"
                           name="installation_date"
                           placeholder="Installation Date"
+                          disabled
+
                           onChange={handleInputChange}
                         />
                         <select
-                          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          class="bg-gray-50 mb-4 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           name="status"
+                          disabled
+
                           value={device.status}
                           onChange={handleInputChange}
                         >
                           <option value="" disabled>Select status</option>
                           <option value="active">Active</option>
                           <option value="inactive">Inactive</option>
+                        </select>
+                        <select
+                          name="user_id"
+                          // s
+                          onChange={handleSelectChange}
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                        >
+                          <option value="">Pilih Peternak</option>
+                          {
+                            UserData && UserData.map((b) => {
+                                if (device.user_id == b.id) {
+                                  return <option key={b.id} value={b.id} selected>{b.name}</option>;
+                                } else {
+                                  return <option key={b.id} value={b.id} >{b.name}</option>;
+                                }
+                            })
+                          }
                         </select>
                         <div className="flex justify-end gap-3 mt-5">
                           <button type="submit" className="btn btn-primary">{device.id != 0 ? 'Update' : 'Create'}</button>
