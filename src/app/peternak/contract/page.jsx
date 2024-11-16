@@ -39,11 +39,12 @@ export default function Contract() {
         } else if (status === 'active') {
             return 'bg-emerald-500';
         } else if (status === 'completed') {
-            return 'bg-red-400';
-        }else if (status === 'returned') {
-            return 'bg-black-400';
+                return 'bg-emerald-400';
+        } else if (status === 'returned') {
+            return 'bg-gray-400';
         }
     };
+
 
     const getContract = async () => {
         try {

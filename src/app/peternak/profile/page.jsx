@@ -23,6 +23,11 @@ import Image from "next/image";
 export default function Profile() {
     const { user, mutate,logout } = useAuth({ middleware: 'cattleman' || 'admin' });
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+    const toggleCollapse = (index) => {
+        setIsCollapsed(!isCollapsed);
+        setCollapsedIndex(collapsedIndex === index ? null : index);
+    };
+
     const [userData, setUserData] =     useState({
         id: 0,
         nama: '',
@@ -137,6 +142,23 @@ export default function Profile() {
             });
         }
     }
+
+    // get iot devices by user
+    const getIotDevices = async () => {
+        console.log('debug iot....')
+        try{
+            var response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            
+        }catch(error){
+            console.log('Error:', error)
+        }
+    }
+
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];

@@ -265,7 +265,7 @@ console.log('nama',cattleData.name)
               <Table>
                 <TableHeader>
                   <TableRow className="text-center">
-                    <TableCell><p className="text-md text-black">Data Pelanggan</p></TableCell>
+                    <TableCell><p className="text-md text-black">Nama Pelanggan</p></TableCell>
                     <TableCell><p className="text-md text-black">Sapi</p></TableCell>
                     <TableCell><p className="text-md text-black">Durasi</p></TableCell>
                   </TableRow>
@@ -300,6 +300,7 @@ console.log('nama',cattleData.name)
         </div>
         
       </div>
+      <form onSubmit={submitRequest}>
       <Modal 
         isOpen={isOpen} 
         onOpenChange={onOpenChange}
@@ -317,7 +318,7 @@ console.log('nama',cattleData.name)
                 <h3 className="text-black font-bold text-center">Request Angon</h3>
               </ModalHeader>
               <ModalBody>
-                <form onSubmit={submitRequest}>
+            
                   <div className="grid grid-cols-1 gap-3">
                     <div className="grid grid-cols-1 gap-1">
                       <label htmlFor="peternak_id" className="text-black font-bold">
@@ -364,7 +365,7 @@ console.log('nama',cattleData.name)
                         name="duration"
                         value={requests.duration}
                         onChange={(value) => handleSelectChange(value)}
-                      >
+                      >onC
                         <SelectItem value={6}>6 Bulan</SelectItem>
                         <SelectItem value={12}>12 Bulan</SelectItem>
                       </Select> */}
@@ -372,7 +373,7 @@ console.log('nama',cattleData.name)
                     </div>
                   </div>
 
-                </form>
+             
               </ModalBody>
               <ModalFooter>
                 <Button className="bg-emerald-600 text-md" type="submit" onClick={submitRequest}>
@@ -383,6 +384,7 @@ console.log('nama',cattleData.name)
           )}
         </ModalContent>
       </Modal>
+         </form>
     </>
   );
 }

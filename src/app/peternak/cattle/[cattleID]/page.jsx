@@ -42,6 +42,7 @@ export default function Page( {params} ){
     const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
     const [statusData, setStatusData] = useState(['sehat', 'sakit', 'dijual', 'mati']);
+    const { isOpen: isIotModalOpen, onOpen: onIotModalOpen, onOpenChange: onIotModalOpenChange, onClose: onIotModalClose } = useDisclosure();
 // State Cattle 
 const [cattleData, setCattleData] = useState(
     null
@@ -404,6 +405,79 @@ const [cattleData, setCattleData] = useState(
             }
       }
     };
+  
+    const handleSelectChange2 = (value) => {
+      setCattle({ ...cattle, iot_device_id: value });
+    };
+    const assignIotDevices = async (e) => {
+      e.preventDefault();
+  
+      Swal.fire({
+        title: 'Loading...',
+        text: 'Mohon tunggu sebentar...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+  
+      const bodyFormData = new FormData();
+      bodyFormData.append('iot_device_id', cattle.iot_device_id);
+  
+      try {
+        const res = await axios.patch(
+          `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/assign-iot-devices/${params.cattleID}`,
+          bodyFormData,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            }
+          }
+        );
+        console.log(res.data.data) ;
+        // Refresh cattle data
+        getCattleData();
+        if(res.data.data)
+          {
+            setCattle({
+            iot_device_id : "",
+
+          }, 
+        Swal.fire({
+          icon: 'success',
+          title: 'IoT Devices assigned successfully',
+          showConfirmButton: false,
+          timer: 1500
+        }));
+  }
+        // Reset form fields
+        
+        setOpen(false);
+  
+        Swal.close();
+      } catch (error) {
+        console.error('Error:', error.response);  // Log error lengkap dari response
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          });
+          logout();
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error terjadi',
+            text: 'Mohon coba lagi nanti.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      }
+    };
+
     const handleSelectChange1 = (value) => {
       setCattle({ ...cattle, breed_id: value });
     };
@@ -623,7 +697,7 @@ const [cattleData, setCattleData] = useState(
                                         
                                         <i class="bi m-[-1re] bi-pencil-fill cursor-pointer text-2xl text-emerald-600" onClick={onOpen}></i>
                                     </div>
-                                    <Button className="bg-emerald-600">Set IoT</Button>
+                                    <Button  className="bg-emerald-600" onClick={onIotModalOpen }>Set IoT</Button>
                                 </div>
                             </div>
                             <div >
@@ -708,6 +782,62 @@ const [cattleData, setCattleData] = useState(
                     </div>
                 </div>
             </div>
+          
+
+            <Modal 
+                    isOpen={isIotModalOpen} 
+                    onOpenChange={onIotModalOpenChange}
+                    scrollBehavior="inside"
+                    placement="center"
+                    backdrop="opaque"
+                    classNames={{
+                    backdrop: "bg-black bg-opacity-50"
+                    }}
+                    >
+                    <form onSubmit={assignIotDevices}>
+                      <ModalContent className="w-[800px] h-[320px] bg-white rounded-xl ">
+                      {(onIotModalClose) => (
+                      <>
+                      <ModalHeader className="dialog-title flex flex-col gap-2 px-6 mt-6">
+                          <h3 className="text-black font-bold text-center">Set IoT Devices</h3>
+                      </ModalHeader>
+                      <ModalBody className="grid">
+                          {/* Cattle Name */}
+                          <div className="grid-cols-1">
+                          <label htmlFor="iot_devices" className="font-bold text-black mb-[-1rem]">
+                            <h6>Iot Devices</h6>
+                          </label>
+                          <Select
+                            id="iot_devices"
+                            variant="bordered"
+                            name="iot_device_id"
+                            autoFocus
+                            value={cattle.iot_device_id}
+                            placeholder="Select your iot devices"
+                            onChange={(e) => handleSelectChange2(e.target.value)}
+                            className="w-full mt-[1rem]"
+                          >
+                            {IotDeviceData && IotDeviceData.map((iot_devices) => (
+                              <SelectItem key={iot_devices.serial_number} value={iot_devices.serial_number} className="bg-white">
+                                {iot_devices.serial_number}
+                              </SelectItem>
+                            ))}
+                          </Select>
+                        </div>
+                      
+                          </ModalBody>
+                          <ModalFooter>
+
+                          <Button isSubmit className="bg-emerald-600 text-md" onPress={onIotModalClose}>
+                          Submit
+                          </Button>
+                          </ModalFooter>
+                      </>
+                      )}
+                  </ModalContent>
+                </form>
+              </Modal>
+
         </>
     )
 }

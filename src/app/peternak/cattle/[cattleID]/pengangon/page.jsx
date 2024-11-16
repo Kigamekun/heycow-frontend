@@ -145,7 +145,7 @@ const handleSearchChange = (event) => {
           {filteredUserData.map((user, index) => (
             <div key={index} className="card">
               <div className="card-body image dan profile d-flex gap-4">
-                <img src={user && user.avatar || "https://via.placeholder.com/130"} alt="user" className="w-[130px]" />
+                <img src={user && user.avatar || "https://via.placeholder.com/130"} alt="user" className="w-[150px]" />
                 <div className="d-flex flex-col grid ">
                   <h4 className="text-black font-bold">{user.name}</h4>
                   <p className="text-md text-black font-bold">{user.farm}</p>

@@ -325,10 +325,7 @@ export default function Home() {
   const handleSelectChange1 = (value) => {
     setCattle({ ...cattle, breed_id: value });
   };
-  
-  const handleSelectChange2 = (value) => {
-    setCattle({ ...cattle, iot_device_id: value });
-  };
+
   
   const handleStatusChange = (value) => {
     setCattle({ ...cattle, status: value });
@@ -535,7 +532,7 @@ export default function Home() {
                         </div>
                         
                         {/* IoT devices */}
-                        <div className="grid grid-cols-1">
+                        {/* <div className="grid grid-cols-1">
                           <label htmlFor="iot_devices" className="font-bold text-black mb-[-1rem]">
                             <h6>Iot Devices</h6>
                           </label>
@@ -554,7 +551,7 @@ export default function Home() {
                               </SelectItem>
                             ))}
                           </Select>
-                        </div>
+                        </div> */}
 
                           {/* status */}
                       

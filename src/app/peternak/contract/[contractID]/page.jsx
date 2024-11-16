@@ -26,8 +26,9 @@ import {
 } from '@nextui-org/modal';
 
 import ReactStars from 'react-stars';
-import { Button } from '@nextui-org/react';
+import { Button, Input } from '@nextui-org/react';
 import Swal from 'sweetalert2';
+import Link from 'next/link';
 export default function ContractID( {params} ) {
     const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' })
     const [contract, setContract] = useState([]);
@@ -35,13 +36,13 @@ export default function ContractID( {params} ) {
     const [returnContractData, setReturnContractData] = useState({
         id: '',
         status: 'returned',
-        new_value: '',
+        weight: '',
         cattle_id: '',
         user_id: '',
-        old_value: '',
-        message: '',
+        height: '',
     });
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+    const { isOpen:isReturnOpen, onOpen: onReturnOpen, onOpenChange: onReturnChange, onClose: onReturnClose } = useDisclosure();
     const getContractID = async () => {
         try {
             const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/contract/${params.contractID}`, {
@@ -65,13 +66,14 @@ export default function ContractID( {params} ) {
         } else if (status === 'completed') {
                 return 'bg-emerald-400';
         } else if (status === 'returned') {
-            return 'bg-green-400';
+            return 'bg-gray-400';
         }
     };
     const returnContract = async () => {
         const bodyFormData = new FormData();
         bodyFormData.append('status', 'returned');
-        bodyFormData.append('new_value', );
+        bodyFormData.append('height', returnContractData.height);
+        bodyFormData.append('weight', returnContractData.weight);
         try {
             const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/contract/${params.contractID}/return`, bodyFormData,{
                 headers: {
@@ -89,6 +91,13 @@ export default function ContractID( {params} ) {
             setReturnContractData();
         } catch (error) {
             console.error('Error fetching contract data:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error occurred',
+                text: ['Please try again later.', error],
+                showConfirmButton: false,
+                timer: 1500,
+            })
         }
       };
     const formatDate = (dateString) => {
@@ -116,6 +125,10 @@ export default function ContractID( {params} ) {
       useEffect(() => {
         getContractID();
     }, [])
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setReturnContractData({ ...returnContractData, [name]: value });
+      };
     return (
         <>
         <div className='d-flex justify-center'>
@@ -123,14 +136,17 @@ export default function ContractID( {params} ) {
                 <div className='card-body'>
                     <div className='d-flex justify-between'>
                         <h4 className='text-black font-bold'>Kontrak</h4>
-                        <p className={`text-black text-sm font-bold p-2 rounded-xl ${getStatusClass(contract.status)}`}>{contract.status}</p>
+                        <p className={`text-white text-sm font-bold p-2 rounded-xl ${getStatusClass(contract.status)}`}>{contract.status}</p>
                     </div>
                     <div className='d-flex justify-between'>
-                        {contract.request && contract.request.peternak && contract.request.peternak_id === user.id && user.id ?(<p className='text-lg text-black '>Client : {contract.request && contract.request.user.name}</p>) : (<p className='text-lg text-black '>Sapi : {contract.cattleName && contract.cattleName}</p>)}
-                        
+                    {contract.request && contract.request.peternak && contract.request.peternak_id === user?.id ? (
+                        <p className='text-lg text-black '>Client : {contract.request.user?.name}</p>
+                    ) : (
+                        <p className='text-lg text-black '>Sapi : {contract.cattleName}</p>
+                    )}
                     </div>
                     <hr className='mt-[-0.5rem]'/>
-                    {contract.request && contract.request.peternak && contract.request.peternak_id ===  user.id && user.id  ? (
+                    {contract.request && contract.request.peternak && contract.request.peternak_id ===  user?.id ? (
                         <div className='d-flex justify-center gap-3 mt-4'>
                             <img src={contract.request && contract.request.user && contract.request.user.full_avatar_url || "https://via.placeholder.com/130"} alt="user" className="w-[20rem]" />
                             <div className=''>
@@ -230,10 +246,17 @@ export default function ContractID( {params} ) {
                                 <i className="bi bi-check-circle text-emerald-600 text-2xl font-bold"></i>
                                 <p className='text-emerald-600 text-2xl font-bold'>Lunas</p> 
                              </div>
-                            {contract.request && contract.request.peternak && contract.request.peternak_id === user.id && user.id && (
+                            {contract.request && contract.request.peternak && contract.request.peternak_id === user.id && user.id && contract.status !== 'returned' && (
                                 <div className='d-flex justify-center mt-4'>
-                                    <Button className='bg-emerald-600 rounded-lg text-white text-xl' onClick={returnContract}>
+                                    <Button className='bg-emerald-600 rounded-lg text-white text-xl' onClick={onReturnOpen}>
                                         Selesaikan Kontrak
+                                    </Button>    
+                                </div>
+                            )}
+                             {contract.request && contract.request.peternak && contract.request.peternak_id !== user.id && user.id && contract.status === 'returned' && (
+                                <div className='d-flex justify-center mt-4'>
+                                    <Button className='bg-emerald-600 rounded-lg text-white text-xl' onClick={onReturnOpen}>
+                                        Berikan Rating pada Peternak!
                                     </Button>    
                                 </div>
                             )}
@@ -245,7 +268,9 @@ export default function ContractID( {params} ) {
                                 <i className="bi bi-dash-circle text-red-600 text-2xl font-bold"></i>
                                 <p className='text-red-600 text-2xl font-bold'>Belum Dibayar</p> 
                             </div>
-                            {contract.user && contract.user.id === user.id && (
+                            
+                            {contract.request.user && contract.request.peternak_id && contract.request.peternak_id !== user.id && 
+                             user.id &&  user.id &&(
                                 <div className='d-flex justify-center mt-4'>
                                     <Button className='bg-emerald-600 rounded-lg text-white text-xl' onClick={onOpen}>
                                         Bayar Sekarang
@@ -269,12 +294,70 @@ export default function ContractID( {params} ) {
                         </ModalHeader>
                         <ModalBody className='w-[55rem] h-full'>
                             <ModalContent>
+                                <Link href='/peternak/history'>
                                 <iframe  src={`https://heycow.my.id/transactions/create-charge/${params.contractID}`} width="100%" height="600px" />
+                                </Link>
                             </ModalContent>
                         </ModalBody>
                     </Modal>
                 </div>
-               
+                <Modal 
+                    isOpen={isReturnOpen} 
+                    onOpenChange={onReturnChange}
+                    scrollBehavior="inside"
+                    placement="center"
+                    backdrop="opaque"
+                    classNames={{
+                    backdrop: "bg-black bg-opacity-50"
+                    }}
+                    >
+                    <form onSubmit={returnContract}>
+                      <ModalContent className="w-[800px] h-[500px] bg-white rounded-xl ">
+                      {(onReturnChange) => (
+                      <>
+                      <ModalHeader className="dialog-title flex flex-col gap-2 px-6 mt-6">
+                          <h3 className="text-black font-bold text-center">Final Return Cattle</h3>
+                      </ModalHeader>
+                      <ModalBody className="grid">
+                          {/* Cattle Name */}
+                          <div className="grid-cols-1">
+                            <label htmlFor="height" className="font-bold text-black mb-[-1rem]">
+                                <h6>Final Height</h6>
+                            </label>
+                            <Input 
+                                id='height'
+                                name='height'
+                                type='text'
+                                placeholder='Final Height'
+                                onChange={handleInputChange}
+                                value={returnContractData.height}
+                            />
+                            </div>
+                            <div className="grid-cols-1">
+                            <label htmlFor="weight" className="font-bold text-black mb-[-1rem]">
+                                <h6>Final Weight</h6>
+                            </label>
+                            <Input 
+                                id='weight'
+                                name='weight'
+                                type='text'
+                                placeholder='Final Weight'
+                                onChange={handleInputChange}
+                                value={returnContractData.weight}
+                            />
+                            </div>
+                          </ModalBody>
+                          <ModalFooter>
+
+                          <Button isSubmit className="bg-emerald-600 text-md text-white rounded-md" onPress={() => { onReturnChange(); returnContract(); }}>
+                          Submit
+                          </Button>
+                          </ModalFooter>
+                      </>
+                      )}
+                  </ModalContent>
+                </form>
+              </Modal>
             </div>
         </div>
             
