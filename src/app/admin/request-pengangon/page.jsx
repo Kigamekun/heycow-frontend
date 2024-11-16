@@ -247,7 +247,7 @@ export default function Home() {
             accessorKey: 'id',
             header: 'Actions',
             cell: info => (
-                <div>
+                <div className="flex space-x-2">
                     <button
                         className="text-xs text-white btn btn-success"
                         onClick={() => handleApprove(info.getValue('id'))}
@@ -255,7 +255,7 @@ export default function Home() {
                         Approve
                     </button>
                     <button
-                        className="ml-2 text-xs btn btn-danger"
+                        className="text-xs btn btn-danger"
                         onClick={() => handleReject(info.getValue('id'))}
                     >
                         Reject
@@ -296,7 +296,9 @@ export default function Home() {
             .then(function (response) {
                 if (response.data.data != undefined) {
                     // Filter out users with "admin" role and where "nik" is null
-                    const nonAdminUsers = response.data.data.filter(user => user.role !== 'admin' && user.nik !== null);
+                    console.log(response.data.data)
+                    // const nonAdminUsers = response.data.data.filter(user => user.role !== 'admin' && user.nik !== null);
+                    const nonAdminUsers = response.data.data.filter(user => user.role !== 'admin' && (user.nik !== null && user.is_pengangon == 0));
                     setRequestPengangonData(nonAdminUsers); // Update state with filtered data
                     console.log(nonAdminUsers);
                 }
@@ -333,18 +335,9 @@ export default function Home() {
         });
 
         var res = await axios.patch(
-            `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${id}/approve}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${id}/approve`,
             {
-                avatar: request.avatar,
-                name: request.name,
-                address: request.address,
-                phone_number: request.phone_number,
-                email: request.email,
-                nik: request.nik,
-                upah: request.upah,
-                ktp: request.ktp,
-                selfie_ktp: request.selfie_ktp,
-
+                is_pengangon: 1
             },
             {
                 headers: {
@@ -356,22 +349,14 @@ export default function Home() {
         )
             .then(function (response) {
                 getRequestPengangonData();
-                setRequest({
-                    id: 0,
-                    avatar: '',
-                    name: '',
-                    address: '',
-                    phone_number: '',
-                    email: '',
-                    nik: '',
-                    upah: '',
-                    ktp: '',
-                    selfie_ktp: '',
-
+                Swal.fire ({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: 'Pengangon berhasil di approve',
+                    showConfirmButton: false,
+                    timer: 1500
                 })
-                setProcessedRequests(prev => [...prev, id]);
                 Swal.close();
-                setOpen(false);
 
             }).catch(function (error) {
                 if (error.response && error.response.status === 401) {
@@ -404,7 +389,7 @@ export default function Home() {
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonText: 'Yes, reject it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
                 Swal.fire({
@@ -418,7 +403,7 @@ export default function Home() {
 
                 try {
                     await axios.put(
-                        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${id}/reject`,
+                        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${id}/reject`,{},
                         {
                             headers: {
                                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -426,11 +411,9 @@ export default function Home() {
                         }
                     );
                     await getRequestPengangonData();
-                    setProcessedRequests(prev => [...prev, id]);
                     Swal.fire(
-                        'Unnasign!',
-                        'The device has been unassigned.',
-                        'success'
+                        'Reject!',
+                        'Permintaan Menjadi Pengangon Ditolak.',
                     );
                 } catch (error) {
 
@@ -443,7 +426,6 @@ export default function Home() {
         getRequestPengangonData();
     }, []);
 
-    // Ini untuk Modal dialog ketika membuat data dengan form
     return (
         <>
             <header className="mb-3">

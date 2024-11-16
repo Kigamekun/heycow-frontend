@@ -6,14 +6,6 @@ import * as React from "react"
 
 import { Input } from "@/components/ui/input"
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 
 import { Cow } from "@phosphor-icons/react"
 
@@ -23,13 +15,12 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  useDisclosure,
-  Checkbox, 
+  useDisclosure
 } from '@nextui-org/react'
 
 
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 import { Select, SelectItem } from "@nextui-org/react"
@@ -39,27 +30,27 @@ import Swal from "sweetalert2"
 
 import { animals } from "./dummy"
 export default function Home() {
-  const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
-  const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
+  const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  ' })
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
   const [searchQuery, setSearchQuery] = React.useState('')
   // State Cattle 
   const [cattleData, setCattleData] = React.useState(
     []
   );
-  
+
   const [statusData, setStatusData] = React.useState(['sehat', 'sakit', 'dijual', 'mati']);
   const [cattle, setCattle] = React.useState({
     id: 0,
     name: "",
     farm: "",
-    breed_id: "" ,
-    type : "",
-    status : "",
-    birth_date : "",
-    birth_weight : "",
-    birth_height : "",
-    iot_device_id : "",
-    last_vaccination : ""
+    breed_id: "",
+    type: "",
+    status: "",
+    birth_date: "",
+    birth_weight: "",
+    birth_height: "",
+    iot_device_id: "",
+    last_vaccination: ""
   });
   // State IOT DEVICE
   const [IotDeviceData, setIotDeviceData] = React.useState(
@@ -69,7 +60,7 @@ export default function Home() {
   const [breedsData, setBreedsData] = React.useState(
     []
   );
-  
+
   // State Farm
   const [farmData, setFarmData] = React.useState(
     []
@@ -77,24 +68,24 @@ export default function Home() {
 
   const getBreedsData = async () => {
     console.log('get breeds data');
-    try{
+    try {
       var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/breeds`, {
         headers: {
           'content-type': 'text/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         }
       })
-      console.log('get breeds',res.data.data);
+      console.log('get breeds', res.data.data);
       if (res.data.data != undefined) {
         setBreedsData(res.data.data);
       }
-      
-    }catch(error){
+
+    } catch (error) {
       console.log('error', error);
     }
-    
+
   }
-  
+
   // mengambil farm data
   const getFarmData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
@@ -106,7 +97,7 @@ export default function Home() {
       .then(function (response) {
         if (response.data.data != undefined) {
           setFarmData(response.data.data);
-        console.log(response.data.data);
+          console.log(response.data.data);
         }
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
@@ -141,11 +132,11 @@ export default function Home() {
       }
     })
       .then(function (response) {
-        console.log('get iot device',response.data.data);
-        console.log('get iot device',response.data.data);
+        console.log('get iot device', response.data.data);
+        console.log('get iot device', response.data.data);
         if (response.data.data != undefined) {
           setIotDeviceData(response.data.data);
-        console.log(response.data.data.data);
+          console.log(response.data.data.data);
         }
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
@@ -169,10 +160,10 @@ export default function Home() {
         }
       })
   }
-  
+
   const getCattleData = async () => {
 
-  
+
     try {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle`, {
         headers: {
@@ -180,7 +171,7 @@ export default function Home() {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         }
       });
-  
+
       if (res.data.data) {
         setCattleData(res.data.data);
         console.log('Ada datanya');
@@ -194,7 +185,7 @@ export default function Home() {
           showConfirmButton: false,
           timer: 1500,
         });
-  
+
         logout();
       } else {
         Swal.fire({
@@ -252,7 +243,7 @@ export default function Home() {
           }
         }
       );
-      console.log(res.data) ;
+      console.log(res.data);
       // Refresh cattle data
       getCattleData();
 
@@ -260,16 +251,16 @@ export default function Home() {
       setCattle({
         id: 0,
         name: "",
-        breed_id: "" ,
-        gender : "",
-        type : "",
-        farm : "",
-        status : "",
-        birth_date : "",
-        birth_weight : "",
-        birth_height : "",
-        iot_device_id : "",
-        last_vaccination : ""
+        breed_id: "",
+        gender: "",
+        type: "",
+        farm: "",
+        status: "",
+        birth_date: "",
+        birth_weight: "",
+        birth_height: "",
+        iot_device_id: "",
+        last_vaccination: ""
       });
 
       setOpen(false);
@@ -319,20 +310,20 @@ export default function Home() {
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
- 
+
 
   const handleSelectChange1 = (value) => {
     setCattle({ ...cattle, breed_id: value });
   };
-  
+
   const handleSelectChange2 = (value) => {
     setCattle({ ...cattle, iot_device_id: value });
   };
-  
+
   const handleStatusChange = (value) => {
     setCattle({ ...cattle, status: value });
   };
-  
+
   const handleTypeChange = (value) => {
     setCattle({ ...cattle, type: value });
   };
@@ -356,27 +347,27 @@ export default function Home() {
               {/* <button className="mr-2 rounded rounded-lg btn btn-success">Add New Cattle</button> */}
               <Button onClick={onOpen} className="mr-2 rounded rounded-lg bg-emerald-600 text-md">Add New Cattle</Button>
             </div>
-            
+
             {/* Section Modal Opened */}
-            <Modal 
-                isOpen={isOpen} 
-                onOpenChange={onOpenChange}
-                scrollBehavior="inside"
-                placement="center"
-                backdrop="opaque"
-                classNames={{
+            <Modal
+              isOpen={isOpen}
+              onOpenChange={onOpenChange}
+              scrollBehavior="inside"
+              placement="center"
+              backdrop="opaque"
+              classNames={{
                 backdrop: "bg-black bg-opacity-50"
-                }}
-                >
-                <form onSubmit={createCattle}>
-                  <ModalContent className="w-[800px] h-[650px] bg-white rounded-xl ">
+              }}
+            >
+              <form onSubmit={createCattle}>
+                <ModalContent className="w-[800px] h-[650px] bg-white rounded-xl ">
                   {(onClose) => (
                     <>
-                    <ModalHeader className="flex flex-col gap-1 px-6 mt-6 dialog-title">
-                      <h3 className="font-bold text-center text-black">Add New Cattle</h3>
-                    </ModalHeader>
-                    <ModalBody className="grid grid-cols-2">
-                      
+                      <ModalHeader className="flex flex-col gap-1 px-6 mt-6 dialog-title">
+                        <h3 className="font-bold text-center text-black">Add New Cattle</h3>
+                      </ModalHeader>
+                      <ModalBody className="grid grid-cols-2">
+
                         {/* Cattle Name */}
                         <div className="grid grid-cols-1 gap-1">
                           <label htmlFor="name" className="font-bold text-black">
@@ -419,7 +410,7 @@ export default function Home() {
                             ))}
                           </Select>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 gap-1">
                           <label htmlFor="birth_date" className="font-bold text-black">
                             <h6>
@@ -476,16 +467,16 @@ export default function Home() {
                             <h6>Farm</h6>
                           </label>
                           <Select
-                          id="breed"
-                          variant="bordered"
-                          autoFocus
-                          items={animals}
-                          // label="Select an animal" 
-                          placeholder="Select an animal"
-                          size
-                          className="w-full ">
+                            id="breed"
+                            variant="bordered"
+                            autoFocus
+                            items={animals}
+                            // label="Select an animal" 
+                            placeholder="Select an animal"
+                            size
+                            className="w-full ">
                             {(animal) => <SelectItem className="bg-white"
-                            variant="bordered">{animal.label}</SelectItem>}
+                              variant="bordered">{animal.label}</SelectItem>}
                           </Select>
                         </div>
                         {/* Cattle Height */}
@@ -509,7 +500,7 @@ export default function Home() {
                         </div>
 
                         {/* Cattle Weight */}
-                      
+
                         <div className="grid grid-cols-1 gap-1">
                           <label htmlFor="birth_weight" className="font-bold text-black">
                             <h6>
@@ -528,7 +519,7 @@ export default function Home() {
                             onChange={handleInputChange}
                           />
                         </div>
-                        
+
                         {/* IoT devices */}
                         <div className="grid grid-cols-1">
                           <label htmlFor="iot_devices" className="font-bold text-black mb-[-1rem]">
@@ -551,8 +542,8 @@ export default function Home() {
                           </Select>
                         </div>
 
-                          {/* status */}
-                      
+                        {/* status */}
+
                         <div className="grid grid-cols-1">
                           <label htmlFor="status" className="font-bold text-black mb-[1rem]">
                             <h6>Status</h6>
@@ -575,8 +566,8 @@ export default function Home() {
                           </Select>
                         </div>
 
-                        
-                        
+
+
                         <div className="grid grid-cols-1">
                           <label htmlFor="type" className="font-bold text-black mb-[1rem]">
                             <h6>Type</h6>
@@ -597,10 +588,10 @@ export default function Home() {
                               </SelectItem>
                             ))}
                           </Select>
-                        </div>        
-                          
+                        </div>
 
-                        
+
+
                         <div className="grid grid-cols-1 gap-1">
                           <label htmlFor="last_vaccination" className="font-bold text-black">
                             <h6>
@@ -624,9 +615,9 @@ export default function Home() {
                       </ModalBody>
                       <ModalFooter>
 
-                      <Button isSubmit className="bg-emerald-600 text-md" onPress={onClose}>
-                        Submit
-                      </Button>
+                        <Button isSubmit className="bg-emerald-600 text-md" onPress={onClose}>
+                          Submit
+                        </Button>
                       </ModalFooter>
                     </>
                   )}
@@ -636,55 +627,55 @@ export default function Home() {
 
           </div>
           <div className="row mt-3">
-          <div className="col-sm-3">
+            <div className="col-sm-3">
               <div className="border border-success card">
                 <div className="gap-10 float-start card-body d-flex">
                   <Cow size={50} className=" text-emerald-500 text-[2rem]" />
-                    <div className="flex-col d-flex ">
-                      <h6 className="text-emerald-600">Sehat</h6>
-                      <p>15</p>
-                    </div>
+                  <div className="flex-col d-flex ">
+                    <h6 className="text-emerald-600">Sehat</h6>
+                    <p>15</p>
+                  </div>
                 </div>
               </div>
             </div>
-          <div className="col-sm-3">
-            <div className="border border-success card">
-              <div className="gap-10 float-start card-body d-flex">
-              <Cow size={50} className=" text-red-500 text-[3rem]" />
+            <div className="col-sm-3">
+              <div className="border border-success card">
+                <div className="gap-10 float-start card-body d-flex">
+                  <Cow size={50} className=" text-red-500 text-[3rem]" />
                   <div className="flex-col d-flex ">
                     <h6 className="text-red-600">Sakit</h6>
                     <p>2</p>
                   </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col-sm-3">
-            <div className="border border-success card">
-              <div className="gap-10 float-start card-body d-flex">
-              <Cow size={50} className=" text-yellow-400 text-[3rem]" />
+            <div className="col-sm-3">
+              <div className="border border-success card">
+                <div className="gap-10 float-start card-body d-flex">
+                  <Cow size={50} className=" text-yellow-400 text-[3rem]" />
                   <div className="flex-col d-flex ">
                     <h6 className="text-yellow-600">Dijual</h6>
                     <p>7</p>
                   </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col-sm-3">
-            <div className="border border-success card">
-              <div className="gap-10 float-start card-body d-flex">
-              <Cow size={50} className=" text-red-700 text-[3rem]" />
+            <div className="col-sm-3">
+              <div className="border border-success card">
+                <div className="gap-10 float-start card-body d-flex">
+                  <Cow size={50} className=" text-red-700 text-[3rem]" />
                   <div className="flex-col d-flex ">
                     <h6 className="text-red-600">Mati</h6>
                     <p>15</p>
                   </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        </div>
       </div>
-      
-      
+
+
       {/* Search Bar  */}
       <div>
         <div className="card-body float-start rounded">

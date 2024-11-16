@@ -1,5 +1,7 @@
 'use client'
 import { Button } from "@/components/ui/button"
+import { useEffect, useState } from "react"
+
 import {
   Dialog,
   DialogContent,
@@ -7,8 +9,6 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog"
-import { useEffect, useState } from "react"
-
 import {
   flexRender,
   getCoreRowModel,
@@ -167,7 +167,7 @@ export default function AsignDevice() {
       accessorKey: 'id',
       header: 'Actions',
       cell: info => (
-        <div>
+        <div className="flex space-x-2">
           <button className="text-xs text-white btn btn-success" onClick={() => editDevice(Number(info.getValue()))}>Assign</button>
           <button className="text-xs text-white btn btn-danger" onClick={() => deleteDevice(Number(info.getValue()))}>Unassign</button>
         </div>
@@ -176,7 +176,7 @@ export default function AsignDevice() {
 
   ];
 
-  
+
   const handleSelectChange = (event) => {
     const name = event.target.name;
     const { value } = event.target.selectedOptions[0];
@@ -291,8 +291,6 @@ export default function AsignDevice() {
 
 
   const createDevice = async (e) => {
-    e.preventDefault();
-
     Swal.fire({
       title: 'Loading...',
       text: 'Mohon tunggu sebentar...',
@@ -396,13 +394,13 @@ export default function AsignDevice() {
         Swal.showLoading();
       }
     });
-   
+
     var res = await axios.post(
       `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices/assign-iot-devices`,
       {
         user_id: device.user_id,
-        iot_device_id : device.id,
-        device_id : device.id
+        iot_device_id: device.id,
+        device_id: device.id
 
       },
       {
@@ -509,40 +507,35 @@ export default function AsignDevice() {
           <div className="d-flex justify-content-between align-items-center">
             <h3>Device</h3>
             <div>
-
-
               <Dialog open={open} onOpenChange={setOpen}>
-
-
                 {/* Add a ref to the dialog */}
                 <DialogContent >
                   <DialogHeader>
                     <DialogTitle className="mb-4">{device.id != 0 ? 'Update' : 'Create'} Device</DialogTitle>
                     <DialogDescription>
                       <form method="dialog" onSubmit={device.id != 0 ? updateDevice : createDevice}>
+                        <label className="mb-2 text-black float-start"> Serial Number </label>
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={device.serial_number}
                           type="text"
                           name="serial_number"
                           placeholder="Serial Number"
-                          disabled
                           onChange={handleInputChange}
                         />
+                        <label className="mb-2 text-black float-start"> Installation Date </label>
                         <input
-                          className="bg-gray-50 mb-4 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={device.installation_date}
                           type="date"
                           name="installation_date"
                           placeholder="Installation Date"
-                          disabled
-
                           onChange={handleInputChange}
                         />
+                        <label className="mb-2 text-black float-start"> Status </label>
                         <select
-                          class="bg-gray-50 mb-4 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           name="status"
-                          disabled
                           value={device.status}
                           onChange={handleInputChange}
                         >
@@ -550,17 +543,21 @@ export default function AsignDevice() {
                           <option value="active">Active</option>
                           <option value="inactive">Inactive</option>
                         </select>
+                        <label className="mb-2 text-black float-start"> Choose Farm Owner </label>
                         <select
                           name="user_id"
+                          // s
                           onChange={handleSelectChange}
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                         >
-                          <option value="">Pilih Peternak</option>
+                          <option value="">Pilih User yang di Assign</option>
                           {
                             UserData && UserData.map((b) => {
+
                                 if (device.user_id == b.id) {
                                   return <option key={b.id} value={b.id} selected>{b.name}</option>;
                                 } else {
+
                                   return <option key={b.id} value={b.id} >{b.name}</option>;
                                 }
                             })

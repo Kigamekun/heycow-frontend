@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
     // className="justify-between d-flex"
     return (
         <main>
-            <div id="app"  >
+            <div id="app" className='mb-3'  >
                 <Navbar />
                 <div id="sidebar" className="fixed left-0 z-50 justify-between d-flex bg-emerald-500" >
                         <div className="w-auto overflow-hidden sidebar-wrapper active">

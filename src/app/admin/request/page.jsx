@@ -158,26 +158,6 @@ export default function Home() {
                         </p>
                     </div>
                 </div>,
-        },
-        {
-            accessorKey: 'id',
-            header: 'Actions',
-            cell: info => (
-                <div>
-                    <button
-                        className="text-xs text-white btn btn-success"
-                        onClick={() => handleApprove(info.getValue())}
-                    >
-                        Approve
-                    </button>
-                    <button
-                        className="ml-2 text-xs btn btn-danger"
-                        onClick={() => handleReject(info.getValue())}
-                    >
-                        Reject
-                    </button>
-                </div>
-            ),
         }
     ];
 

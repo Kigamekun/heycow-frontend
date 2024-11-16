@@ -137,7 +137,7 @@ export default function Home() {
             accessorKey: 'id',
             header: 'Actions',
             cell: info => (
-                <div>
+                <div className="flex space-x-2">
                     <button className="text-xs text-white btn btn-warning" onClick={() => editBreeds(Number(info.getValue()))}>Edit</button>
                     <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteBreeds(Number(info.getValue()))}>Delete</button>
                 </div>
@@ -443,6 +443,7 @@ export default function Home() {
                                         <DialogTitle className="mb-4">{breeds.id != 0 ? 'Update' : 'Create'} breeds</DialogTitle>
                                         <DialogDescription>
                                             <form method="dialog" onSubmit={breeds.id != 0 ? updateBreeds : createBreeds}>
+                                                <label className="mb-2 text-black float-start"> Name </label>
                                                 <input
                                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                                                     value={breeds.name}
@@ -451,6 +452,7 @@ export default function Home() {
                                                     placeholder="Name"
                                                     onChange={handleInputChange}
                                                 />
+                                                <label className="mb-2 text-black float-start"> Country </label>
                                                 <input
                                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                                                     value={breeds.country}
@@ -459,6 +461,7 @@ export default function Home() {
                                                     placeholder="Country"
                                                     onChange={handleInputChange}
                                                 />
+                                                <label className="mb-2 text-black float-start"> Cattle Type </label>
                                                 <select
                                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                                                     name="type"
@@ -470,6 +473,7 @@ export default function Home() {
                                                     <option value="perah">Perah</option>
                                                     <option value="ganda">ganda</option>
                                                 </select>
+                                                <label className="mb-2 text-black float-start"> Characteristics </label>
                                                 <input
                                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                                                     value={breeds.characteristics}

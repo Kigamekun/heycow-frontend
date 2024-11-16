@@ -52,42 +52,33 @@ export function Navbar() {
                             </button>
                         )}
                     </div>
-                        <Popover>
-                            <PopoverTrigger>
-                                <div className="gap-3 profile d-flex align-items-center">
-                                    <div className="text-right profile-info">
-                                        <h4>{user ? user.name : 'User'}</h4>
-                                        <p>{user ? user.role : 'Role'}</p>
-                                    </div>
-                                    <img
-                                        src={user ? user.avatar : 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'}
-                                        alt="Profile"
-                                        className="rounded-full mt-[-1.5rem] w-[60px]"
-                                    />
+                    <Popover>
+                        <PopoverTrigger>
+                            <div className="gap-3 profile d-flex align-items-center">
+                                <div className="text-right profile-info">
+                                    <h4>{user ? user.name : 'User'}</h4>
+                                    <p>{user ? user.role : 'Role'}</p>
                                 </div>
-                            </PopoverTrigger>
-                            {user && user.role === 'peternak' && (
-                            <PopoverContent className="bg-emerald-600 rounded-xl p-2 mt-[-2rem] cursor-pointer">
-                                <div className="w-[10rem]">
-                                    <Link href="/peternak/profile">
-                                        <div className="justify-center gap-3 mb-1 text-lg text-white d-flex">
-                                            <i className="bi bi-person-circle" />
-                                            <p>Profile</p>
-                                        </div>
-                                    </Link>
-                                    <div
-                                        onClick={handleLogout}
-                                        className="justify-center gap-3 text-lg font-bold text-red-600 d-flex"
-                                    >
-                                        <i className="bi bi-box-arrow-right" />
-                                        <p>Logout</p>
+                                <img src={user ? user.avatar : "https://images.unsplash.com/broken"} alt="Profile" className="rounded-full mt-[-1.5rem] w-[60px]" />
+                            </div>
+                        </PopoverTrigger>
+                        <PopoverContent className="bg-white p-2 mt-[-2rem] cursor-pointer">
+                            <div className="w-[10rem]">
+                                <Link href='/peternak/profile'>
+                                    <div className="justify-center gap-3 text-lg text-black d-flex">
+                                        <i className="bi bi-person-circle" />
+                                        <p>Profile</p>
                                     </div>
+                                </Link>
+                                <div onClick={handleLogout} className="justify-center gap-3 text-lg font-bold text-red-600 d-flex">
+                                    <i className="bi bi-box-arrow-right" />
+                                    <p>Logout</p>
                                 </div>
-                            </PopoverContent>
-                                                )}
-                        </Popover>
+                            </div>
+                        </PopoverContent>
+                    </Popover>
                 </div>
-                {user && user.is_pengangon === 0 && <Request />}
+                {user && !(user.is_pengangon === 0 && user.role === 'admin') && <Request />}
             </nav>
         </header>
     );

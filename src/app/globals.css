@@ -1043,4 +1043,23 @@ body {
   }
 }
 
+.sidebar-wrapper .menu .sidebar-link:hover .ph .ph-cow {
+  color: #20A577;
+  transition: 10ms;
+}
+
+.sidebar-wrapper .menu .sidebar-link:hover .ph .ph-barn {
+  color: #20A577;
+  transition: 10ms;
+}
+
+.sidebar-wrapper .menu .sidebar-link:hover .ph .ph-scroll {
+  color: #20A577;
+  transition: 10ms;
+}
+
+.sidebar-wrapper .menu .sidebar-link:hover .ph .ph-lasso {
+  color: #20A577;
+  transition: 10ms;
+}
 

@@ -339,7 +339,7 @@ export default function Home() {
         Swal.showLoading();
       }
     });
-   
+
     var res = await axios.put(
       `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms/${farm.id}`,
       {
@@ -382,7 +382,7 @@ export default function Home() {
         } else {
           Swal.fire({
             icon: 'error',
-            title: 'error terjadi',
+            title: 'User Hanya Boleh Memiliki Farm Satu',
             text: 'mohon coba lagi nanti.',
             showConfirmButton: false,
             timer: 1500
@@ -451,17 +451,14 @@ export default function Home() {
             <h3>Farm</h3>
             <div>
               <Button variant="outline" onClick={createData}>Create Farm</Button>
-
-
               <Dialog open={open} onOpenChange={setOpen}>
-
-
                 {/* Add a ref to the dialog */}
                 <DialogContent >
                   <DialogHeader>
                     <DialogTitle className="mb-4">{farm.id != 0 ? 'Update' : 'Create'} Farm</DialogTitle>
                     <DialogDescription>
                       <form method="dialog" onSubmit={farm.id != 0 ? updateFarm : createFarm}>
+                        <label className="mb-2 text-black float-start"> Farm Name </label>
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={farm.name}
@@ -470,6 +467,7 @@ export default function Home() {
                           placeholder="Name"
                           onChange={handleInputChange}
                         />
+                        <label className="mb-2 text-black float-start"> Address </label>
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={farm.address}
@@ -478,6 +476,7 @@ export default function Home() {
                           placeholder="Address"
                           onChange={handleInputChange}
                         />
+                        <label className="mb-2 text-black float-start"> Choose Farm Owner </label>
                         <select
                           name="user_id"
                           // s
@@ -488,14 +487,14 @@ export default function Home() {
                           {
                             userData && userData.map((b) => {
 
-                                if (farm.user_id == b.id) {
-                                  return <option key={b.id} value={b.id} selected>{b.name}</option>;
+                              if (farm.user_id == b.id) {
+                                return <option key={b.id} value={b.id} selected>{b.name}</option>;
 
 
-                                } else {
-                                  return <option key={b.id} value={b.id} >{b.name}</option>;
+                              } else {
+                                return <option key={b.id} value={b.id} >{b.name}</option>;
 
-                                }
+                              }
                             })
                           }
 
