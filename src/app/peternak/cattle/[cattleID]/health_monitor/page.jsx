@@ -37,7 +37,29 @@ export default function Health({params}){
         }
     }
 
-    
+    const getQrImages = async () => {
+        try {
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/getFile/storage`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            console.log('QR Images data:', res.data.data);
+            // Assuming you want to set the QR images data to state
+            setHealthData(prevData => ({
+                ...prevData,
+                qrImages: res.data.data
+            }));
+        } catch (error) {
+            console.error('Error fetching QR images data:', error);
+        }
+    };
+
+    useEffect(() => {
+        getHealthCattle();
+        getQrImages();
+    }, []);
     useEffect(() => {
         getHealthCattle();
     }, [])
