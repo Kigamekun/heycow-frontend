@@ -93,18 +93,22 @@ export default function Home() {
     if (barChart !== undefined) {
       barChart.destroy();
     }
-
+    const sickCattle = cattleData.filter(cattle => cattle.status === 'sakit');
+    const soldCattle = cattleData.filter(cattle => cattle.status === 'dijual');
+    const deathCattle = cattleData.filter(cattle => cattle.status === 'mati');
+    const sehatCattle = cattleData.filter(cattle => cattle.status === 'sehat');
+    
     const label = chartData.map((items) => items.firstName)
     const data = chartData.map((items) => items.weight)
-
+  
     new Chart(doughnutCanvas.current, {
       type: 'doughnut',
       data: {
-        labels: ['Sehat', 'Sakit', 'Mati'],
+        labels:  ['Sehat', 'Sakit', 'Mati'],
         datasets: [
           {
             label: 'Dataset Sapi',
-            data: [23, 12, 4],
+            data: [sickCattle.length, soldCattle.length, deathCattle.length,sehatCattle.length],
             backgroundColor: [
               'rgba(32, 165, 119, 1)',
               'rgba(250, 204, 21, 1)',
@@ -169,7 +173,7 @@ export default function Home() {
     });
   }, [chartData]);
   const sickCattle = cattleData.filter(cattle => cattle.status === 'sakit');
-
+  const totalIotDevices = cattleData.filter(cattle => cattle.iot_device).length;
   return (
     <>
       <header className="mb-3">
@@ -209,7 +213,7 @@ export default function Home() {
               <Toolbox className="text-emerald-600" size={50} />
                   <div className="flex-col d-flex ">
                     <h6 className="text-emerald-600">Device</h6>
-                    <p>7</p>
+                    <p>{totalIotDevices}</p>
                   </div>
               </div>
             </div>
@@ -219,7 +223,7 @@ export default function Home() {
               <div className="gap-10 float-start card-body d-flex">
               <User className="text-emerald-600" size={50} />
                   <div className="flex-col d-flex ">
-                    <h6 className="text-emerald-600">Pengangon</h6>
+                    <h6 className="text-emerald-600">Total Contract</h6>
                     <p>15</p>
                   </div>
               </div>

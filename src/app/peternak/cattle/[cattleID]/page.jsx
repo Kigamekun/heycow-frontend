@@ -668,6 +668,12 @@ const [cattleData, setCattleData] = useState(
                                         {cattle.iot_device && cattle.iot_device.serial_number}
                                       </TableCell>
                                     </TableRow>
+                                    <TableRow className="text-black">
+                                      <TableCell className="font-bold text-lg">Last Vaccination</TableCell>
+                                      <TableCell className="font-thin text-sm">
+                                        {cattle.last_vaccination ? cattle.last_vaccination : 'belum ada vaksinasi'}
+                                      </TableCell>
+                                    </TableRow>
                                 </TableBody>
                               </Table>
                           </div>

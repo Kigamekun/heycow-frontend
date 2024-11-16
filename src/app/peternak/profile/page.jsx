@@ -1,6 +1,6 @@
 'use client'
 import { Button } from "@/components/ui/button";
-// import * as React from 'react';
+// import * as from 'react';
 import { useAuth } from '@/lib/hooks/auth';
 import { useState, useEffect } from 'react';
 import axios from "axios";
@@ -23,7 +23,7 @@ import Image from "next/image";
 export default function Profile() {
     const { user, mutate,logout } = useAuth({ middleware: 'cattleman' || 'admin' });
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-    const [userData, setUserData] = React.useState({
+    const [userData, setUserData] =     useState({
         id: 0,
         nama: '',
         phone_number: '',
@@ -169,7 +169,7 @@ export default function Profile() {
         setUserData({ ...userData, [name]: value });
     };
 
-    const [userAvatar, setUserAvatar] = React.useState('');
+    const [userAvatar, setUserAvatar] = useState('');
     const fetchUserImage = async () => {
         console.log('fetching user image...');
         try {

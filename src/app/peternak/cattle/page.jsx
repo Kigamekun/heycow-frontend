@@ -343,6 +343,7 @@ export default function Home() {
   const sickCattle = cattleData.filter(cattle => cattle.status === 'sakit');
   const soldCattle = cattleData.filter(cattle => cattle.status === 'dijual');
   const deathCattle = cattleData.filter(cattle => cattle.status === 'mati');
+  const sehatCattle = cattleData.filter(cattle => cattle.status === 'sehat');
   
   console.log('test', IotDeviceData)
   return (
@@ -474,7 +475,7 @@ export default function Home() {
                             </label>
                           </div>
                         </div>
-                        {/* Farm */}
+                        {/* Farm
                         <div className="grid grid-cols-1">
                           <label htmlFor="breed" className="font-bold text-black">
                             <h6>Farm</h6>
@@ -491,7 +492,7 @@ export default function Home() {
                             {(animal) => <SelectItem className="bg-white"
                             variant="bordered">{animal.label}</SelectItem>}
                           </Select>
-                        </div>
+                        </div> */}
                         {/* Cattle Height */}
                         <div className="grid grid-cols-1 gap-1">
                           <label htmlFor="height" className="font-bold text-black">
@@ -646,7 +647,7 @@ export default function Home() {
                     <Cow size={50} className=" text-emerald-500 text-[2rem]" />
                       <div className="flex-col d-flex ">
                         <h6 className="text-emerald-600">Sehat</h6>
-                        <p>{cattleData.length}</p>
+                        <p>{sehatCattle.length}</p>
                       </div>
                   </div>
                 </div>
