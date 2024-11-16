@@ -38,10 +38,8 @@ export function Navbar() {
             }
         });
     };
-    const [isPengangon, setIsPengangon] = useState(null);
 
     useEffect(() => {
-        console.log('User:', user);
     }, [pathname, user]);
 
     return (
@@ -81,7 +79,7 @@ export function Navbar() {
                         </PopoverContent>
                     </Popover>
                 </div>
-                {user && user.is_pengangon === 0 && <Request />}
+                {user && user.role==='cattleman'&& user.is_pengangon === 0 && <Request />}
             </nav>
         </header>
     );

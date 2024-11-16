@@ -337,8 +337,9 @@ export default function ForumPage() {
 
             <div className="d-flex justify-center">
             <div className="grid grid-cols-1 container-post">
+                  <Link href={`/peternak/komunitas/forum/${post.id}`}>
                     {forumData?.map((post, index) => (
-                      <Link href={`/peternak/komunitas/forum/${post.id}`}>
+                     
                         <div key={index} className="card mt-3 w-[800px] grid grid-cols-1 gap-6">
                             <div className="card-body">
                               <div className="settings post float-end">
@@ -385,9 +386,9 @@ export default function ForumPage() {
                                 </div>
                             </div>
                         </div>
-                       </Link>
+                       
                     ))}
-                 
+                  </Link>
                 </div>
             </div>
         </main>

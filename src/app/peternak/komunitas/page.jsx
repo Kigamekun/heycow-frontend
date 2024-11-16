@@ -129,7 +129,7 @@ export default function Page() {
     
     const handleSort = (order) => {
       setSortOrder(order);
-      const sortedData = [...blogPostDataData].sort((a, b) => {
+      const sortedData = [...blogPostsData].sort((a, b) => {
         if (order === 'asc') {
           return new Date(a.created_at) - new Date(b.created_at);
         } else {
@@ -180,17 +180,19 @@ export default function Page() {
             content: '',
             category: '',
             image : ''
-          });
-    
-          setOpen(false);
-    
+          },
           Swal.fire({
             icon: 'success',
             title: 'BlogPost berhasil dibuat',
             text: 'Data blogpost berhasil dibuat',
             showConfirmButton: true,
             timer: 1500
-          });
+          })
+        );
+    
+          setOpen(false);
+    
+          
         
         } catch (error) {
           console.error('Error:', error.response);  // Log error lengkap dari response
@@ -404,10 +406,13 @@ export default function Page() {
                       </div>  
                       
                       <Divider orientation="vertical" color="black"/>
-                      <div className="gap-3 cursor-pointer d-flex" onClick={() => window.location.href = '/peternak/komunitas/forum'}>
+                      <Link href='/peternak/komunitas/jual'>
+                      <div className="gap-3 cursor-pointer d-flex">
                         <i class="bi bi-question-circle text-black text-xl"></i>
                         <p className="text-lg text-black">Tanyakan</p>
                       </div>
+                      </Link>
+                    
 
                       <Divider orientation="vertical"/>
                       <div className="gap-3 cursor-pointer d-flex" onClick={() => window.location.href = '/peternak/komunitas/jual'}>
@@ -458,6 +463,13 @@ export default function Page() {
                                     <img src={post.full_image_url || 'https://icons.iconarchive.com/icons/fa-team/fontawesome/256/FontAwesome-Image-icon.png'} alt="post" className="w-[45rem]"/>
                                     </div>
                                    
+                                    {post.category === 'forum' && (
+                                      <div className="d-flex justify-between mt-5">
+                                      <Link href={`/peternak/komunitas/forum/${post.id}`}>
+                                        <Button className="text-white text-md font-bold bg-emerald-600">Lihat Detail</Button>
+                                      </Link>
+                                    </div>
+                                    )}
                                   
                                     {post.category === 'jual' && (
                                       <div className="d-flex justify-between mt-5">

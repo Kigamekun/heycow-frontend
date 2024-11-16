@@ -1,7 +1,7 @@
 'use client'
 
 // import { Button } from "@/components/ui/button"
-import * as React from "react"
+// import * as from "react"
 
 
 import { Input } from "@/components/ui/input"
@@ -37,18 +37,19 @@ import { Select, SelectItem } from "@nextui-org/react"
 import axios from "axios"
 import Swal from "sweetalert2"
 
+import { useState, useEffect } from "react"
 import { animals } from "./dummy"
 export default function Home() {
   const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
   const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
-  const [searchQuery, setSearchQuery] = React.useState('')
+  const [searchQuery, setSearchQuery] = useState('')
   // State Cattle 
-  const [cattleData, setCattleData] = React.useState(
+  const [cattleData, setCattleData] = useState(
     []
   );
   
-  const [statusData, setStatusData] = React.useState(['sehat', 'sakit', 'dijual', 'mati']);
-  const [cattle, setCattle] = React.useState({
+  const [statusData, setStatusData] = useState(['sehat', 'sakit', 'dijual', 'mati']);
+  const [cattle, setCattle] = useState({
     id: 0,
     name: "",
     farm: "",
@@ -62,16 +63,16 @@ export default function Home() {
     last_vaccination : ""
   });
   // State IOT DEVICE
-  const [IotDeviceData, setIotDeviceData] = React.useState(
+  const [IotDeviceData, setIotDeviceData] = useState(
     []
   );
   // State Breeds
-  const [breedsData, setBreedsData] = React.useState(
+  const [breedsData, setBreedsData] = useState(
     []
   );
   
   // State Farm
-  const [farmData, setFarmData] = React.useState(
+  const [farmData, setFarmData] = useState(
     []
   );
 
@@ -208,7 +209,7 @@ export default function Home() {
     }
   };
   console.log(cattleData);
-  React.useEffect(() => {
+  useEffect(() => {
     getCattleData();
     getBreedsData();
     getIotDeviceData();
@@ -339,7 +340,10 @@ export default function Home() {
   const filteredCattleData = cattleData.filter(cattle =>
     cattle.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
+  const sickCattle = cattleData.filter(cattle => cattle.status === 'sakit');
+  const soldCattle = cattleData.filter(cattle => cattle.status === 'dijual');
+  const deathCattle = cattleData.filter(cattle => cattle.status === 'mati');
+  
   console.log('test', IotDeviceData)
   return (
     <>
@@ -636,51 +640,51 @@ export default function Home() {
 
           </div>
           <div className="row mt-3">
-          <div className="col-sm-3">
+            <div className="col-sm-3">
+                <div className="border border-success card">
+                  <div className="gap-10 float-start card-body d-flex">
+                    <Cow size={50} className=" text-emerald-500 text-[2rem]" />
+                      <div className="flex-col d-flex ">
+                        <h6 className="text-emerald-600">Sehat</h6>
+                        <p>{cattleData.length}</p>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            <div className="col-sm-3">
               <div className="border border-success card">
                 <div className="gap-10 float-start card-body d-flex">
-                  <Cow size={50} className=" text-emerald-500 text-[2rem]" />
+                <Cow size={50} className=" text-red-500 text-[3rem]" />
                     <div className="flex-col d-flex ">
-                      <h6 className="text-emerald-600">Sehat</h6>
-                      <p>15</p>
+                      <h6 className="text-red-600">Sakit</h6>
+                      <p>{sickCattle.length} </p>
                     </div>
                 </div>
               </div>
             </div>
-          <div className="col-sm-3">
-            <div className="border border-success card">
-              <div className="gap-10 float-start card-body d-flex">
-              <Cow size={50} className=" text-red-500 text-[3rem]" />
-                  <div className="flex-col d-flex ">
-                    <h6 className="text-red-600">Sakit</h6>
-                    <p>2</p>
-                  </div>
+            <div className="col-sm-3">
+              <div className="border border-success card">
+                <div className="gap-10 float-start card-body d-flex">
+                <Cow size={50} className=" text-yellow-400 text-[3rem]" />
+                    <div className="flex-col d-flex ">
+                      <h6 className="text-yellow-600">Dijual</h6>
+                      <p>{soldCattle.length}</p>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-sm-3">
+              <div className="border border-success card">
+                <div className="gap-10 float-start card-body d-flex">
+                <Cow size={50} className=" text-red-700 text-[3rem]" />
+                    <div className="flex-col d-flex ">
+                      <h6 className="text-red-600">Mati</h6>
+                      <p>{deathCattle.length}</p>
+                    </div>
+                </div>
               </div>
             </div>
           </div>
-          <div className="col-sm-3">
-            <div className="border border-success card">
-              <div className="gap-10 float-start card-body d-flex">
-              <Cow size={50} className=" text-yellow-400 text-[3rem]" />
-                  <div className="flex-col d-flex ">
-                    <h6 className="text-yellow-600">Dijual</h6>
-                    <p>7</p>
-                  </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-sm-3">
-            <div className="border border-success card">
-              <div className="gap-10 float-start card-body d-flex">
-              <Cow size={50} className=" text-red-700 text-[3rem]" />
-                  <div className="flex-col d-flex ">
-                    <h6 className="text-red-600">Mati</h6>
-                    <p>15</p>
-                  </div>
-              </div>
-            </div>
-          </div>
-        </div>
         </div>
       </div>
       

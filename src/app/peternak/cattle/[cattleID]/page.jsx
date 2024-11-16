@@ -1,5 +1,5 @@
 'use client'
-import * as React from "react";
+// import * as from "react";
 
 // import { useQuery } from "react-query";
 import { Button } from "@/components/ui/button";
@@ -41,13 +41,13 @@ import { swal } from "@/public/assets/extensions/sweetalert2/sweetalert2.all";
 export default function Page( {params} ){
     const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
-
+    const [statusData, setStatusData] = useState(['sehat', 'sakit', 'dijual', 'mati']);
 // State Cattle 
-const [cattleData, setCattleData] = React.useState(
+const [cattleData, setCattleData] = useState(
     null
   );
   
-  const [cattle, setCattle] = React.useState({
+  const [cattle, setCattle] = useState({
     name: '',
     breed: {
       name: '',
@@ -60,15 +60,15 @@ const [cattleData, setCattleData] = React.useState(
     },
   });
   // State IOT DEVICE
-  const [IotDeviceData, setIotDeviceData] = React.useState(
+  const [IotDeviceData, setIotDeviceData] = useState(
     []
   );
   // State Breeds
-  const [breedsData, setBreedsData] = React.useState(
+  const [breedsData, setBreedsData] = useState(
     []
   );
   // State Farm
-  const [farmData, setFarmData] = React.useState(
+  const [farmData, setFarmData] = useState(
     []
   );
 
@@ -231,11 +231,7 @@ const [cattleData, setCattleData] = React.useState(
 
     const bodyFormData = new FormData();
     bodyFormData.append('name', cattle.name);
-    bodyFormData.append('breed_id', cattle.breed_id);
     bodyFormData.append('status', cattle.status);
-    bodyFormData.append('gender', cattle.gender);
-    bodyFormData.append('type', cattle.type);
-    bodyFormData.append('farm', cattle.farm);
     bodyFormData.append('birth_date', cattle.birth_date);
     bodyFormData.append('birth_weight', cattle.birth_weight);
     bodyFormData.append('birth_height', cattle.birth_height);
@@ -248,31 +244,35 @@ const [cattleData, setCattleData] = React.useState(
         bodyFormData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           }
         }
       );
-      console.log(res.data) ;
+      console.log(res.data.data) ;
       // Refresh cattle data
       getCattleData();
-
+      if(res.data.data)
+        {
+          setCattle({
+          id: 0,
+          name: "",
+          gender : "",
+          status : "",
+          birth_date : "",
+          birth_weight : "",
+          birth_height : "",
+          last_vaccination : ""
+        }, 
+      Swal.fire({
+        icon: 'success',
+        title: 'Cattle updated successfully',
+        showConfirmButton: false,
+        timer: 1500
+      }));
+}
       // Reset form fields
-      setCattle({
-        id: 0,
-        name: "",
-        breed_id: "" ,
-        gender : "",
-        type : "",
-        farm : "",
-        status : "",
-        birth_date : "",
-        birth_weight : "",
-        birth_height : "",
-        iot_device_id : "",
-        last_vaccination : ""
-      });
-
+      
       setOpen(false);
 
       Swal.close();
@@ -299,7 +299,7 @@ const [cattleData, setCattleData] = React.useState(
   };
   const [data, setData] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     getCattleData();
     getBreedsData();
     getFarmData();
@@ -414,6 +414,12 @@ const [cattleData, setCattleData] = React.useState(
         [name]: value,
       }));
     };
+    const handleTypeChange = (value) => {
+      setCattle({ ...cattle, type: value });
+    };
+    const handleStatusChange = (value) => {
+      setCattle({ ...cattle, status: value });
+    };
     return (
         <>
             {/* card 1 untuk destroy dan edit */}
@@ -438,15 +444,15 @@ const [cattleData, setCattleData] = React.useState(
                       <ModalContent className="w-[800px] h-[650px] bg-white rounded-xl ">
                       {(onClose) => (
                       <>
-                      <ModalHeader className="dialog-title flex flex-col gap-1 px-6 mt-6">
+                      <ModalHeader className="dialog-title flex flex-col gap-2 px-6 mt-6">
                           <h3 className="text-black font-bold text-center">Edit Cattle</h3>
                       </ModalHeader>
                       <ModalBody className="grid grid-cols-2">
                           {/* Cattle Name */}
-                          <div className="grid grid-cols-1 gap-1">
+                          <div className="grid grid-cols-1">
                               <label htmlFor="name" className="text-black font-bold">
                               <h6>
-                                  Cattle Name<span className="text-red-600">*</span>
+                                  Cattle Name
                               </h6>
                               </label>
                               <Input
@@ -459,38 +465,14 @@ const [cattleData, setCattleData] = React.useState(
                               placeholder="Input your cattle name"
                               variant="bordered"
                               className="w-full h-[2.8rem] "
-                              onChange={handleInputChange}
+                              // onChange={handleInputChange}
                               />
                           </div>
 
-                          {/* Breed */}
                           <div className="grid grid-cols-1">
-                            <label htmlFor="breed" className="font-bold text-black mb-[-1rem]">
-                              <h6>Breed</h6>
-                            </label>
-                            <Select
-                              id="breed"
-                              name="breed_id"
-                              variant="bordered"
-                              autoFocus
-                              defaultValue={cattle.breed.name}
-                              value={cattle.breed_id}
-                              placeholder="Select an animal"
-                              onChange={(e) => handleSelectChange1(e.target.value)}
-                              className="w-full mt-[0.5rem] h-[2.8rem]"
-                            >
-                              {breedsData && breedsData.map((breed) => (
-                                <SelectItem key={breed.id} value={breed.id} className="bg-white">
-                                  {breed.name}
-                                </SelectItem>
-                              ))}
-                            </Select>
-                          </div>
-                          
-                          <div className="grid grid-cols-1 gap-1">
                               <label htmlFor="date" className="text-black font-bold">
                               <h6>
-                                  Birth Date<span className="text-red-600">*</span>
+                                  Birth Date
                               </h6>
                               </label>
                               <Input
@@ -503,36 +485,33 @@ const [cattleData, setCattleData] = React.useState(
                               placeholder="Input your cattle name"
                               variant="bordered"
                               className="w-full h-[2.8rem] "
+                              // onChange={handleInputChange}
+                              />
+                          </div>
+                          <div className="grid grid-cols-1">
+                              <label htmlFor="date" className="text-black font-bold">
+                              <h6>
+                                  Last Vaccination
+                              </h6>
+                              </label>
+                              <Input
+                              name="last_vaccination"
+                              id="date"
+                              autoFocus
+                              value={cattle.last_vaccination}
+                              type="date"
+                              label="text"
+                              placeholder="Your cattle last vaccination"
+                              variant="bordered"
+                              className="w-full h-[2.8rem] "
                               onChange={handleInputChange}
                               />
                           </div>
-                          
-                          {/* Farm */}
-                          <div className="grid grid-cols-1=">
-                              <label htmlFor="farm" className="text-black font-bold">
-                              <h6>Farm</h6>
-                              </label>
-                              <Select
-                                id="farm"
-                                name="farm"
-                                variant="bordered"
-                                placeholder="Select a category"
-                                className="w-full h-[2.8rem]"
-                                value={cattle.farm && cattle.farm.name}
-                                onChange={handleSelectChange}
-                              >
-                                {cattleData && cattleData.map((cattle) => (
-                                  <SelectItem key={cattle && cattle.id} value={cattle.farm && cattle.farm.name}>
-                                    {cattle.farm && cattle.farm.name}
-                                  </SelectItem>
-                                ))}
-                              </Select>
-                          </div>
-                          {/* Cattle Height */}
-                          <div className="grid grid-cols-1 gap-1">
+                   
+                          <div className="grid grid-cols-1">
                               <label htmlFor="height" className="text-black font-bold">
                               <h6>
-                                  Cattle Height<span className="text-red-600">*</span>
+                                  Cattle Height
                               </h6>
                               </label>
                               <Input
@@ -550,10 +529,10 @@ const [cattleData, setCattleData] = React.useState(
                           </div>
 
                           {/* Cattle Weight */}
-                          <div className="grid grid-cols-1 gap-1">
+                          <div className="grid grid-cols-1">
                               <label htmlFor="weight" className="text-black font-bold">
                               <h6>
-                                  Cattle Weight<span className="text-red-600">*</span>
+                                  Cattle Weight
                               </h6>
                               </label>
                               <Input
@@ -569,7 +548,27 @@ const [cattleData, setCattleData] = React.useState(
                               onChange={handleInputChange}
                               />
                           </div>
-                        
+
+                          <div className="grid grid-cols-1 gap-1">
+                            <label htmlFor="status" className="text-black font-bold">
+                              <h6>
+                                Status
+                              </h6>
+                            </label>
+                            <select
+                              name="status"
+                              id="status"
+                              value={cattle.status}
+                              onChange={handleSelectChange}
+                              className="w-full h-[2.8rem] shadow-md"
+                            >
+                              <option value=''>Pilih Status Sapi</option>
+                              <option value='sehat'>Sehat</option>
+                              <option value='sakit'>Sakit</option>
+                              <option value='mati'>Mati</option>
+                            </select>
+                          </div>
+                      
                           </ModalBody>
                           <ModalFooter>
 
@@ -598,7 +597,7 @@ const [cattleData, setCattleData] = React.useState(
                                
                                 <p className="text-lg text-black text-center">From : <span className="font-bold">{cattle.farm &&cattle.farm.name}</span></p>
                             </div>
-                            <div className="d-flex justify-around">
+                            {cattle && cattle.diAngon === false && ( <div className="d-flex justify-around">
                                <Link href={`/peternak/cattle/${cattle.id}/pengangon`}>
                                   <Button className="bg-yellow-300" >
                                     Angonkan
@@ -612,7 +611,8 @@ const [cattleData, setCattleData] = React.useState(
                                   </Button>
                                 </Link>
                            
-                            </div>
+                            </div>)}
+                           
                         </div>
                         <div className="grid grid-cols-1 gap-3 w-full">
                             <div>
@@ -623,7 +623,7 @@ const [cattleData, setCattleData] = React.useState(
                                         
                                         <i class="bi m-[-1re] bi-pencil-fill cursor-pointer text-2xl text-emerald-600" onClick={onOpen}></i>
                                     </div>
-                                    <Button className="bg-emerald-600">Detail IoT</Button>
+                                    <Button className="bg-emerald-600">Set IoT</Button>
                                 </div>
                             </div>
                             <div >

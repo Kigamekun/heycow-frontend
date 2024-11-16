@@ -13,8 +13,13 @@ import { Button } from '@nextui-org/react';
 import { Input } from '@nextui-org/react';
 export default function Page({params}) {
     const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' });
-
-    const [jualDetail, setJualDetail] = useState([]); // State to store the jual detail
+    const [likes, setLikes] = useState({
+        
+    });
+    const [jualDetail, setJualDetail] = useState({
+        id: 0,
+        isLiked: false,
+    },[]); // State to store the jual detail
     const [cattle, setCattleData] =useState([]);
     const [comments, setComments] = useState({
         content: ''
@@ -99,11 +104,58 @@ export default function Page({params}) {
       }
     };
    
+    const LikePosts = async () => {
+        const bodyFormData = new FormData();
+        bodyFormData.append('like', 1);
+        try {
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${params.jualID}/likes`, bodyFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            console.log(res.data);
+            setLikes(res.data);
+            // Optionally, you can add code here to update the UI after successful like
+        } catch (error) {
+            console.error('Error:', error.response);  // Log error lengkap dari response
+            Swal.fire({
+                icon: 'error',
+                title: 'Error liking post',
+                text: error.response.data.message,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    const unLikePosts = async () => {
+        const bodyFormData = new FormData();
+        bodyFormData.delete('like', 0);
+        try {
+            const res = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${params.jualID}/likes`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            console.log(res.data);
+            
+            // Optionally, you can add code here to update the UI after successful unlike
+        } catch (error) {
+            console.error('Error:', error.response);  // Log error lengkap dari response
+            Swal.fire({
+                icon: 'error',
+                title: 'Error unliking post',
+                text: error.response.data.message,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
     const createComment = async (e) => {
         e.preventDefault();
-    
-       
-    
         const bodyFormData = new FormData();
         bodyFormData.append('content', comments.content);
     
@@ -224,7 +276,34 @@ export default function Page({params}) {
                                 </div>
                                 <div className="gap-4 mt-3 container-post-action d-flex">
                                     <div className="gap-2 Likes-count d-flex text-md">
-                                        <i class="bi bi-heart-fill text-red-600"></i>
+                                        {/* <div 
+                                            className="like-button" 
+                                            onClick={() => {
+                                                if (jualDetail.is_liked) {
+                                                    unLikePosts(jualDetail.id);
+                                                } else {
+                                                    LikePosts(jualDetail.id);
+                                                }
+                                                setJualDetail({ ...jualDetail, is_liked: !jualDetail.is_liked });
+                                            }}
+                                        >
+                                            <i className={`bi ${jualDetail.is_liked ? 'bi-heart-fill text-red-600' : 'bi-heart text-red-600'}`}></i>
+                                        </div> */}
+                                        <div
+                                            className="like-button" 
+                                            onClick={async () => {
+                                                if (jualDetail.isLiked) {
+                                                    await unLikePosts(jualDetail.id);
+                                                } else {
+                                                    await LikePosts(jualDetail.id);
+                                                }
+                                                getJualDetail();
+                                            }}
+                                        >
+                                            <i className={`bi ${jualDetail.isLiked ? 'bi-heart-fill text-red-600' : 'bi-heart text-red-600'}`}></i>
+                                        </div>
+
+                                      
                                         <p className="text-black">{jualDetail.likes_count}</p>
                                     </div>
                                     <div className="gap-2 Likes-count d-flex text-md ">

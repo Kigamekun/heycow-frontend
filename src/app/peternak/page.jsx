@@ -168,6 +168,7 @@ export default function Home() {
       },
     });
   }, [chartData]);
+  const sickCattle = cattleData.filter(cattle => cattle.status === 'sakit');
 
   return (
     <>
@@ -180,24 +181,25 @@ export default function Home() {
       <h3 className="mb-4 ml-2 text-emerald-600">Home</h3>
         <div className="row">
           <div className="col-sm-6 col-md-3 mb-3">
-              <div className="border border-success card">
-                <div className="gap-10 float-start card-body d-flex">
-                  <Cow className="text-emerald-600" size={50} />
-                    <div className="flex-col d-flex ">
-                      <h6 className="text-emerald-600">Sapi</h6>
-                      <p>15</p>
-                    </div>
+            <div className="border border-success card">
+              <div className="gap-10 float-start card-body d-flex">
+                <Cow className="text-emerald-600" size={50} />
+                <div className="flex-col d-flex ">
+                  <h6 className="text-emerald-600">Sapi</h6>
+                  <p>{cattleData.length}</p>
                 </div>
               </div>
             </div>
+          </div>
+
           <div className="col-sm-6 col-md-3 mb-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
                 <i className="bi bi-emoji-dizzy-fill text-red-400 text-[2rem]" />
-                  <div className="flex-col d-flex ">
-                    <h6 className="text-red-400">Sakit</h6>
-                    <p>2</p>
-                  </div>
+                <div className="flex-col d-flex ">
+                  <h6 className="text-red-400">Sakit</h6>
+                  <p>{sickCattle.length}</p>
+                </div>
               </div>
             </div>
           </div>

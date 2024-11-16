@@ -100,6 +100,7 @@ export default function JualPage({params}) {
         bodyFormData.append('title', jual.title);
         bodyFormData.append('content', jual.content);
         bodyFormData.append('image', jual.image);
+        bodyFormData.append('price', jual.price);
         bodyFormData.append('cattle_id', jual.cattle_id);
         bodyFormData.append('category', jual.category);
         
@@ -125,19 +126,21 @@ export default function JualPage({params}) {
             title: '',
             content: '',
             category: 'jual',
+            price: '',
             cattle_id: '',
             image : ''
-          });
-    
-          onClose();
-    
+          },
           Swal.fire({
             icon: 'success',
             title: 'BlogPost berhasil dibuat',
             text: 'Data blogpost berhasil dibuat',
             showConfirmButton: true,
             timer: 1500
-          });
+          }));
+    
+          onClose();
+    
+         
         
         } catch (error) {
           console.error('Error:', error.response);  // Log error lengkap dari response
@@ -162,10 +165,10 @@ export default function JualPage({params}) {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         });
-        if (Array.isArray(res.data.data)) {
+        console.log('data cattle',res.data.data);
+        if (res.data.data) {
           setCattleData(res.data.data);
-          console.log('Ada datanya');
-          console.log(res.data.data);
+          console.log('data cattle',res.data.data);
         } else {
           console.error('Data yang diterima bukan array:', res.data.data);
         }
@@ -272,6 +275,7 @@ export default function JualPage({params}) {
           }
         }
       };
+      console.log(jualData)
       const DeletePosts = async (id) => {
         if (user && user.role === 'admin') {
             try {
@@ -409,7 +413,7 @@ export default function JualPage({params}) {
                               </div>
                                 <div className="mt-3 container-post-content">
                                     <h4 className="font-bold text-black">{post.title}</h4>
-                                    <p className="text-black">
+                                    <p className="text-black truncate">
                                         {post.content}
                                     </p>
                                     {/* <img src={post.image} alt="post" className="w-[100%] max-h-[400px] border" /> */}

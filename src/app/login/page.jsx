@@ -7,10 +7,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Input } from "@/components/ui/input"
-
-import { MailIcon } from "lucide-react";
-
 import Link from "next/link";
+import Swal from 'sweetalert2';
 
 export default function Page() {
 
@@ -78,16 +76,10 @@ export default function Page() {
                                 </div>
 
                                 <br />
-                                {/* <button
-                                    type="submit"
-                                    className="w-[350px] h-[] justify-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-                                >
-                                    Login
-                                </button> */}
+                            
                                 <button type="submit" className="bg-[#20A577] rounded-xl font-bold text-xl text-white h-[3rem] w-full">
                                     Login
                                 </button> 
-                                {/* <div className="divider text-red-200">atau</div> */}
                                 <div className="text-center">
                                     <p className="font-bold text-lg"> Belum punya akun?{" "}</p>
                                     <p className="font-bold text-lg">

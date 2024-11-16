@@ -96,7 +96,7 @@ export default function Page({params}) {
     
         try {
           const res = await axios.post(
-            `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${params.jualID}/comments`,
+            `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${params.forumID}/comments`,
             bodyFormData,
             {
               headers: {
@@ -140,6 +140,7 @@ export default function Page({params}) {
     const handleInputChange = (e) => {
         setComments({ ...comments, content: e.target.value });
     };
+    
     react.useEffect(() => {
         getMe();
         getForumDetail();

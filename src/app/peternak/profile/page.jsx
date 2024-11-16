@@ -1,6 +1,6 @@
 'use client'
 import { Button } from "@/components/ui/button";
-import * as React from 'react';
+// import * as React from 'react';
 import { useAuth } from '@/lib/hooks/auth';
 import { useState, useEffect } from 'react';
 import axios from "axios";
@@ -86,7 +86,7 @@ export default function Profile() {
             console.log('updating profile...', userData);
             const formData = new FormData();
 
-            formData.append('nama', userData.nama);
+            formData.append('nama', userData.name);
             formData.append('phone_number', userData.phone_number);
             formData.append('email', userData.email);
             formData.append('address', userData.address);
@@ -110,8 +110,6 @@ export default function Profile() {
             if (res.data) {
                 // getUserData();
                 await mutate(); // This will refetch `/api/me` data in `useAuth`
-                
-
                 setUserAvatar(res.data.user.full_avatar_url);
 
                 setUserData(prevUserData => ({
@@ -428,7 +426,7 @@ export default function Profile() {
                         </Button>
                         <div>
                             <div className='profile-picture d-flex justify-center'>
-                                <img src={user && user.avatar} width={120} height={120} alt="Profile" className="rounded-full ml-[9rem]" onLoadingComplete={handleImageLoad} />
+                                <img src={user && user.avatar} width={120} height={120} alt="Profile" className="rounded-full ml-[9rem] object-cover" onLoadingComplete={handleImageLoad} />
                             </div>
                             <h5 className='mt-3 text-black font-bold text-center'>{user ? user.name : "N/A"}</h5>
                         </div>
