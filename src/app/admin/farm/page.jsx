@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog"
-import * as React from "react"
+import { useEffect, useState } from "react"
 
 import {
   flexRender,
@@ -38,7 +38,8 @@ import Swal from "sweetalert2"
 export default function Home() {
 
 
-  const { user, logout } = useAuth({ middleware: 'admin' })
+  const { user, logout } = useAuth({ middleware: 'admin' });
+  const [loading, setLoading] = useState(true);
 
   //security by role
   const alert = () => {
@@ -59,18 +60,18 @@ export default function Home() {
     alert()
   }
 
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState([])
+  const [sorting, setSorting] = useState([])
+  const [columnFilters, setColumnFilters] = useState([])
   const [columnVisibility, setColumnVisibility] =
-    React.useState({
+    useState({
       image: false,
     })
 
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = useState({})
 
-  const [farmData, setFarmData] = React.useState([]);
+  const [farmData, setFarmData] = useState([]);
 
-  const [userData, setUserData] = React.useState([]);
+  const [userData, setUserData] = useState([]);
 
   const columns = [
     {
@@ -91,65 +92,24 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => (
-
-        <div className="flex px-2 py-1">
-          <div>
-
-          </div>
-          <div className="flex flex-col justify-center">
-            <h6 className="mb-0 text-sm leading-normal dark:text-white">
-              {row.getValue("name")}
-            </h6>
-            <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
-            </p>
-          </div>
-        </div>
-      ),
+      cell: ({ row }) => <div>{row.getValue("name")}</div>,
     },
-
-    
     {
-      accessorKey: "users.address",
+      accessorKey: "address",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Jenis Sapi
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            Address
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => {
+      cell: ({ row }) => <div>{row.getValue("address")}</div>,
 
-        if (row.original.breed != null) {
-            return <div className="lowercase">{row.original.users.address}</div>
-        }
-        else {
-            
-            return <div className="lowercase">-</div>
-        }
-
-      },
     },
-    // {
-    //   accessorKey: "address",
-    //   header: ({ column }) => {
-    //     return (
-    //       <Button
-    //         variant="ghost"
-    //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    //       >
-    //         Address
-    //         <ArrowUpDown className="w-4 h-4 ml-2" />
-    //       </Button>
-    //     )
-    //   },
-    //   cell: ({ row }) => <div className="lowercase">{row.getValue("address")}</div>,
-    // },
-
     {
       accessorKey: 'id',
       header: 'Actions',
@@ -162,10 +122,11 @@ export default function Home() {
     }
   ];
 
-  const [farm, setFarm] = React.useState({
+  const [farm, setFarm] = useState({
     id: 0,
-    name: '',
-    address: '',
+    name: "",
+    address: "",
+    user_id: "",
   });
 
 
@@ -194,10 +155,17 @@ export default function Home() {
     setFarm({ ...farm, [name]: value });
   }
 
-  const [open, setOpen] = React.useState(false)
+  const handleSelectChange = (event) => {
+    const name = event.target.name;
+    const { value } = event.target.selectedOptions[0];
+    console.log(value);
+    setFarm({ ...farm, [name]: value });
+  }
+
+  const [open, setOpen] = useState(false)
 
 
-  
+
   const getUserData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
       headers: {
@@ -208,6 +176,7 @@ export default function Home() {
       .then(function (response) {
         if (response.data.data != undefined) {
           setUserData(response.data.data);
+          console.log(response.data.data);
         }
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
@@ -232,40 +201,42 @@ export default function Home() {
       })
   }
 
-  
+
   const getFarmData = async () => {
-    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
-      headers: {
-        'content-type': 'text/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      });
+
+      if (response.data.data !== undefined) {
+        setFarmData(response.data.data.data);
+        console.log('Farm dsada:', response.data.data.data);
       }
-    })
-      .then(function (response) {
-        if (response.data.data != undefined) {
-          setFarmData(response.data.data);
-        }
-      }).catch(function (error) {
-        if (error.response && error.response.status === 401) {
-          Swal.fire({
-            icon: 'error',
-            title: error.response.data.message,
-            showConfirmButton: false,
-            timer: 1500
-          })
-
-          logout()
-
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'error terjadi',
-            text: 'mohon coba lagi nanti.',
-            showConfirmButton: false,
-            timer: 1500
-          });
-        }
-      })
-  }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500
+        });
+        logout();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'error terjadi',
+          text: 'mohon coba lagi nanti.',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const createFarm = async (e) => {
     e.preventDefault();
@@ -282,6 +253,7 @@ export default function Home() {
     const bodyFormData = new FormData();
     bodyFormData.append('name', farm.name);
     bodyFormData.append('address', farm.address);
+    bodyFormData.append('user_id', farm.user_id)
 
     try {
       const res = await axios.post(
@@ -301,8 +273,9 @@ export default function Home() {
       // Reset form fields
       setFarm({
         id: 0,
-        name: '',
-        address: '',
+        name: "",
+        address: "",
+        user_id: ""
       });
 
       setOpen(false);
@@ -337,6 +310,7 @@ export default function Home() {
         id: fr.id,
         name: fr.name,
         address: fr.address,
+        user_id: fr.user_id
       });
       setOpen(true);
     }
@@ -346,14 +320,14 @@ export default function Home() {
   const createData = async () => {
     setFarm({
       id: 0,
-      name: '',
-      address: '',
+      name: "",
+      address: "",
+      user_id: ""
     });
     setOpen(true);
   }
 
   const updateFarm = async (e) => {
-
 
     e.preventDefault();
     Swal.fire({
@@ -365,17 +339,13 @@ export default function Home() {
         Swal.showLoading();
       }
     });
-    var bodyFormData = new FormData();
-
-    bodyFormData.append('name', farm.name);
-    bodyFormData.append('address', farm.address);
-
+   
     var res = await axios.put(
       `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms/${farm.id}`,
       {
         name: farm.name,
         address: farm.address,
-
+        user_id: farm.user_id
       },
       {
         headers: {
@@ -389,8 +359,9 @@ export default function Home() {
         getFarmData();
         setFarm({
           id: 0,
-          name: '',
-          address: '',
+          name: "",
+          address: "",
+          user_id: "",
 
         })
         Swal.close()
@@ -462,8 +433,9 @@ export default function Home() {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getFarmData();
+    getUserData();
   }, []);
 
   return (
@@ -506,8 +478,30 @@ export default function Home() {
                           placeholder="Address"
                           onChange={handleInputChange}
                         />
+                        <select
+                          name="user_id"
+                          // s
+                          onChange={handleSelectChange}
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                        >
+                          <option value="">Pilih Pemilik Farm</option>
+                          {
+                            userData && userData.map((b) => {
+
+                                if (farm.user_id == b.id) {
+                                  return <option key={b.id} value={b.id} selected>{b.name}</option>;
+
+
+                                } else {
+                                  return <option key={b.id} value={b.id} >{b.name}</option>;
+
+                                }
+                            })
+                          }
+
+                        </select>
                         <div className="flex justify-end gap-3 mb-3">
-                          <button type="submit" className="btn btn-primary">{farm.id != 0 ? 'Update' : 'Create'}</button>
+                          <button type="submit" className="btn-modal">{farm.id != 0 ? 'Update' : 'Create'}</button>
                         </div>
                       </form>
                     </DialogDescription>
@@ -530,22 +524,20 @@ export default function Home() {
                 />
               </div>
               <div className="border rounded-md">
-                <Table>
+                <Table className="border border-collapse border-gray-300">
                   <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                       <TableRow key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => {
-                          return (
-                            <TableHead key={header.id}>
-                              {header.isPlaceholder
-                                ? null
-                                : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                            </TableHead>
-                          )
-                        })}
+                        {headerGroup.headers.map((header) => (
+                          <TableHead key={header.id} className="border border-gray-300">
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                          </TableHead>
+                        ))}
                       </TableRow>
                     ))}
                   </TableHeader>
@@ -557,7 +549,7 @@ export default function Home() {
                           data-state={row.getIsSelected() && "selected"}
                         >
                           {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
+                            <TableCell key={cell.id} className="border border-gray-300">
                               {flexRender(
                                 cell.column.columnDef.cell,
                                 cell.getContext()
@@ -570,7 +562,7 @@ export default function Home() {
                       <TableRow>
                         <TableCell
                           colSpan={columns.length}
-                          className="h-24 text-center"
+                          className="h-24 text-center border border-gray-300"
                         >
                           No results.
                         </TableCell>
@@ -578,6 +570,7 @@ export default function Home() {
                     )}
                   </TableBody>
                 </Table>
+
               </div>
               <div className="flex items-center justify-end py-4 space-x-2">
                 <div className="flex-1 text-sm text-muted-foreground">

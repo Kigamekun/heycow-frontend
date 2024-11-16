@@ -1,9 +1,5 @@
 'use client'
-import { useState } from 'react';
-import * as React from "react"
-import { useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,24 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
-
-
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -36,25 +16,35 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import axios from "axios"
-import { useRouter } from "next/navigation"
-import Swal from "sweetalert2"
+} from "@/components/ui/table";
+import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable
+} from "@tanstack/react-table";
+import axios from "axios";
+import { ArrowUpDown } from "lucide-react";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 
 export default function Cattle() {
   const { user, logout } = useAuth({ middleware: 'admin' })
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState(
+  const [sorting, setSorting] = useState([])
+  const [columnFilters, setColumnFilters] = useState(
     []
   )
   // const [error, setError] = useState(false);
   const [columnVisibility, setColumnVisibility] =
-    React.useState({
+    useState({
       image: false,
 
     })
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = useState({})
   //security by role
   const alert = () => {
     Swal.fire({
@@ -73,7 +63,7 @@ export default function Cattle() {
   if (user === 'cattleman') {
     alert()
   }
-  const [cattleData, setCattleData] = React.useState([]);
+  const [cattleData, setCattleData] = useState([]);
   const columns = [
     {
       accessorKey: "no",
@@ -88,28 +78,28 @@ export default function Cattle() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            Name
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => (
-
-        <div className="flex px-2 py-1">
-          <div>
-
-          </div>
-          <div className="flex text-center flex-col justify-center">
-            <h6 className="mb-0 text-sm leading-normal dark:text-white">
-              {row.getValue("name")}
-            </h6>
-            <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
-            </p>
-          </div>
-        </div>
-      ),
+      cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
     },
-
+    {
+      accessorKey: "user_id",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            User ID
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="">{row.getValue("user_id")}</div>,
+    },
     {
       accessorKey: "breed.name",
       header: ({ column }) => {
@@ -119,18 +109,18 @@ export default function Cattle() {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Jenis Sapi
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
       cell: ({ row }) => {
 
         if (row.original.breed != null) {
-            return <div className="lowercase">{row.original.breed.name}</div>
+          return <div className="">{row.original.breed.name}</div>
         }
         else {
-            
-            return <div className="lowercase">-</div>
+
+          return <div className="">-</div>
         }
 
       },
@@ -144,15 +134,28 @@ export default function Cattle() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            status
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            Status
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("status")}</div>,
+      cell: ({ row }) =>
+        <div className="flex px-2 py-1">
+          <div className="flex flex-col justify-center">
+            <h6 className="mb-0 text-sm leading-normal dark:text-white">
+              {row.getValue("status") === 'sehat' && <span className="bg-green-500 badge">Sehat</span>}
+              {row.getValue("status") === 'sakit' && <span className="bg-yellow-500 badge">Sakit</span>}
+              {row.getValue("status") === 'dijual' && <span className="bg-blue-500 badge">Dijual</span>}
+              {row.getValue("status") === 'mati' && <span className="bg-red-500 badge">Mati</span>}
+            </h6>
+            <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
+              {/* Additional description if needed */}
+            </p>
+          </div>
+        </div>,
     },
 
-    
+
     {
       accessorKey: "gender",
       header: ({ column }) => {
@@ -161,12 +164,21 @@ export default function Cattle() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            gender
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            Gender
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("gender")}</div>,
+      cell: ({ row }) =>
+        <div className="flex px-2 py-1">
+          <div className="flex flex-col justify-center">
+            <h6 className="mb-0 text-sm leading-normal dark:text-white">
+              {row.getValue("gender") == 'jantan' ? <span class="badge bg-primary">Jantan</span> : <span class="badge bg-pink-500">Betina</span>}
+            </h6>
+            <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
+            </p>
+          </div>
+        </div>,
     },
 
     {
@@ -177,12 +189,12 @@ export default function Cattle() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            type
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            Type
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("type")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("type")}</div>,
     },
 
     {
@@ -193,24 +205,24 @@ export default function Cattle() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-           Adrress
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            Farm Adrress
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
       cell: ({ row }) => {
 
         if (row.original.farm != null) {
-            return <div className="lowercase">{row.original.farm.name}</div>
+          return <div className="">{row.original.farm.name}</div>
         }
         else {
-            
-            return <div className="lowercase">-</div>
+
+          return <div className="">-</div>
         }
 
       },
 
-    },  
+    },
 
     {
       accessorKey: "birth_date",
@@ -220,12 +232,12 @@ export default function Cattle() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            birth_date
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            Birth Date
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("birth_date")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("birth_date")}</div>,
     },
 
     {
@@ -236,12 +248,12 @@ export default function Cattle() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            birth_weight
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            Birth Height
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("birth_weight")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("birth_weight")} kg</div>,
     },
 
 
@@ -253,12 +265,12 @@ export default function Cattle() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            birth_height
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            Birth Height
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("birth_height")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("birth_height")} cm</div>,
     },
 
     {
@@ -269,26 +281,26 @@ export default function Cattle() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            iot_device
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            IOT Device
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
       cell: ({ row }) => {
 
         if (row.original.iot_device != null) {
-            return <div className="lowercase">{row.original.iot_device.serial_number}</div>
+          return <div className="">{row.original.iot_device.serial_number}</div>
         }
         else {
-            
-            return <div className="lowercase">-</div>
+
+          return <div className="">-</div>
         }
 
       },
 
-    },  
+    },
 
-     {
+    {
       accessorKey: "last_vaccination",
       header: ({ column }) => {
         return (
@@ -296,49 +308,61 @@ export default function Cattle() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            last_vaccination
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            Last Vaccination
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("last_vaccination")}</div>,
-    },  
+      cell: ({ row }) => {
+        if (row.original.last_vaccination != null) {
+          return <div className="">{row.original.last_vaccination}</div>
+        }
+        else {
+
+          return <div className="">-</div>
+        }
+      }
+      ,
+    },
 
     {
       accessorKey: 'id',
       header: 'Actions',
       cell: info => (
         <div>
-          <button className="btn btn-warning text-white text-xs" onClick={() => editCattle(Number(info.getValue()))}>Edit</button>
-          <button className="btn btn-danger text-xs ml-2" onClick={() => deleteCattle(Number(info.getValue()))}>Delete</button>
+          <button className="text-xs text-white btn btn-warning" onClick={() => editCattle(Number(info.getValue()))}>Edit</button>
+          <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteCattle(Number(info.getValue()))}>Delete</button>
         </div>
       ),
     }
   ];
-  const [cattle, setCattle] = React.useState({
+  const [cattle, setCattle] = useState({
     id: 0,
     name: "",
+    user_id: "",
     farm: "",
-    breed_id: "" ,
-    type : "",
-    status : "",
-    birth_date : "",
-    birth_weight : "",
-    birth_height : "",
-    iot_device_id : "",
-    last_vaccination : ""
+    breed_id: "",
+    type: "",
+    status: "",
+    birth_date: "",
+    birth_weight: "",
+    birth_height: "",
+    iot_device_id: "",
+    last_vaccination: ""
   });
 
 
-const [IotDeviceData, setIotDeviceData] = React.useState(
- []
-);
+  const [IotDeviceData, setIotDeviceData] = useState(
+    []
+  );
 
-const [breedsData, setBreedsData] = React.useState(
- []
-);
+  const [breedsData, setBreedsData] = useState(
+    []
+  );
 
-const [farmData, setFarmData] = React.useState([]);
+  const [farmData, setFarmData] = useState([]);
+
+  const [userData, setuserData] = useState([]);
 
 
   const table = useReactTable({
@@ -362,25 +386,53 @@ const [farmData, setFarmData] = React.useState([]);
 
 
   const handleInputChange = (event) => {
-
     const { name, value } = event.target;
     setCattle({ ...cattle, [name]: value });
-  
   }
-
-  
 
   const handleSelectChange = (event) => {
-    
     const name = event.target.name;
-    const {value} = event.target.selectedOptions[0];
+    const { value } = event.target.selectedOptions[0];
     console.log(value);
-    setCattle({ ...cattle, [name]: value });
-
+    setCattle({ ...cattle,  [name]: value });
   }
 
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
 
+  const getUserData = async () => {
+    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
+      headers: {
+        'content-type': 'text/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      }
+    })
+      .then(function (response) {
+        if (response.data.data != undefined) {
+          setuserData(response.data.data);
+          console.log(response.data.data);
+        }
+      }).catch(function (error) {
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          })
+
+          logout()
+
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'error terjadi',
+            text: 'mohon coba lagi nanti.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      })
+  }
 
   // Breed Data
   const getBreedsData = async () => {
@@ -393,7 +445,7 @@ const [farmData, setFarmData] = React.useState([]);
       .then(function (response) {
         if (response.data.data != undefined) {
           setBreedsData(response.data.data);
-        console.log(response.data.data);
+          console.log(response.data.data);
         }
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
@@ -417,37 +469,41 @@ const [farmData, setFarmData] = React.useState([]);
         }
       })
   }
-  
+
   const getFarmData = async () => {
-    try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
-        headers: {
-          'content-type': 'text/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        }
-      });
-      
-    } catch (error) {
-      console.error('Error:', error);
-      if (error.response && error.response.status === 401) {
-        Swal.fire({
-          icon: 'error',
-          title: error.response.data.message,
-          showConfirmButton: false,
-          timer: 1500
-        });
-        logout();
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error terjadi',
-          text: 'Mohon coba lagi nanti.',
-          showConfirmButton: false,
-          timer: 1500
-        });
+    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
+      headers: {
+        'content-type': 'text/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
       }
-    }
-  };
+    })
+      .then(function (response) {
+        if (response.data.data != undefined) {
+          setFarmData(response.data.data.data);
+          console.log(response.data.data.data);
+        }
+      }).catch(function (error) {
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          })
+
+          logout()
+
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'error terjadi',
+            text: 'mohon coba lagi nanti.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      })
+  }
 
   // mengambil Iot Data
   const getIotDeviceData = async () => {
@@ -460,7 +516,7 @@ const [farmData, setFarmData] = React.useState([]);
       .then(function (response) {
         if (response.data.data != undefined) {
           setIotDeviceData(response.data.data);
-        console.log(response.data.data);
+          console.log(response.data.data);
         }
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
@@ -484,8 +540,8 @@ const [farmData, setFarmData] = React.useState([]);
         }
       })
   }
-  
-// mengambil semua cattle Data
+
+  // mengambil semua cattle Data
   const getCattleData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle`, {
       headers: {
@@ -495,8 +551,8 @@ const [farmData, setFarmData] = React.useState([]);
     })
       .then(function (response) {
         if (response.data.data != undefined) {
-          setCattleData(response.data.data.data);
-        console.log(response.data.data.data);
+          setCattleData(response.data.data);
+          console.log(response.data.data);
         }
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
@@ -521,12 +577,9 @@ const [farmData, setFarmData] = React.useState([]);
       })
   }
 
-
-
   // Membuat cattle data
   const createCattle = async (e) => {
     e.preventDefault();
-
     Swal.fire({
       title: 'Loading...',
       text: 'Mohon tunggu sebentar...',
@@ -538,6 +591,7 @@ const [farmData, setFarmData] = React.useState([]);
 
     const bodyFormData = new FormData();
     bodyFormData.append('name', cattle.name);
+    bodyFormData.append('user_id', cattle.user_id)
     bodyFormData.append('breed_id', cattle.breed_id);
     bodyFormData.append('status', cattle.status);
     bodyFormData.append('gender', cattle.gender);
@@ -560,7 +614,7 @@ const [farmData, setFarmData] = React.useState([]);
           }
         }
       );
-      console.log(res.data) ;
+      console.log(res.data);
       // Refresh cattle data
       getCattleData();
 
@@ -568,16 +622,17 @@ const [farmData, setFarmData] = React.useState([]);
       setCattle({
         id: 0,
         name: "",
-        breed_id: "" ,
-        gender : "",
-        type : "",
-        farm : "",
-        status : "",
-        birth_date : "",
-        birth_weight : "",
-        birth_height : "",
-        iot_device_id : "",
-        last_vaccination : ""
+        user_id: "",
+        breed_id: "",
+        gender: "",
+        type: "",
+        farm: "",
+        status: "",
+        birth_date: "",
+        birth_weight: "",
+        birth_height: "",
+        iot_device_id: "",
+        last_vaccination: ""
       });
 
       setOpen(false);
@@ -605,26 +660,24 @@ const [farmData, setFarmData] = React.useState([]);
     }
   };
 
-  
   const editCattle = async (id) => {
-    let ct = cattleData.find((f) => f.id === id );
+    let ct = cattleData.find((f) => f.id === id);
     console.log(ct)
     if (ct) {
       setCattle({
-        id : ct.id,
+        id: ct.id,
         name: ct.name,
-        breed_id: ct.breed_id ,
-        gender : ct.gender,
-        type : ct.type,
-        status : ct.status,
-        farm : ct.farm,
-        birth_date : ct.birth_date,
-        birth_weight : ct.birth_weight,
-        birth_height : ct.birth_height,
-        iot_device_id : ct.iot_device_id,
-        last_vaccination : ct.last_vaccination
-
-      
+        user_id: cr.user_id,
+        breed_id: ct.breed_id,
+        gender: ct.gender,
+        type: ct.type,
+        status: ct.status,
+        farm: ct.farm,
+        birth_date: ct.birth_date,
+        birth_weight: ct.birth_weight,
+        birth_height: ct.birth_height,
+        iot_device_id: ct.iot_device_id,
+        last_vaccination: ct.last_vaccination
       });
       setOpen(true);
     }
@@ -633,29 +686,26 @@ const [farmData, setFarmData] = React.useState([]);
   const createData = async () => {
     setCattle({
       id: 0,
-            name: "",
-            breed_id: "" ,
-            farm : "",
-            gender : "",
-            type : "",
-            status : "",
-            farm : " ",
-            birth_date : "",
-            birth_weight : "",
-            birth_height : "",
-            iot_device_id : "",
-            last_vaccination : ""
+      name: "",
+      user_id: "",
+      breed_id: "",
+      farm: "",
+      gender: "",
+      type: "",
+      status: "",
+      birth_date: "",
+      birth_weight: "",
+      birth_height: "",
+      iot_device_id: "",
+      last_vaccination: ""
     });
     setOpen(true);
   }
 
   const updateCattle = async (e) => {
-
-
     e.preventDefault();
     Swal.fire({
       title: 'Loading...',
-
       text: 'Mohon tunggu sebentar...',
       allowOutsideClick: false,
       didOpen: () => {
@@ -663,8 +713,8 @@ const [farmData, setFarmData] = React.useState([]);
       }
     });
     var bodyFormData = new FormData();
-
     bodyFormData.append('name', cattle.name);
+    bodyFormData.append('user_id', cattle.user_id);
     bodyFormData.append('breed_id', cattle.breed_id);
     bodyFormData.append('status', cattle.status);
     bodyFormData.append('gender', cattle.gender);
@@ -678,50 +728,33 @@ const [farmData, setFarmData] = React.useState([]);
 
     var res = await axios.put(
       `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${cattle.id}`,
-      {
-        name: cattle.name,
-        breed_id: cattle.breed_id ,
-        gender : cattle.gender,
-        type : cattle.type,
-        farm : cattle.farm,
-        status : cattle.status,
-        birth_date : cattle.birth_date,
-        birth_weight : cattle.birth_weight,
-        birth_height : cattle.birth_height,
-        iot_device_id : cattle.iot_device_id,
-        last_vaccination : cattle.last_vaccination
-
-      },
+        bodyFormData,
       {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
-
         },
       },
-     
     )
       .then(function (response) {
         getCattleData();
         setCattle({
-            id: 0,
-            name: "",
-            breed_id: "" ,
-            gender : "",
-            type : "",
-            status : "",
-            farm : "",
-            birth_date : "",
-            birth_weight : "",
-            birth_height : "",
-            iot_device_id : "",
-            last_vaccination : ""
-
+          id: 0,
+          name: "",
+          user_id: "",
+          breed_id: "",
+          gender: "",
+          type: "",
+          status: "",
+          farm: "",
+          birth_date: "",
+          birth_weight: "",
+          birth_height: "",
+          iot_device_id: "",
+          last_vaccination: ""
         })
         Swal.close()
-
         setOpen(false);
-
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
           Swal.fire({
@@ -730,9 +763,7 @@ const [farmData, setFarmData] = React.useState([]);
             showConfirmButton: false,
             timer: 1500
           })
-
           logout()
-
         } else {
           Swal.fire({
             icon: 'error',
@@ -764,7 +795,6 @@ const [farmData, setFarmData] = React.useState([]);
             Swal.showLoading();
           }
         });
-
         try {
           await axios.delete(
             `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${id}`,
@@ -781,18 +811,17 @@ const [farmData, setFarmData] = React.useState([]);
             'success'
           );
         } catch (error) {
-
         }
       }
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getCattleData();
     getBreedsData();
     getFarmData();
     getIotDeviceData();
-
+    getUserData();
   }, []);
 
   return (
@@ -813,27 +842,45 @@ const [farmData, setFarmData] = React.useState([]);
                 </DialogTrigger>
 
                 {/* Add a ref to the dialog */}
-                <DialogContent  className={"lg:max-w-[200px]-lg overflow-y-scroll max-h-screen"} >
+                <DialogContent className={"lg:max-w-[200px]-lg overflow-y-scroll max-h-screen"} >
                   <DialogHeader>
-                    <DialogTitle>{cattle.id != 0 ? 'Update' :'Create'} Cattle</DialogTitle>
+                    <DialogTitle className="mb-4">{cattle.id != 0 ? 'Update' : 'Create'} Cattle</DialogTitle>
                     <DialogDescription>
                       <form method="dialog" onSubmit={cattle.id != 0 ? updateCattle : createCattle}>
                         <input
-                          className="input input-bordered w-full mt-5"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={cattle.name}
                           type="text"
                           name="name"
                           placeholder="Name"
                           onChange={handleInputChange}
                         />
+                                                <div>
+                          <label className="w-full input-bordered">
+                            User
+                            <select
+                              name="user_id"
+                              value={cattle.user_id}
+                              onChange={handleSelectChange}
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                            >
+                              <option value="">User</option>
+                              {userData && userData.map((b) => (
+                                <option key={b.id} value={b.id}>{b.name}</option>
+                              ))}
+                            </select>
+                          </label>
+                        </div>
 
 
                         <div>
-                          <label className="mt-5 input-bordered w-full">
+                          <label className="w-full input-bordered">
+                            Breed
                             <select
                               name="breed_id"
+                              value={cattle.breed_id}
                               onChange={handleSelectChange}
-                              className="input input-bordered w-full mt-1"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                             >
                               <option value="">Breed</option>
                               {breedsData && breedsData.map((b) => (
@@ -842,78 +889,75 @@ const [farmData, setFarmData] = React.useState([]);
                             </select>
                           </label>
                         </div>
-                       
-                        <label className="mt-5 input-bordered w-full">
-                            <select
-                                name="status"
-                                // value={cattle.status}
-                                onChange={handleSelectChange}
-                                className="input input-bordered w-full mt-1"
-                            >
-                                <option value="">Pilih Status Sapimu</option>
-                                <option value="sehat">Sehat</option>
-                                <option value="sakit">Sakit</option>
-                                <option value="mati">Mati</option>
-                            </select>
+
+                        <label className="w-full input-bordered">
+                          <select
+                            name="status"
+                            value={cattle.status}
+                            onChange={handleSelectChange}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4">
+                            <option value="">Pilih Status Sapimu</option>
+                            <option value="sehat">Sehat</option>
+                            <option value="sakit">Sakit</option>
+                            <option value="mati">Mati</option>
+                          </select>
                         </label>
-                       
-                        <div className="mt-5 input-bordered w-full flex justify-start gap-3     ">
-                            <label>
-                                <input
-                                type="radio"
-                                name="gender"
-                                value="jantan"
-                                checked={cattle.gender === 'jantan'}
-                                onChange={handleInputChange}
-                                />
-                                Jantan
-                            </label>
-                            <label>
-                                <input
-                                type="radio"
-                                name="gender"
-                                value="betina"
-                                checked={cattle.gender === 'betina'}
-                                onChange={handleInputChange}
-                                />
-                                Betina
-                            </label>
+
+                        <div className="flex justify-start w-full gap-3 mb-3 input-bordered ">
+                          <label>
+                            <input
+                              type="radio"
+                              name="gender"
+                              value="jantan"
+                              checked={cattle.gender === 'jantan'}
+                              onChange={handleInputChange}
+                            />
+                            Jantan
+                          </label>
+                          <label>
+                            <input
+                              type="radio"
+                              name="gender"
+                              value="betina"
+                              checked={cattle.gender === 'betina'}
+                              onChange={handleInputChange}
+                            />
+                            Betina
+                          </label>
                         </div>
 
-                        <label className="mt-5 input-bordered w-full">
-                            <select
-                                name="type"
-                                // value={cattle.type}
-                                onChange={handleSelectChange}
-                                className="input input-bordered w-full mt-1"
-                            >
-                                <option value="">Pilih Jenis Sapimu</option>
-                                <option value="pedaging">Sapi Pedaging</option>
-                                <option value="peranakan">Sapi Peternak</option>
-                                <option value="perah">Sapi Perah</option>
-                            </select>
+                        <label className="w-full input-bordered">
+                          <select
+                            name="type"
+                            value={cattle.type}
+                            onChange={handleSelectChange}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                          >
+                            <option value="">Pilih Jenis Sapimu</option>
+                            <option value="pedaging">Sapi Pedaging</option>
+                            <option value="peranakan">Sapi Peternak</option>
+                            <option value="perah">Sapi Perah</option>
+                          </select>
                         </label>
 
                         <div>
-                          <label className="mt-5 input-bordered w-full">
+                          <label className="w-full input-bordered">
                             <select
                               name="farm"
+                              value={cattle.farm}
                               onChange={handleSelectChange}
-                              className="input input-bordered w-full mt-1"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                             >
                               <option value="">Pilih nama farm mu</option>
-                              {/* {farmData && farmData.map((b) => (
-                                <option key={b.id} value={b.id}>{b.name}</option>
-                              ))} */}
-                                {Array.isArray(farmData) && farmData.map((b) => (
-                                  <option key={b.id} value={b.id}>{b.name}</option>
-                                ))}
+                              {Array.isArray(farmData) && farmData.map(b => {
+                                return <option key={b.id} value={b.id}>{b.name}</option>;
+                              })}
                             </select>
                           </label>
                         </div>
 
                         <input
-                          className="input input-bordered w-full mt-5"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={cattle.birth_date}
                           type="date"
                           name="birth_date"
@@ -921,15 +965,15 @@ const [farmData, setFarmData] = React.useState([]);
                           onChange={handleInputChange}
                         />
                         <input
-                          className="input input-bordered w-full mt-5"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={cattle.birth_weight}
                           type="text"
                           name="birth_weight"
                           placeholder="birth_weight"
                           onChange={handleInputChange}
                         />
-                         <input
-                          className="input input-bordered w-full mt-5"
+                        <input
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={cattle.birth_height}
                           type="text"
                           name="birth_height"
@@ -937,27 +981,27 @@ const [farmData, setFarmData] = React.useState([]);
                           onChange={handleInputChange}
                         />
 
-                        <label className="mt-5 input-bordered w-full">
-                            <select
-                                name="iot_device_id"
-                                onChange={handleSelectChange}
-                                className="input input-bordered w-full mt-1"
-                            >
-                                <option value="">iot device</option>
+                        <label className="w-full input-bordered">
+                          <select
+                            name="iot_device_id"
+                            value={cattle.iot_device_id}
+                            onChange={handleSelectChange}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                          >
+                            <option value="">IOT Device</option>
+                            {
+                              IotDeviceData && IotDeviceData.map((b) => {
+                                return <option key={b.id} value={b.id}>{b.serial_number}</option>
+                              })
+                            }
 
-                                {
-                                    IotDeviceData && IotDeviceData.map((b) => {
-                                        return <option key={b.id} value={b.id}>{b.serial_number}</option>
-                                    })
-                                }
-                                
-                            </select>
+                          </select>
                         </label>
-                 
-                        <div className="flex flex-col items-start mt-5">
+
+                        <div className="flex flex-col items-start ">
                           <label htmlFor="last_vaccination" className="w-full">Last Vaccination</label>
                           <input
-                            className="input input-bordered w-full"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                             id="last_vaccination"
                             value={cattle.last_vaccination}
                             type="date"
@@ -966,9 +1010,9 @@ const [farmData, setFarmData] = React.useState([]);
                             onChange={handleInputChange}
                           />
                         </div>
-                        
-                        <div className="mt-5 flex justify-end gap-3">
-                          <button type="submit" className="btn">{cattle.id != 0 ? 'Update' :'Create'} Cattle</button>
+
+                        <div className="flex justify-end gap-3 ">
+                          <button type="submit" className="btn-modal">{cattle.id != 0 ? 'Update' : 'Create'} Cattle</button>
                         </div>
                       </form>
                     </DialogDescription>
@@ -990,23 +1034,21 @@ const [farmData, setFarmData] = React.useState([]);
                   className="max-w-sm"
                 />
               </div>
-              <div className="rounded-md border">
-                <Table>
+              <div className="border rounded-md">
+                <Table className="border border-collapse border-gray-300">
                   <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                       <TableRow key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => {
-                          return (
-                            <TableHead key={header.id}>
-                              {header.isPlaceholder
-                                ? null
-                                : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                            </TableHead>
-                          )
-                        })}
+                        {headerGroup.headers.map((header) => (
+                          <TableHead key={header.id} className="border border-gray-300">
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                          </TableHead>
+                        ))}
                       </TableRow>
                     ))}
                   </TableHeader>
@@ -1018,7 +1060,7 @@ const [farmData, setFarmData] = React.useState([]);
                           data-state={row.getIsSelected() && "selected"}
                         >
                           {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
+                            <TableCell key={cell.id} className="border border-gray-300">
                               {flexRender(
                                 cell.column.columnDef.cell,
                                 cell.getContext()
@@ -1031,7 +1073,7 @@ const [farmData, setFarmData] = React.useState([]);
                       <TableRow>
                         <TableCell
                           colSpan={columns.length}
-                          className="h-24 text-center"
+                          className="h-24 text-center border border-gray-300"
                         >
                           No results.
                         </TableCell>
@@ -1040,7 +1082,7 @@ const [farmData, setFarmData] = React.useState([]);
                   </TableBody>
                 </Table>
               </div>
-              <div className="flex items-center justify-end space-x-2 py-4">
+              <div className="flex items-center justify-end py-4 space-x-2">
                 <div className="flex-1 text-sm text-muted-foreground">
                   {table.getFilteredSelectedRowModel().rows.length} of{" "}
                   {table.getFilteredRowModel().rows.length} row(s) selected.

@@ -40,8 +40,9 @@ export function Sidebar() {
     }, [pathname]);
 
     return (
-        <div className="fixed top-0 bottom-0 left-0 h-full overflow-x-hidden lg:block md:hidden sidebar-menu bg-emerald-600">
+        <div className="fixed top-0 bottom-0 left-0 h-full overflow-x-hidden sidebar-menu bg-emerald-600">
            
+
             <div className="image-container w-[300px] px-4 mt-3">
                 <Link href="/peternak">
                     <Image
@@ -70,23 +71,23 @@ export function Sidebar() {
                      <Link className=" sidebar-link" href="/peternak/request">
                             <i class="bi bi-send-exclamation"></i>
                             <span className="">Request</span>
-                     </Link>
-                 </li>
+                        </Link>
+                    </li>
 
-                 <li className=" sidebar-title">Management</li>
+                    <li className=" sidebar-title">Management</li>
 
-                 <li className={`sidebar-item ${pathname === "/peternak/cattle" ? "active" : ""}`}>
-                     <Link className="sidebar-link" href="/peternak/cattle">
+                    <li className={`sidebar-item ${pathname === "/peternak/cattle" ? "active" : ""}`}>
+                        <Link className="sidebar-link" href="/peternak/cattle">
                             <div className='ph'>
-                            <Cow className="ph-cow"size={20} />
+                                <Cow className="ph-cow" size={20} />
                             </div>
                             <span className="">Cattle</span>
-                     </Link>
-                 </li>
-                 <li className={`sidebar-item ${pathname === "/peternak/angon" && "/peternak/angon/pengangon" ? "active" : ""}`}>
-                     <Link className="sidebar-link" href="/peternak/angon">
+                        </Link>
+                    </li>
+                    <li className={`sidebar-item ${pathname === "/peternak/angon" && "/peternak/angon/pengangon" ? "active" : ""}`}>
+                        <Link className="sidebar-link" href="/peternak/angon">
                             <div className='ph'>
-                            <Barn className ="ph-barn"size={20} />
+                                <Barn className="ph-barn" size={20} />
                             </div>
                             <span className="">Angon</span>
                      </Link>
@@ -107,12 +108,12 @@ export function Sidebar() {
                      <Link className="sidebar-link" href="/peternak/history">
                             <i class="bi bi-clock-history "></i>
                             <span className="">History</span>
-                     </Link>
-                 </li>
-                
-                 
+                        </Link>
+                    </li>
 
-             </ul>
-        </div>
-    );
+
+
+                </ul>
+            </div>
+            );
 }

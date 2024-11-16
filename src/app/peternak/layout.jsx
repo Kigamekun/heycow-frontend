@@ -1,16 +1,14 @@
 'use client'
 
-import localFont from "next/font/local";
 import "../globals.css";
 
 import '@/styles/app.css';
 import '@/styles/iconly.css';
 
-import { useRouter } from "next/navigation"; // Import router untuk redirect
-import * as React from "react"
-import { Sidebar } from '@/components/Sidebar_user'; // Import Sidebar
 import { Navbar } from '@/components/Navbar'; // Import Sidebar
-// import { useEffect } from "react";
+import { Sidebar } from '@/components/Sidebar_user'; // Import Sidebar
+import { useRouter } from "next/navigation"; // Import router untuk redirect
+import { useState } from "react";
 
 
 export default function RootLayout({ children }) {
@@ -27,7 +25,7 @@ export default function RootLayout({ children }) {
 
     const router = useRouter();
 
-    const [loading, setLoading] = React.useState(true); // Tambahkan state loading
+    const [loading, setLoading] = useState(true); // Tambahkan state loading
 
     return (
         <main>
@@ -35,8 +33,8 @@ export default function RootLayout({ children }) {
             <div id="app" >
                 <Navbar />
                 
-                <div id="sidebar" className="d-flex fixed left-0 justify-between bg-emerald-500 z-50" >
-                        <div className="sidebar-wrapper w-auto active overflow-hidden">
+                <div id="sidebar" className="fixed left-0 z-50 justify-between d-flex bg-emerald-500" >
+                        <div className="w-auto overflow-hidden sidebar-wrapper active">
                             <div className="sidebar-header w-[300px]" >
                                 <div className="d-flex justify-content-between align-items-center bg-emerald-600">
                                     <div className="logo bg-emerald-600">
@@ -56,7 +54,7 @@ export default function RootLayout({ children }) {
 
                 </div>
               
-                <div id="main" className=" children my-24"> 
+                <div id="main" className="my-24 children"> 
                     {children}
                 </div>
                 

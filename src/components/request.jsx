@@ -1,30 +1,23 @@
 'use client'
-import axios from "axios";
-import React from "react";
 import {
     Modal,
     ModalBody,
     ModalContent,
     ModalFooter,
     ModalHeader,
-    useDisclosure,
-    Checkbox, 
-    Link
+    useDisclosure
 } from '@nextui-org/modal';
+import axios from "axios";
+import { useEffect, useState } from "react";
 
+import { Button, Input } from "@nextui-org/react";
 import { UserCircleCheck } from "@phosphor-icons/react";
-import { Input } from "@nextui-org/react";
-import { Select, SelectItem, SelectSection } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
-import Image from "next/image";
-import foto from '@/images/Farmer-profile.jpg'
-import { animals } from "@/app/peternak/cattle/dummy";
 
 export default function Request() {
-    const [request, setRequest] = React.useState([]);
-    const [loading, setLoading] = React.useState(true);
-    const [user, setUser] = React.useState([]);
-    const [userData, setUserData] = React.useState({
+    const [request, setRequest] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState([]);
+    const [userData, setUserData] = useState({
         id: 0,
         ktp: null,
         nik: '',
@@ -52,7 +45,7 @@ export default function Request() {
         }
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         getUserData();
     }, []); // Empty dependency array to run only once
 
@@ -94,7 +87,7 @@ export default function Request() {
                 {/* <Image src={foto} className="w-[65px] h-[65px] rounded-tl-lg" /> */}
                 <UserCircleCheck size={64} className="text-white mt-[0.5rem]"/>
                 <div className="mt-[1rem]">
-                    <p className="text-white text-md font-bold">Jadilah Seorang</p>
+                    <p className="font-bold text-white text-md">Jadilah Seorang</p><br></br>
                     <p className="text-white text-md font-bold text-left mt-[-1rem] ">Pengangon</p>
                 </div>
             </div>
@@ -128,8 +121,8 @@ export default function Request() {
                 <ModalContent className="w-[800px] h-[650px] bg-white rounded-xl ">
                 {(onClose) => (
                   <>
-                  <ModalHeader className="dialog-title flex flex-col gap-1 px-6 mt-6">
-                    <h3 className="text-black font-bold text-center">Jadilah Pengangon!</h3>
+                  <ModalHeader className="flex flex-col gap-1 px-6 mt-6 dialog-title">
+                    <h3 className="font-bold text-center text-black">Jadilah Pengangon!</h3>
                   </ModalHeader>
                   <ModalBody className="">
                     <form className="grid grid-cols-1 gap-4 p-3" onSubmit={updateMe}>
@@ -201,7 +194,7 @@ export default function Request() {
                                     />
                         </div>   
                         <ModalFooter>
-                            <Button type="submit" className="bg-emerald-600 text-md text-white rounded-xl">
+                            <Button type="submit" className="text-white bg-emerald-600 text-md rounded-xl">
                                 Submit
                             </Button>
                         </ModalFooter>

@@ -1,4 +1,25 @@
 'use client'
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog"
+import { useEffect, useState } from "react"
+
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable
+} from "@tanstack/react-table"
+import { ArrowUpDown } from "lucide-react"
+
+import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 
 import { Input } from "@/components/ui/input"
 import {
@@ -9,33 +30,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog"
-
-import { Button } from "@/components/ui/button"
-import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
-
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable
-} from "@tanstack/react-table"
 import axios from "axios"
-import { ArrowUpDown } from "lucide-react"
-import { useEffect, useState } from "react"
 import Swal from "sweetalert2"
 
 
-export default function Home() {
+export default function AsignDevice() {
   const { user, logout } = useAuth({ middleware: 'admin' })
   const [sorting, setSorting] = useState([])
   const [columnFilters, setColumnFilters] = useState(
@@ -47,10 +46,7 @@ export default function Home() {
 
     })
   const [rowSelection, setRowSelection] = useState({})
-
-  const [selectedFile, setSelectedFile] = useState();
-
-  //  security by role 
+  //security by role
   const alert = () => {
     Swal.fire({
       title: "Anda bukan admin!",
@@ -68,8 +64,7 @@ export default function Home() {
   if (user === 'cattleman') {
     alert()
   }
-
-  const [UserData, setUserData] = useState([]);
+  const [deviceData, setDeviceData] = useState([]);
   const columns = [
     {
       accessorKey: "no",
@@ -77,141 +72,130 @@ export default function Home() {
       cell: ({ row }) => row.index + 1, // Display row index, starting from 1
     },
     {
-      accessorKey: "full_avatar_url",
+      accessorKey: "serial_number",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Avatars
+            Serial Number
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
       cell: ({ row }) => (
 
-        <div className="flex items-center justify-center">
-            <img src={row.getValue("full_avatar_url") ?? 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} 
-            alt="avatar" className="w-16 h-16 rounded-full">
-            </img>
+        <div className="flex px-2 py-1">
+          <div>
+
+          </div>
+          <div className="flex flex-col justify-center">
+            <h6 className="mb-0 text-sm leading-normal dark:text-white">
+              {row.getValue("serial_number")}
+            </h6>
+            <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
+            </p>
+          </div>
         </div>
       ),
 
     },
 
     {
-      accessorKey: "name",
+      accessorKey: "installation_date",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Nama
+            Installation Date
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("installation_date")}</div>,
     },
     {
-      accessorKey: "address",
+      accessorKey: "status",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Address
+            Status
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="">{row.getValue("address")}</div>,
+      cell: ({ row }) => (
+
+        <div className="flex px-2 py-1">
+          <div>
+
+          </div>
+          <div className="flex flex-col justify-center">
+            <h6 className="mb-0 text-sm leading-normal dark:text-white">
+              {row.getValue("status") == 'active' ? <span class="badge bg-success">Active</span> : <span class="badge bg-danger">Inactive</span>}
+            </h6>
+            <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
+            </p>
+          </div>
+        </div>
+      ),
+
     },
     {
-      accessorKey: "phone_number",
+      accessorKey: "user_name",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Nomor Telpon
+            User Assigned
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="">{row.getValue("phone_number")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("user_name")}</div>,
     },
 
-    {
-      accessorKey: "email",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Email
-            <ArrowUpDown className="w-4 h-4 ml-2" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => <div className="">{row.getValue("email")}</div>,
-    },
-
-    {
-      accessorKey: "role",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Role
-            <ArrowUpDown className="w-4 h-4 ml-2" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => <div className="flex px-2 py-1">
-      <div className="flex flex-col justify-center">
-        <h6 className="mb-0 text-sm leading-normal dark:text-white">
-          {row.getValue("role") == 'admin' ? <span class="badge bg-warning text-black">Admin</span> : <span class="badge bg-success">Cattleman</span>}
-        </h6>
-        <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
-        </p>
-      </div>
-    </div>,
-    },
     {
       accessorKey: 'id',
       header: 'Actions',
       cell: info => (
         <div>
-          <button className="text-xs text-white btn btn-warning" onClick={() => editUser(Number(info.getValue()))}>Edit</button>
-          <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteUser(Number(info.getValue()))}>Delete</button>
+          <button className="text-xs text-white btn btn-success" onClick={() => editDevice(Number(info.getValue()))}>Assign</button>
+          <button className="text-xs text-white btn btn-danger" onClick={() => deleteDevice(Number(info.getValue()))}>Unassign</button>
         </div>
       ),
     }
 
   ];
-  const [User, setUser] = useState({
-    id: 0,
-    avatar: '',
-    name: '',
-    address: '',
-    phone_number: '',
-    email: '',
-    password: '',
-    role: ''
 
+  
+  const handleSelectChange = (event) => {
+    const name = event.target.name;
+    const { value } = event.target.selectedOptions[0];
+    console.log(value);
+    setDevice({ ...device, [name]: value });
+  }
+
+  const [device, setDevice] = useState({
+    id: 0,
+    serial_number: '',
+    installation_date: '',
+    status: '',
+    user_id: '',
   });
+  const [UserData, setUserData] = useState([]);
 
 
   const table = useReactTable({
-    data: UserData,
+    data: deviceData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -231,35 +215,14 @@ export default function Home() {
 
 
   const handleInputChange = (event) => {
-    const { name, value, files } = event.target;
-    if (name === 'avatar') {
-      setUser((prevUser) => ({
-        ...prevUser,
-        [name]: files[0], // Handle file input
-      }));
-      console.log(`Updated ${name}: ${files[0].name}`); // Log file name
-    } else {
-      setUser((prevUser) => ({
-        ...prevUser,
-        [name]: value,
-      }));
-      console.log(`Updated ${name}: ${value}`); // Log value
-    }
-  }
-
-  const handleInputChangeRole = (event) => {
     const { name, value } = event.target;
-    setUser({ ...User, [name]: value });
+    setDevice({ ...device, [name]: value });
   }
 
-  const handleFileSelect = (event) => {
-    setSelectedFile(event.target.files ? event.target.files[0] : undefined);
-  }
   const [open, setOpen] = useState(false)
 
-  //Mengambil user data
-  const getUserData = async () => {
-    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
+  const getDeviceData = async () => {
+    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices`, {
       headers: {
         'content-type': 'text/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -267,8 +230,7 @@ export default function Home() {
     })
       .then(function (response) {
         if (response.data.data != undefined) {
-          setUserData(response.data.data);
-          console.log(response.data.data);
+          setDeviceData(response.data.data);
         }
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
@@ -293,8 +255,42 @@ export default function Home() {
       })
   }
 
-  //Membuat User Data
-  const createUser = async (e) => {
+  const getUserData = async () => {
+    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
+      headers: {
+        'content-type': 'text/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      }
+    })
+      .then(function (response) {
+        if (response.data.data != undefined) {
+          setUserData(response.data.data);
+        }
+      }).catch(function (error) {
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          })
+
+          logout()
+
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'error terjadi',
+            text: 'mohon coba lagi nanti.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      })
+  }
+
+
+  const createDevice = async (e) => {
     e.preventDefault();
 
     Swal.fire({
@@ -307,20 +303,14 @@ export default function Home() {
     });
 
     const bodyFormData = new FormData();
-    // bodyFormData.append('avatar', User.avatar);
-    if (selectedFile) {
-      bodyFormData.append('avatar', selectedFile);
-    }
-    bodyFormData.append('name', User.name);
-    bodyFormData.append('address', User.address);
-    bodyFormData.append('phone_number', User.phone_number);
-    bodyFormData.append('email', User.email);
-    bodyFormData.append('password', User.password);
-    bodyFormData.append('role', User.role);
+    bodyFormData.append('serial_number', device.serial_number);
+    bodyFormData.append('installation_date', device.installation_date);
+    bodyFormData.append('status', device.status);
+    bodyFormData.append('user_id', device.user_id);
 
     try {
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`,
+        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices`,
         bodyFormData,
         {
           headers: {
@@ -330,19 +320,16 @@ export default function Home() {
         }
       );
 
-      // Refresh User data
-      getUserData();
+      // Refresh device data
+      getDeviceData();
 
       // Reset form fields
-      setUser({
+      setDevice({
         id: 0,
-        avatar: '',
-        name: '',
-        address: '',
-        phone_number: '',
-        email: '',
-        password: '',
-        role: ''
+        serial_number: '',
+        installation_date: '',
+        status: '',
+        user_id: '',
       });
 
       setOpen(false);
@@ -369,97 +356,77 @@ export default function Home() {
     }
   };
 
-  //Mengedit dan mengupdate data user
-  const editUser = async (id) => {
-    const fr = UserData.find((f) => f.id === id);
+  const editDevice = async (id) => {
+    let fr = deviceData.find((f) => f.id === id);
     console.log(fr)
     if (fr) {
-      setUser({
+      setDevice({
         id: fr.id,
-        avatar: fr.avatar,
-        name: fr.name,
-        address: fr.address,
-        phone_number: fr.phone_number,
-        email: fr.email,
+        serial_number: fr.serial_number,
+        installation_date: fr.installation_date,
         status: fr.status,
-        role: fr.role,
-        password: fr.password
+        user_id: fr.user_id
       });
-      setSelectedFile(null);
-
       setOpen(true);
-    } else {
-      console.log("user not found for id", id);
     }
   }
 
 
   const createData = async () => {
-    setUser({
+    setDevice({
       id: 0,
-      avatar: '',
-      name: '',
-      address: '',
-      phone_number: '',
-      email: '',
-      password: '',
-      role: ''
-
+      serial_number: '',
+      installation_date: '',
+      status: '',
+      user_id: ''
     });
-
-    setSelectedFile(null);
     setOpen(true);
   }
 
-  const updateUser = async (e) => {
+  const updateDevice = async (e) => {
+
+
     e.preventDefault();
     Swal.fire({
       title: 'Loading...',
+
       text: 'Mohon tunggu sebentar...',
       allowOutsideClick: false,
       didOpen: () => {
         Swal.showLoading();
       }
     });
-
-    
-    const bodyFormData = new FormData();
-    if (selectedFile) {
-      bodyFormData.append('avatar', selectedFile);
-    }
-    bodyFormData.append('name', User.name);
-    bodyFormData.append('address', User.address);
-    bodyFormData.append('phone_number', User.phone_number);
-    bodyFormData.append('email', User.email);
-    bodyFormData.append('password', User.password);
-    bodyFormData.append('role', User.role);
-
+   
     var res = await axios.post(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${User.id}`,
-      bodyFormData,
+      `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices/assign-iot-devices`,
+      {
+        user_id: device.user_id,
+        iot_device_id : device.id,
+        device_id : device.id
+
+      },
       {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
 
         },
       }
     )
       .then(function (response) {
-        getUserData();
-        setUser({
+        getDeviceData();
+        setDevice({
           id: 0,
-          avatar: '',
-          name: '',
-          address: '',
-          phone_number: '',
-          email: '',
-          role: '',
-          password: '',
+          serial_number: '',
+          installation_date: '',
+          status: '',
+          user_id: ''
 
-        });
+        })
         Swal.close()
+
         setOpen(false);
+
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
           Swal.fire({
@@ -483,7 +450,7 @@ export default function Home() {
       })
   }
 
-  const deleteUser = async (id) => {
+  const deleteDevice = async (id) => {
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -505,17 +472,17 @@ export default function Home() {
 
         try {
           await axios.delete(
-            `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${id}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices/remove_devices/${id}`,
             {
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
               }
             }
           );
-          await getUserData();
+          await getDeviceData();
           Swal.fire(
-            'Deleted!',
-            'Your User has been deleted.',
+            'Unnasign!',
+            'The device has been unassigned.',
             'success'
           );
         } catch (error) {
@@ -526,10 +493,10 @@ export default function Home() {
   };
 
   useEffect(() => {
+    getDeviceData();
     getUserData();
   }, []);
 
-  // Ini untuk Modal dialog ketika membuat data dengan form
   return (
     <>
       <header className="mb-3">
@@ -540,86 +507,67 @@ export default function Home() {
       <div className="card">
         <div className="card-body">
           <div className="d-flex justify-content-between align-items-center">
-            <h2>User Account</h2><br></br>
+            <h3>Device</h3>
             <div>
-              <Button className="mt-4" variant="outline" onClick={createData}>Create Account</Button>
+
+
               <Dialog open={open} onOpenChange={setOpen}>
+
+
                 {/* Add a ref to the dialog */}
-                <DialogContent className="max-h-screen overflow-y-scroll">
+                <DialogContent >
                   <DialogHeader>
-                    <DialogTitle className="mb-4">{User.id != 0 ? 'Update' : 'Create'} User</DialogTitle>
+                    <DialogTitle className="mb-4">{device.id != 0 ? 'Update' : 'Create'} Device</DialogTitle>
                     <DialogDescription>
-                      <form method="dialog" onSubmit={User.id != 0 ? updateUser : createUser}>
-                        {/* untuk masukkan file, gunakan dropify */}
-                        <label className="mb-2 text-black float-start"> Avatar </label>
-                        <input
-                          className="file-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          // value={User.avatar}
-                          type="file"
-                          name="avatar"
-                          placeholder="Chose your avatar"
-                          onChange={handleFileSelect}
-                        />
-                        <label className="mb-2 text-black float-start"> Name </label>
+                      <form method="dialog" onSubmit={device.id != 0 ? updateDevice : createDevice}>
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={User.name}
+                          value={device.serial_number}
                           type="text"
-                          name="name"
-                          placeholder="Username"
+                          name="serial_number"
+                          placeholder="Serial Number"
+                          disabled
                           onChange={handleInputChange}
                         />
-                        <label className="mb-2 text-black float-start"> Address </label>
                         <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={User.address}
-                          type="text"
-                          name="address"
-                          placeholder="Masukkan Alamatmu"
+                          className="bg-gray-50 mb-4 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                          value={device.installation_date}
+                          type="date"
+                          name="installation_date"
+                          placeholder="Installation Date"
+                          disabled
+
                           onChange={handleInputChange}
                         />
-                        <label className="mb-2 text-black float-start"> Phone Number </label>
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={User.phone_number}
-                          type="text"
-                          name="phone_number"
-                          placeholder="Masukkan Nomor Telponmu"
+                        <select
+                          class="bg-gray-50 mb-4 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          name="status"
+                          disabled
+                          value={device.status}
                           onChange={handleInputChange}
-                        />
-                        <label className="mb-2 text-black float-start"> Email </label>
-                        <input
+                        >
+                          <option value="" disabled>Select status</option>
+                          <option value="active">Active</option>
+                          <option value="inactive">Inactive</option>
+                        </select>
+                        <select
+                          name="user_id"
+                          onChange={handleSelectChange}
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={User.email}
-                          type="email"
-                          name="email"
-                          placeholder="Masukkan Emailmu"
-                          onChange={handleInputChange}
-                        />
-                        <label className="mb-2 text-black float-start"> Password </label>
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={User.password}
-                          type="text"
-                          name="password"
-                          placeholder="Masukkan Passwordmu! minimal 8 karakter"
-                          onChange={handleInputChange}
-                        />
-                        <label className="mb-2 text-black float-start"> Role </label>
-                        <label className="w-full input-bordered">
-                          <select
-                            name="role"
-                            // value={User.role}
-                            onChange={handleInputChangeRole}
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          >
-                            <option value="">Pilih Role User</option>
-                            <option value="admin">Admin</option>
-                            <option value="cattleman">Peternak</option>
-                          </select>
-                        </label>
+                        >
+                          <option value="">Pilih Peternak</option>
+                          {
+                            UserData && UserData.map((b) => {
+                                if (device.user_id == b.id) {
+                                  return <option key={b.id} value={b.id} selected>{b.name}</option>;
+                                } else {
+                                  return <option key={b.id} value={b.id} >{b.name}</option>;
+                                }
+                            })
+                          }
+                        </select>
                         <div className="flex justify-end gap-3 mt-5">
-                          <button type="submit" className="btn-modal">{User.id != 0 ? 'Update' : 'Create'} User</button>
+                          <button type="submit" className="btn-modal">{device.id != 0 ? 'Update' : 'Create'}</button>
                         </div>
                       </form>
                     </DialogDescription>
@@ -633,10 +581,10 @@ export default function Home() {
             <div className="">
               <div className="flex items-end w-full py-4" style={{ justifyContent: 'end' }}>
                 <Input
-                  placeholder="Filter User..."
-                  value={(table.getColumn("name")?.getFilterValue()) ?? ""}
+                  placeholder="Filter Device..."
+                  value={(table.getColumn("serial_number")?.getFilterValue()) ?? ""}
                   onChange={(event) =>
-                    table.getColumn("name")?.setFilterValue(event.target.value)
+                    table.getColumn("serial_number")?.setFilterValue(event.target.value)
                   }
                   className="max-w-sm"
                 />
@@ -688,7 +636,6 @@ export default function Home() {
                     )}
                   </TableBody>
                 </Table>
-
               </div>
               <div className="flex items-center justify-end py-4 space-x-2">
                 <div className="flex-1 text-sm text-muted-foreground">
@@ -719,6 +666,8 @@ export default function Home() {
         </div>
       </div >
     </>
+
+
   )
 }
 

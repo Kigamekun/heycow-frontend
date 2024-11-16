@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog"
-import * as React from "react"
+import { useEffect, useState } from "react"
 
 import {
   flexRender,
@@ -35,19 +35,19 @@ import axios from "axios"
 import Swal from "sweetalert2"
 
 
-export default function Home() {
+export default function Device() {
   const { user, logout } = useAuth({ middleware: 'admin' })
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState(
+  const [sorting, setSorting] = useState([])
+  const [columnFilters, setColumnFilters] = useState(
     []
   )
   const [columnVisibility, setColumnVisibility] =
-    React.useState({
+    useState({
       image: false,
 
     })
-  const [rowSelection, setRowSelection] = React.useState({})
-//security by role
+  const [rowSelection, setRowSelection] = useState({})
+  //security by role
   const alert = () => {
     Swal.fire({
       title: "Anda bukan admin!",
@@ -65,7 +65,7 @@ export default function Home() {
   if (user === 'cattleman') {
     alert()
   }
-  const [deviceData, setDeviceData] = React.useState([]);
+  const [deviceData, setDeviceData] = useState([]);
   const columns = [
     {
       accessorKey: "no",
@@ -100,7 +100,7 @@ export default function Home() {
           </div>
         </div>
       ),
-      
+
     },
 
     {
@@ -116,38 +116,38 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("installation_date")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("installation_date")}</div>,
     },
     {
-        accessorKey: "status",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-              Status
-              <ArrowUpDown className="w-4 h-4 ml-2" />
-            </Button>
-          )
-        },
-        cell: ({ row }) => (
-  
-          <div className="flex px-2 py-1">
-            <div>
-  
-            </div>
-            <div className="flex flex-col justify-center">
-              <h6 className="mb-0 text-sm leading-normal dark:text-white">
-                {row.getValue("status") == 'active' ? <span class="badge bg-success">Active</span> : <span class="badge bg-danger">Inactive</span>}
-              </h6>
-              <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
-              </p>
-            </div>
-          </div>
-        ),
-        
+      accessorKey: "status",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Status
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
       },
+      cell: ({ row }) => (
+
+        <div className="flex px-2 py-1">
+          <div>
+
+          </div>
+          <div className="flex flex-col justify-center">
+            <h6 className="mb-0 text-sm leading-normal dark:text-white">
+              {row.getValue("status") == 'active' ? <span class="badge bg-success">Active</span> : <span class="badge bg-danger">Inactive</span>}
+            </h6>
+            <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
+            </p>
+          </div>
+        </div>
+      ),
+
+    },
 
     {
       accessorKey: 'id',
@@ -161,7 +161,7 @@ export default function Home() {
     }
 
   ];
-  const [device, setDevice] = React.useState({
+  const [device, setDevice] = useState({
     id: 0,
     serial_number: '',
     installation_date: '',
@@ -194,15 +194,7 @@ export default function Home() {
     setDevice({ ...device, [name]: value });
   }
 
-  const [open, setOpen] = React.useState(false)
-
-
-
-
-
-
-
-  
+  const [open, setOpen] = useState(false)
 
   const getDeviceData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices`, {
@@ -440,7 +432,7 @@ export default function Home() {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getDeviceData();
   }, []);
 
@@ -456,18 +448,19 @@ export default function Home() {
           <div className="d-flex justify-content-between align-items-center">
             <h3>Device</h3>
             <div>
-            <Button variant="outline" onClick={createData}>Create Device</Button>
+              <Button variant="outline" onClick={createData}>Create Device</Button>
 
 
               <Dialog open={open} onOpenChange={setOpen}>
-               
+
 
                 {/* Add a ref to the dialog */}
                 <DialogContent >
                   <DialogHeader>
-                    <DialogTitle className="mb-4">{device.id != 0 ? 'Update' :'Create'} Device</DialogTitle>
+                    <DialogTitle className="mb-4">{device.id != 0 ? 'Update' : 'Create'} Device</DialogTitle>
                     <DialogDescription>
                       <form method="dialog" onSubmit={device.id != 0 ? updateDevice : createDevice}>
+                        <label className="mb-2 text-black float-start"> Serial Number </label>
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={device.serial_number}
@@ -476,6 +469,7 @@ export default function Home() {
                           placeholder="Serial Number"
                           onChange={handleInputChange}
                         />
+                        <label className="mb-2 text-black float-start"> Installation Date </label>
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={device.installation_date}
@@ -484,18 +478,19 @@ export default function Home() {
                           placeholder="Installation Date"
                           onChange={handleInputChange}
                         />
+                        <label className="mb-2 text-black float-start"> Status </label>
                         <select
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        name="status"
-                        value={device.status}
-                        onChange={handleInputChange}
+                          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          name="status"
+                          value={device.status}
+                          onChange={handleInputChange}
                         >
-                        <option value="" disabled>Select status</option>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
+                          <option value="" disabled>Select status</option>
+                          <option value="active">Active</option>
+                          <option value="inactive">Inactive</option>
                         </select>
                         <div className="flex justify-end gap-3 mt-5">
-                          <button type="submit" className="btn btn-primary">{device.id != 0 ? 'Update' :'Create'}</button>
+                          <button type="submit" className="btn-modal">{device.id != 0 ? 'Update' : 'Create'}</button>
                         </div>
                       </form>
                     </DialogDescription>
@@ -518,22 +513,20 @@ export default function Home() {
                 />
               </div>
               <div className="border rounded-md">
-                <Table>
+                <Table className="border border-collapse border-gray-300">
                   <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                       <TableRow key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => {
-                          return (
-                            <TableHead key={header.id}>
-                              {header.isPlaceholder
-                                ? null
-                                : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                            </TableHead>
-                          )
-                        })}
+                        {headerGroup.headers.map((header) => (
+                          <TableHead key={header.id} className="border border-gray-300">
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                          </TableHead>
+                        ))}
                       </TableRow>
                     ))}
                   </TableHeader>
@@ -545,7 +538,7 @@ export default function Home() {
                           data-state={row.getIsSelected() && "selected"}
                         >
                           {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
+                            <TableCell key={cell.id} className="border border-gray-300">
                               {flexRender(
                                 cell.column.columnDef.cell,
                                 cell.getContext()
@@ -558,7 +551,7 @@ export default function Home() {
                       <TableRow>
                         <TableCell
                           colSpan={columns.length}
-                          className="h-24 text-center"
+                          className="h-24 text-center border border-gray-300"
                         >
                           No results.
                         </TableCell>

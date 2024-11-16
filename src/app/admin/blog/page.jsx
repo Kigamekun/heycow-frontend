@@ -19,19 +19,19 @@ import {
 } from "@/components/ui/dialog"
 
 import { Button } from "@/components/ui/button"
-import * as React from "react"
+import { useEffect, useState } from "react"
 
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 
 import {
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable
 } from "@tanstack/react-table"
-import { ArrowUpDown, Files } from "lucide-react"
+import { ArrowUpDown } from "lucide-react"
 
 
 import axios from "axios"
@@ -40,8 +40,8 @@ import Swal from "sweetalert2"
 
 export default function Home() {
   const { user, logout } = useAuth({ middleware: 'admin' })
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState(
+  const [sorting, setSorting] = useState([])
+  const [columnFilters, setColumnFilters] = useState(
     []
   )
   const alert = () => {
@@ -62,16 +62,17 @@ export default function Home() {
     alert()
   }
   const [columnVisibility, setColumnVisibility] =
-    React.useState({
+    useState({
       image: false,
 
     })
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = useState({})
 
-  const [selectedFile, setSelectedFile] = React.useState();
+  const [selectedFile, setSelectedFile] = useState();
+  const [UserData, setUserData] = useState([])
 
 
-  const [UserData, setUserData] = React.useState([]);
+  const [BlogPostData, setBlogPostData] = useState([]);
   const columns = [
     {
       accessorKey: "no",
@@ -79,183 +80,225 @@ export default function Home() {
       cell: ({ row }) => row.index + 1, // Display row index, starting from 1
     },
     {
-      accessorKey: "avatar",
+      accessorKey: "full_image_url",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Avatar
+            Image
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
       cell: ({ row }) => (
 
+          <div className="flex items-center justify-center">
+            <img src={row.getValue("full_image_url") ?? 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} 
+            alt="image" className="w-16 h-16 rounded-full">
+            </img>
+          </div>
+      ),
+
+    },
+
+    {
+      accessorKey: "user_id",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            User ID
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="">{row.getValue("user_id")}</div>,
+    },
+    {
+      accessorKey: "title",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Title
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="">{row.getValue("title")}</div>,
+    },
+    {
+      accessorKey: "content",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Content
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const content = row.getValue("content");
+        const maxLength = 50;
+        const truncatedContent = content.length > maxLength ? content.substring(0, maxLength) + "..." : content;
+        
+        return <div className="">{truncatedContent}</div>;
+      },
+    },
+    {
+      accessorKey: "category",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Category
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
+      },
+      cell: ({ row }) =>
         <div className="flex px-2 py-1">
           <div className="flex flex-col justify-center">
-            <img className="mb-0 text-sm leading-normal dark:text-white">
-              {row.getValue()}
-            </img>
-            
+            <h6 className="mb-0 text-sm leading-normal dark:text-white">
+              {row.getValue("category") == 'jual' ? <span class="badge bg-warning">Jual</span> : <span class="badge bg-primary">Forum</span>}
+            </h6>
+            <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
+            </p>
           </div>
-        </div>
-      ),
-      
+        </div>,
     },
 
     {
-      accessorKey: "name",
+      accessorKey: "price",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Nama
+            Price
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
-    },
-    {
-      accessorKey: "address",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Address
-            <ArrowUpDown className="w-4 h-4 ml-2" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("address")}</div>,
-    },
-    {
-      accessorKey: "phone_number",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Nomor Telpon
-            <ArrowUpDown className="w-4 h-4 ml-2" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("phone_number")}</div>,
-    },
-    
-    {
-      accessorKey: "email",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Email
-            <ArrowUpDown className="w-4 h-4 ml-2" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("price")}</div>,
     },
 
     {
-      accessorKey: "password",
+      accessorKey: "cattle_id",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Password
+            Cattle ID
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("password")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("cattle_id")}</div>,
     },
-    
     {
-      accessorKey: "role",
+      accessorKey: "published",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Role
+            Published Status
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("role")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("published")}</div>,
     },
-    // {
-    //     accessorKey: "status",
-    //     header: ({ column }) => {
-    //       return (
-    //         <Button
-    //           variant="ghost"
-    //           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    //         >
-    //           Status
-    //           <ArrowUpDown className="w-4 h-4 ml-2" />
-    //         </Button>
-    //       )
-    //     },
-    //     cell: ({ row }) => (
-  
-    //       <div className="flex px-2 py-1">
-    //         <div>
-  
-    //         </div>
-    //         <div className="flex flex-col justify-center">
-    //           <h6 className="mb-0 text-sm leading-normal dark:text-white">
-    //             {row.getValue("status") == 'active' ? <span class="badge bg-success">Active</span> : <span class="badge bg-danger">Inactive</span>}
-    //           </h6>
-    //           <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
-    //           </p>
-    //         </div>
-    //       </div>
-    //     ),
-        
-    //   },
-
+    {
+      accessorKey: "published_at",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Published Date/Time
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="">{row.getValue("published_at")}</div>,
+    },
+    {
+      accessorKey: "comments_count",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Comments Count
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="">{row.getValue("comments_count")}</div>,
+    },
+    {
+      accessorKey: "likes_count",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Likes Count
+            <ArrowUpDown className="w-4 h-4 ml-2" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="">{row.getValue("likes_count")}</div>,
+    },
     {
       accessorKey: 'id',
       header: 'Actions',
       cell: info => (
         <div>
-          <button className="text-xs text-white btn btn-warning" onClick={() => editUser(Number(info.getValue()))}>Edit</button>
-          <button className="ml-2 text-xs btn btn-danger" onClick={() => delete(Number(info.getValue()))}>Delete</button>
+          <button className="text-xs text-white btn btn-warning" onClick={() => editBlogPost(Number(info.getValue()))}>Edit</button>
+          <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteBlogPost(Number(info.getValue()))}>Delete</button>
         </div>
       ),
     }
-
   ];
-  const [User, setUser] = React.useState({
+  const [BlogPost, setBlogPost] = useState({
     id: 0,
-    avatar: '',
-    name: '',
-    address: '',
-    phone_number: '',
-    email: '',
-    password: '',
-    role: ''
-
+    user_id: '',
+    title: '',
+    content: '',
+    category: '',
+    image: '',
+    price: '',
+    cattle_id: '',
+    published: '',
+    published_at: '',
+    comments_count: '',
+    likes_count: ''
   });
 
 
   const table = useReactTable({
-    data: UserData,
+    data: BlogPostData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -277,14 +320,14 @@ export default function Home() {
   const handleInputChange = (event) => {
     const { name, value, files } = event.target;
     if (name === 'avatar') {
-      setUser((prevUser) => ({
-        ...prevUser,
+      setBlogPost((prevBlogPost) => ({
+        ...prevBlogPost,
         [name]: files[0], // Handle file input
       }));
       console.log(`Updated ${name}: ${files[0].name}`); // Log file name
     } else {
-      setUser((prevUser) => ({
-        ...prevUser,
+      setBlogPost((prevBlogPost) => ({
+        ...prevBlogPost,
         [name]: value,
       }));
       console.log(`Updated ${name}: ${value}`); // Log value
@@ -293,16 +336,16 @@ export default function Home() {
 
   const handleSelectChange = (event) => {
     const name = event.target.name;
-    const {value} = event.target.selectedOptions[0];
+    const { value } = event.target.selectedOptions[0];
     console.log(value);
-    setUser({ ...User, [name]: value });
+    setBlogPost({ ...BlogPost, [name]: value });
 
   }
 
   const handleFileSelect = (event) => {
     setSelectedFile(event.target.files ? event.target.files[0] : undefined);
   }
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
 
   const getUserData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
@@ -338,7 +381,42 @@ export default function Home() {
       })
   }
 
-  const createUser = async (e) => {
+  const getBlogPostData = async () => {
+    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts`, {
+      headers: {
+        'content-type': 'text/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      }
+    })
+      .then(function (response) {
+        if (response.data.data != undefined) {
+          setBlogPostData(response.data.data.data);
+          console.log(response.data.data.data)
+        }
+      }).catch(function (error) {
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          })
+
+          logout()
+
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'error terjadi',
+            text: 'mohon coba lagi nanti.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      })
+  }
+
+  const createBlogPost = async (e) => {
     e.preventDefault();
 
     Swal.fire({
@@ -353,19 +431,21 @@ export default function Home() {
     const bodyFormData = new FormData();
     // bodyFormData.append('avatar', User.avatar);
     if (selectedFile) {
-      bodyFormData.append('avatar', selectedFile);
-  }
-  
-    bodyFormData.append('name', User.name);
-    bodyFormData.append('address', User.address);
-    bodyFormData.append('phone_number', User.phone_number);
-    bodyFormData.append('email', User.email);
-    bodyFormData.append('password', User.password);
-    bodyFormData.append('role', User.role);
+      bodyFormData.append('image', selectedFile);
+    }
+
+    bodyFormData.append('user_id', BlogPost.user_id);
+    bodyFormData.append('title', BlogPost.title);
+    bodyFormData.append('content', BlogPost.content);
+    bodyFormData.append('category', BlogPost.category);
+    bodyFormData.append('price', BlogPost.price);
+    bodyFormData.append('cattle_id', BlogPost.cattle_id);
+    bodyFormData.append('published', BlogPost.published);
+    bodyFormData.append('published_at', BlogPost.published_at);
 
     try {
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`,
+        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts`,
         bodyFormData,
         {
           headers: {
@@ -376,18 +456,22 @@ export default function Home() {
       );
 
       // Refresh User data
-      getUserData();
+      getBlogPostData();
 
       // Reset form fields
-      setUser({
+      setBlogPost({
         id: 0,
-        avatar: Files || undefined,
-        name: '',
-        address: '',
-        phone_number: '',
-        email: '',
-        password: '',
-        role: ''
+        user_id: '',
+        title: '',
+        content: '',
+        category: '',
+        image: '',
+        price: '',
+        cattle_id: '',
+        published: '',
+        published_at: '',
+        comments_count: '',
+        likes_count: ''
       });
 
       setOpen(false);
@@ -414,15 +498,21 @@ export default function Home() {
     }
   };
 
-  const editUser = async (id) => {
-    let fr = UserData.find((f) => f.id === id);
-    console.log(fr)
-    if (fr) {
-      setUser({
-        id: fr.id,
-        avatar: fr.avatar,
-        name: fr.name,
-        status: fr.status,
+  const editBlogPost = async (id) => {
+    let bp = BlogPostData.find((f) => f.id === id);
+    console.log(bp)
+    if (bp) {
+      setBlogPost({
+        id: bp.id,
+        user_id: bp.user_id,
+        title: bp.title,
+        content: bp.content,
+        category: bp.category,
+        image: bp.image,
+        price: bp.price,
+        cattle_id: bp.cattle_id,
+        published: bp.published,
+        published_at: bp.published_at,
       });
       setOpen(true);
     }
@@ -430,21 +520,23 @@ export default function Home() {
 
 
   const createData = async () => {
-    setUser({
+    setBlogPost({
       id: 0,
-      avatar: '',
-      name: '',
-      address: '',
-      phone_number: '',
-      email: '',
-      password: '',
-      role: ''
+      user_id: '',
+      title: '',
+      content: '',
+      category: '',
+      image: '',
+      price: '',
+      cattle_id: '',
+      published: '',
+      published_at: ''
 
     });
     setOpen(true);
   }
 
-  const updateUser = async (e) => {
+  const updateBlogPost = async (e) => {
 
 
     e.preventDefault();
@@ -459,39 +551,48 @@ export default function Home() {
     });
 
     var bodyFormData = new FormData();
-    bodyFormData.append('avatar', User.avatar);
-    bodyFormData.append('name', User.name);
-    bodyFormData.append('status', User.address);
-    bodyFormData.append('phone_number', User.phone_number);
-    bodyFormData.append('role', User.role);
+    // bodyFormData.append('avatar', User.avatar);
+    if (selectedFile) {
+      bodyFormData.append('image', selectedFile);
+    }
+
+    bodyFormData.append('user_id', BlogPost.user_id);
+    bodyFormData.append('title', BlogPost.title);
+    bodyFormData.append('content', BlogPost.content);
+    bodyFormData.append('category', BlogPost.category);
+    bodyFormData.append('price', BlogPost.price);
+    bodyFormData.append('cattle_id', BlogPost.cattle_id);
+    bodyFormData.append('published', BlogPost.published);
+    bodyFormData.append('published_at', BlogPost.published_at);
 
     var res = await axios.put(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${User.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${BlogPost.id}`,
       {
-        avatar: User.avatar,
-        name: User.name,
-        address: User.address,
-        phone_number: User.phone_number,
-        role: User.role
-
+        bodyFormData
       },
       {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
 
         },
       }
     )
       .then(function (response) {
-        getUserData();
-        setUser({
+        getBlogPostData();
+        setBlogPost({
           id: 0,
-          avatar: '',
-          name: '',
-          address: '',
-          phone_number: '',
-          role: ''
+          user_id: '',
+          title: '',
+          content: '',
+          category: '',
+          image: '',
+          price: '',
+          cattle_id: '',
+          published: '',
+          published_at: '',
+          comments_count: '',
+          likes_count: ''
 
         })
         Swal.close()
@@ -521,7 +622,7 @@ export default function Home() {
       })
   }
 
-  const deleteUser = async (id) => {
+  const deleteBlogPost = async (id) => {
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -543,14 +644,14 @@ export default function Home() {
 
         try {
           await axios.delete(
-            `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${id}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${id}`,
             {
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
               }
             }
           );
-          await getUserData();
+          await getBlogPostData();
           Swal.fire(
             'Deleted!',
             'Your User has been deleted.',
@@ -563,7 +664,8 @@ export default function Home() {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
+    getBlogPostData();
     getUserData();
   }, []);
 
@@ -578,90 +680,105 @@ export default function Home() {
       <div className="card">
         <div className="card-body">
           <div className="d-flex justify-content-between align-items-center">
-            <h3>User Account</h3>
+            <h3>Community Blog Post</h3>
             <div>
-            <Button variant="outline" onClick={createData}>Create Account</Button>
+              <Button variant="outline" onClick={createData}>Create Blog Post</Button>
 
 
               <Dialog open={open} onOpenChange={setOpen}>
-               
+
 
                 {/* Add a ref to the dialog */}
-                <DialogContent >
+                <DialogContent className={"lg:max-w-[200px]-lg overflow-y-scroll max-h-screen"} >
                   <DialogHeader>
-                    <DialogTitle className="mb-4">{User.id != 0 ? 'Update' :'Create'} User</DialogTitle>
+                    <DialogTitle className="mb-4">{BlogPost.id != 0 ? 'Update' : 'Create'} Blog Post</DialogTitle>
                     <DialogDescription>
-                      <form method="dialog" onSubmit={User.id != 0 ? updateUser : createUser}>
+                      <form method="dialog" onSubmit={BlogPost.id != 0 ? updateBlogPost : createBlogPost}>
                         {/* untuk masukkan file, gunakan dropify */}
                         <input
                           className="file-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          // value={User.avatar}
+                          // value={BlogPost.image}
                           type="file"
-                          name="avatar"
-                          placeholder="Chose your avatar"
+                          name="image"
+                          placeholder="Pilih Gambar"
                           onChange={handleFileSelect}
                         />
+                        <select
+                          name="user_id"
+                          // s
+                          onChange={handleSelectChange}
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                        >
+                          <option value="">Pilih User</option>
+                            {
+                              UserData && UserData.map((b) => {
+                                return <option key={b.id} value={b.id}>{b.name}</option>
+                              })
+                            }
+                        </select>
+
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={User.name}
+                          value={BlogPost.title}
                           type="text"
-                          name="name"
-                          placeholder="Username"
+                          name="title"
+                          placeholder="Masukkan Judul"
                           onChange={handleInputChange}
                         />
-                       
+
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={User.address}
+                          value={BlogPost.content}
                           type="text"
-                          name="address"
-                          placeholder="Masukkan Alamatmu"
+                          name="content"
+                          placeholder="Deskripsi Blog Post"
                           onChange={handleInputChange}
                         />
 
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={User.phone_number}
-                          type="text"
-                          name="phone_number"
-                          placeholder="Masukkan Nomor Telponmu"
-                          onChange={handleInputChange}
-                        />
-
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={User.email}
-                          type="email"
-                          name="email"
-                          placeholder="Masukkan Emailmu"
-                          onChange={handleInputChange}
-                        />
-
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={User.password}
-                          type="text"
-                          name="password"
-                          placeholder="Masukkan Passwordmu! minimal 8 karakter"
-                          onChange={handleInputChange}
-                        />
-
-                        <label className=" input-bordered w-full">
-                            <select
-                                name="role"
-                                // value={cattle.status}
-                                onChange={handleSelectChange}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                            >
-                                <option value="">Pilih Role User</option>
-                                <option value="admin">Admin</option>
-                                <option value="cattleman">Peternak</option>
-
-                            </select>
+                        <label className="w-full input-bordered">
+                          <select
+                            name="category"
+                            // value={cattle.type}
+                            onChange={handleSelectChange}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                          >
+                            <option value="">Pilih Jenis Category</option>
+                            <option value="jual">Jual</option>
+                            <option value="forum">Forum</option>
+                          </select>
                         </label>
-                        
-                        <div className="mt-5 flex justify-end gap-3">
-                          <button type="submit" className="btn">{User.id != 0 ? 'Update' :'Create'} User</button>
+
+                        <input
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                          value={BlogPost.price}
+                          type="text"
+                          name="price"
+                          placeholder="Masukkan Harga"
+                          onChange={handleInputChange}
+                        />
+                        <label className="w-full input-bordered">
+                          <select
+                            name="type"
+                            // value={cattle.type}
+                            onChange={handleSelectChange}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                          >
+                            <option value="">Pilih Status Publish</option>
+                            <option value="draft">Draft</option>
+                            <option value="published">Published</option>
+                          </select>
+                        </label>
+
+                        <input
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                          value={BlogPost.published_at}
+                          type="datetime-local"
+                          name="published_at"
+                          placeholder="Masukkan tanggal publsih"
+                          onChange={handleInputChange}
+                        />
+                        <div className="flex justify-end gap-3 mt-5">
+                          <button type="submit" className="btn-modal">{BlogPost.id != 0 ? 'Update' : 'Create'} Blog Post</button>
                         </div>
                       </form>
                     </DialogDescription>
@@ -676,30 +793,28 @@ export default function Home() {
               <div className="flex items-end w-full py-4" style={{ justifyContent: 'end' }}>
                 <Input
                   placeholder="Filter User..."
-                  value={(table.getColumn("avatar")?.getFilterValue()) ?? ""}
+                  value={(table.getColumn("title")?.getFilterValue()) ?? ""}
                   onChange={(event) =>
-                    table.getColumn("avatar")?.setFilterValue(event.target.value)
+                    table.getColumn("title")?.setFilterValue(event.target.value)
                   }
                   className="max-w-sm"
                 />
               </div>
               <div className="border rounded-md">
-                <Table>
+                <Table className="border border-collapse border-gray-300">
                   <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                       <TableRow key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => {
-                          return (
-                            <TableHead key={header.id}>
-                              {header.isPlaceholder
-                                ? null
-                                : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                            </TableHead>
-                          )
-                        })}
+                        {headerGroup.headers.map((header) => (
+                          <TableHead key={header.id} className="border border-gray-300">
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                          </TableHead>
+                        ))}
                       </TableRow>
                     ))}
                   </TableHeader>
@@ -711,7 +826,7 @@ export default function Home() {
                           data-state={row.getIsSelected() && "selected"}
                         >
                           {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
+                            <TableCell key={cell.id} className="border border-gray-300">
                               {flexRender(
                                 cell.column.columnDef.cell,
                                 cell.getContext()
@@ -724,7 +839,7 @@ export default function Home() {
                       <TableRow>
                         <TableCell
                           colSpan={columns.length}
-                          className="h-24 text-center"
+                          className="h-24 text-center border border-gray-300"
                         >
                           No results.
                         </TableCell>

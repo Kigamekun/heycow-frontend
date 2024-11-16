@@ -1,11 +1,10 @@
 'use client';
 
 import { useAuth } from "@/lib/hooks/auth"; // Hook for authentication
-import { Cow, Scroll, Toolbox, User } from "@phosphor-icons/react";
-import Chart from 'chart.js/auto';
-import { useEffect, useRef, useState } from 'react';
-import Link from "next/link";
 import axios from 'axios';
+import Chart from 'chart.js/auto';
+import Link from "next/link";
+import { useEffect, useRef, useState } from 'react';
 import Swal from 'sweetalert2';
 
 export default function Home() {
@@ -14,7 +13,6 @@ export default function Home() {
   const doughnutCanvas = useRef();
   const barCanvas = useRef();
   const [chartData, setChartData] = useState([])
-  const [doughnutData, setdoughnutData] = useState([0])
 
   // get Cattle Data
   const getCattleData = async () => {
@@ -210,7 +208,7 @@ export default function Home() {
           <div className="col-sm-6 col-md-3 mb-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
-              <Toolbox className="text-emerald-600" size={50} />
+                <i className="bi bi-emoji-sunglasses-fill text-yellow-600 text-[2rem]" />
                   <div className="flex-col d-flex ">
                     <h6 className="text-emerald-600">Device</h6>
                     <p>{totalIotDevices}</p>
@@ -221,7 +219,7 @@ export default function Home() {
           <div className="col-sm-6 col-md-3 mb-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
-              <User className="text-emerald-600" size={50} />
+                <i className="bi bi-emoji-dizzy-fill text-red-800 text-[2rem]" />
                   <div className="flex-col d-flex ">
                     <h6 className="text-emerald-600">Total Contract</h6>
                     <p>15</p>
@@ -263,14 +261,14 @@ export default function Home() {
           {cattleData && cattleData.map((cattle) => (
             <Link key={cattle.id} href={`/peternak/cattle/${cattle.id}?user=${user && user.id}`}>
               <div className="card">
-                <div className="card-body d-flex justify-between">
+                <div className="justify-between card-body d-flex">
                   <div>
                     <h3 className="text-emerald-600 text-ellipsis">{cattle && cattle.name}</h3>
                     <p className="text-black">{cattle.iot_device && cattle.iot_device.serial_number}</p>
                   </div>
                   <div>
                     <div className={`${getStatusColor(cattle.status)} rounded-md`}>
-                      <p className="text-white text-sm m-2">{cattle.status}</p>
+                      <p className="m-2 text-sm text-white">{cattle.status}</p>
                     </div>
                   </div>
                 </div>
