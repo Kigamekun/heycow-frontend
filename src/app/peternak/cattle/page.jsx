@@ -254,8 +254,7 @@ export default function Home() {
         }
       );
       console.log(res.data) ;
-      // Refresh cattle data
-      getCattleData();
+ 
 
       // Reset form fields
       setCattle({
@@ -271,9 +270,18 @@ export default function Home() {
         birth_height : "",
         iot_device_id : "",
         last_vaccination : ""
-      });
+      },
+      Swal.fire({
+        title: "Success",
+        text: "Cattle berhasil ditambahkan",
+        icon: "success",
+        confirmButtonText: "OK"
 
-      setOpen(false);
+      })),
+      // Show success message;
+     // Refresh cattle data
+     getCattleData();
+       onClose();
 
       Swal.close();
     } catch (error) {

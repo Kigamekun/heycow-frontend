@@ -369,40 +369,54 @@ const [cattleData, setCattleData] = useState(
     }
 
     const deleteCattle = async () => {
-      
-        try {
-            const response = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${params.id}`, {
-                headers: {
-                    'content-type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                }
-            });
-            console.log('Delete response:', response.data);
-            Swal.fire({
-                icon: 'success',
-                title: 'Cattle deleted successfully',
-                showConfirmButton: false,
-                timer: 1500
-            });
-        } catch (error) {
-            console.error('Error deleting cattle:', error);
-            if (error.response && error.response.status === 401) {
-                Swal.fire({
-                    icon: 'error',
-                    title: error.response.data.message,
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-                logout();
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error occurred',
-                    text: 'Please try again later.',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            }
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          deleteCattle();
+        }
+      });
+      try {
+        const response = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${params.cattleID}`, {
+          headers: {
+            'content-type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          }
+        });
+        console.log('Delete response:', response.data);
+        Swal.fire({
+          icon: 'success',
+          title: 'Cattle deleted successfully',
+          showConfirmButton: false,
+          timer: 1500
+        }).then(() => {
+          window.location.href = '/peternak/cattle'; // Redirect to /peternak/cattle after deletion
+        });
+      } catch (error) {
+        console.error('Error deleting cattle:', error);
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          });
+          logout();
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error occurred',
+            text: 'Please try again later.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
       }
     };
   
@@ -693,7 +707,7 @@ const [cattleData, setCattleData] = useState(
                                 <div className="title-iot d-flex justify-between">
                                     
                                     <div className="d-flex gap-3">
-                                      <i class="bi bi-trash-fill text-2xl cursor-pointer text-red-700" onClick={() => { alert('yakin mau di delete?'); deleteCattle(); }}></i>
+                                      <i class="bi bi-trash-fill text-2xl cursor-pointer text-red-700" onClick={() => { deleteCattle() }}></i>
                                         
                                         <i class="bi m-[-1re] bi-pencil-fill cursor-pointer text-2xl text-emerald-600" onClick={onOpen}></i>
                                     </div>
@@ -715,10 +729,7 @@ const [cattleData, setCattleData] = useState(
                                       {/* {cattleData?.map((cattle) => (
                                         <TableCell key={cattle.id} className="font-thin text-sm">{cattle.breed_id}</TableCell>
                                       ))} */}
-
                                       <TableCell className="font-thin text-sm">{cattle.breed && cattle.breed.name}</TableCell>
-                                     
-                                        
                                     </TableRow>
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">Gender</TableCell>
@@ -754,7 +765,9 @@ const [cattleData, setCattleData] = useState(
                           <div className="mt-5">
                             <div className="title-iot d-flex justify-between">
                              <h5 className="text-black font-bold">Health Monitoring</h5>
+                                 <Link href={`/peternak/cattle/${cattle.id}/health_monitor`}>
                                   <Button className="bg-emerald-600">Detail Kesehatan</Button>
+                                </Link>
                             </div>
                             </div>
                             <div >

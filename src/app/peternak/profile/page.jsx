@@ -23,11 +23,15 @@ import Image from "next/image";
 export default function Profile() {
     const { user, mutate,logout } = useAuth({ middleware: 'cattleman' || 'admin' });
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+
+    const [isCollapsed, setIsCollapsed] = useState(true);
+    const [isBouncing, setIsBouncing] = useState(false);
+    const [collapsedIndex, setCollapsedIndex] = useState(null);
     const toggleCollapse = (index) => {
         setIsCollapsed(!isCollapsed);
         setCollapsedIndex(collapsedIndex === index ? null : index);
     };
-
+    const [iot, setIot] = useState([]);
     const [userData, setUserData] =     useState({
         id: 0,
         nama: '',
@@ -147,13 +151,14 @@ export default function Profile() {
     const getIotDevices = async () => {
         console.log('debug iot....')
         try{
-            var response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices`, {
+            var response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices/get-iot-devices-by-user`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             })
-            
+            console.log('Response:', response.data.data)
+            setIot(response.data.data)
         }catch(error){
             console.log('Error:', error)
         }
@@ -223,6 +228,7 @@ export default function Profile() {
     useEffect(() => {
         getUserData();
         fetchUserImage();
+        getIotDevices();
     }, []);
 
     useEffect(() => {
@@ -363,7 +369,7 @@ export default function Profile() {
                                             />
                                         </div>
 
-                                        <div className="grid grid-cols-1 mb-3 gap-1">
+                                        {/* <div className="grid grid-cols-1 mb-3 gap-1">
                                             <label htmlFor="gender" className="text-black font-bold">
                                                 <h6>
                                                     Gender
@@ -380,7 +386,7 @@ export default function Profile() {
                                                 <option value='male'>Laki-laki</option>
                                                 <option value='female'>Perempuan</option>
                                             </select>
-                                            {/* <Input
+                                            <Input
                                                 id="phone_number"
                                                 autoFocus
                                                 name="phone_number"
@@ -389,8 +395,8 @@ export default function Profile() {
                                                 variant="bordered"
                                                 className="w-full h-[2.8rem] "
                                                 onChange={handleInputChange}
-                                            /> */}
-                                        </div>
+                                            />
+                                        </div> */}
 
                                         {userData.is_pengangon === 1 && (
                                             <div className="grid grid-cols-1 my-3 gap-1">
@@ -529,7 +535,7 @@ export default function Profile() {
                                     </p>
                                 </div>
                             </div>
-                            <div>
+                            {/* <div>
                                 <p className='text-md mb-[-0.2rem] text-black font-bold'>
                                     Gender
                                 </p>
@@ -538,11 +544,41 @@ export default function Profile() {
                                         {user && user.gender ? user.gender : 'N/A'}
                                     </p>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
 
                     </div>
                 </div>
+            </div>
+            <div className="grid grid-cols-1 gap-6">
+                {iot && iot.map((iot, index) => (
+                <div key={index} className="d-flex justify-center">
+                    <div className="w-[60rem] p-4 bg-white border border-gray-300 rounded-lg shadow-sm">
+                        <div
+                            className="grid grid-cols-[1fr_auto] items-center cursor-pointer border-black "
+                            onClick={() => toggleCollapse(index)}
+                        >
+                            <h3 className="text-xl font-semibold float-start">IoT serial Number : {iot.serial_number}</h3>
+                            <span
+                            className={`text-gray-500 transition-transform duration-200 ${collapsedIndex === index ? 'transform scale-125' : ''}`}
+                            >
+                            {collapsedIndex === index ? '-' : '+'}
+                            </span>
+                        </div>
+                        <div
+                            className={`transition-all duration-300 ease-in-out overflow-hidden ${collapsedIndex === index ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}
+                        >
+                            <div>
+                                <img src={iot.qr_image} alt="QR Code" className="w-20 h-20" />
+                            </div>
+                            <div className="grid">
+                                <p className="text-md font-thin">Data Lama = <span className="text-black font-bold">{iot.installation_date}</span></p>
+                                <p className="text-md font-thin">Data Baru = <span  className="text-black font-bold">{iot.serial_number}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                ))}
             </div>
         </main>
     );
