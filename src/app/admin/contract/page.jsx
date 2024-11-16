@@ -76,7 +76,7 @@ export default function Contract() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("contract_code")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("contract_code")}</div>,
         },
         {
             accessorKey: "request_id",
@@ -91,7 +91,7 @@ export default function Contract() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("request_id")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("request_id")}</div>,
 
         },
         {
@@ -107,7 +107,7 @@ export default function Contract() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("cattle_id")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("cattle_id")}</div>,
 
         },
         {
@@ -123,7 +123,7 @@ export default function Contract() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("farm_id")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("farm_id")}</div>,
 
         },
         {
@@ -139,7 +139,7 @@ export default function Contract() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("start_date")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("start_date")}</div>,
 
         },
         {
@@ -192,7 +192,7 @@ export default function Contract() {
 
     const getContractData = async () => {
         try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/contracts`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/contract`, {
                 headers: {
                     'content-type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -248,9 +248,9 @@ export default function Contract() {
                             <div className="flex items-end w-full py-4" style={{ justifyContent: 'end' }}>
                                 <Input
                                     placeholder="Filter Farm..."
-                                    value={(table.getColumn("name")?.getFilterValue()) ?? ""}
+                                    value={(table.getColumn("request_id")?.getFilterValue()) ?? ""}
                                     onChange={(event) =>
-                                        table.getColumn("name")?.setFilterValue(event.target.value)
+                                        table.getColumn("request_id")?.setFilterValue(event.target.value)
                                     }
                                     className="max-w-sm"
                                 />

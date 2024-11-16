@@ -69,6 +69,7 @@ export default function Home() {
   const [rowSelection, setRowSelection] = useState({})
 
   const [selectedFile, setSelectedFile] = useState();
+  const [UserData, setUserData] = useState([])
 
 
   const [BlogPostData, setBlogPostData] = useState([]);
@@ -93,12 +94,11 @@ export default function Home() {
       },
       cell: ({ row }) => (
 
-        <div className="flex px-2 py-1">
-          <div className="flex flex-col justify-center">
-            <img src={row.getValue("full_image_url") ?? 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} alt="image" className="w-10 h-10 rounded-full">
+          <div className="flex items-center justify-center">
+            <img src={row.getValue("full_image_url") ?? 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} 
+            alt="image" className="w-16 h-16 rounded-full">
             </img>
           </div>
-        </div>
       ),
 
     },
@@ -116,7 +116,7 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("user_id")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("user_id")}</div>,
     },
     {
       accessorKey: "title",
@@ -131,7 +131,7 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("title")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("title")}</div>,
     },
     {
       accessorKey: "content",
@@ -144,11 +144,16 @@ export default function Home() {
             Content
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
-        )
+        );
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("content")}</div>,
+      cell: ({ row }) => {
+        const content = row.getValue("content");
+        const maxLength = 50;
+        const truncatedContent = content.length > maxLength ? content.substring(0, maxLength) + "..." : content;
+        
+        return <div className="">{truncatedContent}</div>;
+      },
     },
-
     {
       accessorKey: "category",
       header: ({ column }) => {
@@ -187,7 +192,7 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("price")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("price")}</div>,
     },
 
     {
@@ -203,7 +208,7 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("cattle_id")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("cattle_id")}</div>,
     },
     {
       accessorKey: "published",
@@ -218,7 +223,7 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("published")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("published")}</div>,
     },
     {
       accessorKey: "published_at",
@@ -228,12 +233,12 @@ export default function Home() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Published Date
+            Published Date/Time
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("published_at")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("published_at")}</div>,
     },
     {
       accessorKey: "comments_count",
@@ -248,7 +253,7 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("comments_count")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("comments_count")}</div>,
     },
     {
       accessorKey: "likes_count",
@@ -263,7 +268,7 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("likes_count")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("likes_count")}</div>,
     },
     {
       accessorKey: 'id',
@@ -333,7 +338,7 @@ export default function Home() {
     const name = event.target.name;
     const { value } = event.target.selectedOptions[0];
     console.log(value);
-    setBlogPost({ ...User, [name]: value });
+    setBlogPost({ ...BlogPost, [name]: value });
 
   }
 
@@ -341,6 +346,40 @@ export default function Home() {
     setSelectedFile(event.target.files ? event.target.files[0] : undefined);
   }
   const [open, setOpen] = useState(false)
+
+  const getUserData = async () => {
+    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
+      headers: {
+        'content-type': 'text/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      }
+    })
+      .then(function (response) {
+        if (response.data.data != undefined) {
+          setUserData(response.data.data);
+        }
+      }).catch(function (error) {
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          })
+
+          logout()
+
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'error terjadi',
+            text: 'mohon coba lagi nanti.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      })
+  }
 
   const getBlogPostData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts`, {
@@ -403,8 +442,6 @@ export default function Home() {
     bodyFormData.append('cattle_id', BlogPost.cattle_id);
     bodyFormData.append('published', BlogPost.published);
     bodyFormData.append('published_at', BlogPost.published_at);
-    bodyFormData.append('comments_count', BlogPost.comments_count);
-    bodyFormData.append('likes_count', BlogPost.likes_count);
 
     try {
       const res = await axios.post(
@@ -476,8 +513,6 @@ export default function Home() {
         cattle_id: bp.cattle_id,
         published: bp.published,
         published_at: bp.published_at,
-        comments_count: bp.comments_count,
-        likes_count: bp.likes_count
       });
       setOpen(true);
     }
@@ -495,9 +530,7 @@ export default function Home() {
       price: '',
       cattle_id: '',
       published: '',
-      published_at: '',
-      comments_count: '',
-      likes_count: ''
+      published_at: ''
 
     });
     setOpen(true);
@@ -531,27 +564,15 @@ export default function Home() {
     bodyFormData.append('cattle_id', BlogPost.cattle_id);
     bodyFormData.append('published', BlogPost.published);
     bodyFormData.append('published_at', BlogPost.published_at);
-    bodyFormData.append('comments_count', BlogPost.comments_count);
-    bodyFormData.append('likes_count', BlogPost.likes_count);
 
     var res = await axios.put(
       `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${BlogPost.id}`,
       {
-        user_id: BlogPost.user_id,
-        title: BlogPost.title,
-        content: BlogPost.content,
-        category: BlogPost.category,
-        price: BlogPost.price,
-        cattle_id: BlogPost.cattle_id,
-        published: BlogPost.published,
-        published_at: BlogPost.published_at,
-        comments_count: BlogPost.comments_count,
-        likes_count: BlogPost.likes_count,
-
+        bodyFormData
       },
       {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
 
         },
@@ -645,6 +666,7 @@ export default function Home() {
 
   useEffect(() => {
     getBlogPostData();
+    getUserData();
   }, []);
 
   // Ini untuk Modal dialog ketika membuat data dengan form
@@ -678,24 +700,29 @@ export default function Home() {
                           // value={BlogPost.image}
                           type="file"
                           name="image"
-                          placeholder="Chose your image"
+                          placeholder="Pilih Gambar"
                           onChange={handleFileSelect}
                         />
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={BlogPost.user_id}
-                          type="text"
+                        <select
                           name="user_id"
-                          placeholder="user_id"
-                          onChange={handleInputChange}
-                        />
+                          // s
+                          onChange={handleSelectChange}
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                        >
+                          <option value="">Pilih User</option>
+                            {
+                              UserData && UserData.map((b) => {
+                                return <option key={b.id} value={b.id}>{b.name}</option>
+                              })
+                            }
+                        </select>
 
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={BlogPost.title}
                           type="text"
                           name="title"
-                          placeholder="Masukkan Alamatmu"
+                          placeholder="Masukkan Judul"
                           onChange={handleInputChange}
                         />
 
@@ -704,76 +731,54 @@ export default function Home() {
                           value={BlogPost.content}
                           type="text"
                           name="content"
-                          placeholder="Masukkan Nomor Telponmu"
+                          placeholder="Deskripsi Blog Post"
                           onChange={handleInputChange}
                         />
 
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={BlogPost.category}
-                          type="text"
-                          name="category"
-                          placeholder="Masukkan Emailmu"
-                          onChange={handleInputChange}
-                        />
+                        <label className="w-full input-bordered">
+                          <select
+                            name="category"
+                            // value={cattle.type}
+                            onChange={handleSelectChange}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                          >
+                            <option value="">Pilih Jenis Category</option>
+                            <option value="jual">Jual</option>
+                            <option value="forum">Forum</option>
+                          </select>
+                        </label>
 
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={BlogPost.price}
                           type="text"
                           name="price"
-                          placeholder="Masukkan Passwordmu! minimal 8 karakter"
+                          placeholder="Masukkan Harga"
                           onChange={handleInputChange}
                         />
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={BlogPost.published}
-                          type="text"
-                          name="published"
-                          placeholder="Masukkan Passwordmu! minimal 8 karakter"
-                          onChange={handleInputChange}
-                        />
+                        <label className="w-full input-bordered">
+                          <select
+                            name="type"
+                            // value={cattle.type}
+                            onChange={handleSelectChange}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                          >
+                            <option value="">Pilih Status Publish</option>
+                            <option value="draft">Draft</option>
+                            <option value="published">Published</option>
+                          </select>
+                        </label>
+
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={BlogPost.published_at}
-                          type="text"
+                          type="datetime-local"
                           name="published_at"
-                          placeholder="Masukkan Passwordmu! minimal 8 karakter"
+                          placeholder="Masukkan tanggal publsih"
                           onChange={handleInputChange}
                         />
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={BlogPost.comments_count}
-                          type="text"
-                          name="comment_count"
-                          placeholder="Masukkan Passwordmu! minimal 8 karakter"
-                          onChange={handleInputChange}
-                        />
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={BlogPost.likes_count}
-                          type="text"
-                          name="likes_count"
-                          placeholder="Masukkan Passwordmu! minimal 8 karakter"
-                          onChange={handleInputChange}
-                        />
-
-                        {/* <label className="w-full input-bordered">
-                            <select
-                                name="role"
-                                value={cattle.status}
-                                onChange={handleSelectChange}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                            >
-                                <option value="">Pilih Role User</option>
-                                <option value="admin">Admin</option>
-                                <option value="cattleman">Peternak</option>
-
-                            </select>
-                        </label> */}
-
                         <div className="flex justify-end gap-3 mt-5">
-                          <button type="submit" className="btn">{BlogPost.id != 0 ? 'Update' : 'Create'} Blog Post</button>
+                          <button type="submit" className="btn-modal">{BlogPost.id != 0 ? 'Update' : 'Create'} Blog Post</button>
                         </div>
                       </form>
                     </DialogDescription>

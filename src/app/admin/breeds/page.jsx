@@ -84,7 +84,7 @@ export default function Home() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
         },
 
         {
@@ -100,7 +100,7 @@ export default function Home() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("country")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("country")}</div>,
         },
         {
             accessorKey: "type",
@@ -115,7 +115,7 @@ export default function Home() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("type")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("type")}</div>,
         },
         {
             accessorKey: "characteristics",
@@ -125,12 +125,12 @@ export default function Home() {
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Type
+                        Characteristics
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("characteristics")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("characteristics")}</div>,
         },
 
         {
@@ -479,7 +479,7 @@ export default function Home() {
                                                     onChange={handleInputChange}
                                                 />
                                                 <div className="flex justify-end gap-3 mt-5">
-                                                    <button type="submit" className="btn btn-primary">{breeds.id != 0 ? 'Update' : 'Create'}</button>
+                                                    <button type="submit" className="btn-modal">{breeds.id != 0 ? 'Update' : 'Create'}</button>
                                                 </div>
                                             </form>
                                         </DialogDescription>

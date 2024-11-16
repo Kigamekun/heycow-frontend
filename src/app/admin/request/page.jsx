@@ -85,7 +85,7 @@ export default function Home() {
             },
             cell: ({ row }) => (
 
-                <div className="lowercase">{row.getValue("user_id")}</div>
+                <div className="">{row.getValue("user_id")}</div>
             ),
 
         },
@@ -103,7 +103,7 @@ export default function Home() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("peternak_id")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("peternak_id")}</div>,
         },
         {
             accessorKey: "cattle_id",
@@ -118,7 +118,7 @@ export default function Home() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("cattle_id")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("cattle_id")}</div>,
         },
         {
             accessorKey: "status",
@@ -133,7 +133,7 @@ export default function Home() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("status")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("status")}</div>,
         },
         {
             accessorKey: "duration",
@@ -152,7 +152,7 @@ export default function Home() {
                 <div className="flex px-2 py-1">
                     <div className="flex flex-col justify-center">
                         <h6 className="mb-0 text-sm leading-normal dark:text-white">
-                            {row.getValue("status") == '6' ? <div className="lowercase">6 bulan</div> : <div className="lowercaese">1 tahun</div>}
+                            {row.getValue("status") == '6' ? <div className="">6 bulan</div> : <div className="lowercaese">1 tahun</div>}
                         </h6>
                         <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
                         </p>

@@ -501,7 +501,7 @@ export default function Home() {
 
                         </select>
                         <div className="flex justify-end gap-3 mb-3">
-                          <button type="submit" className="btn btn-primary">{farm.id != 0 ? 'Update' : 'Create'}</button>
+                          <button type="submit" className="btn-modal">{farm.id != 0 ? 'Update' : 'Create'}</button>
                         </div>
                       </form>
                     </DialogDescription>

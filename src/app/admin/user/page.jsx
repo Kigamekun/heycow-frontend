@@ -91,11 +91,10 @@ export default function Home() {
       },
       cell: ({ row }) => (
 
-        <div className="flex">
-          <div className="flex flex-col justify-center">
-            <img src={row.getValue("full_avatar_url") ?? 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} alt="avatar" className="w-10 h-10">
+        <div className="flex items-center justify-center">
+            <img src={row.getValue("full_avatar_url") ?? 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} 
+            alt="avatar" className="w-16 h-16 rounded-full">
             </img>
-          </div>
         </div>
       ),
 
@@ -114,7 +113,7 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
     },
     {
       accessorKey: "address",
@@ -129,7 +128,7 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("address")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("address")}</div>,
     },
     {
       accessorKey: "phone_number",
@@ -144,7 +143,7 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("phone_number")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("phone_number")}</div>,
     },
 
     {
@@ -160,7 +159,7 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("email")}</div>,
     },
 
     {
@@ -176,7 +175,15 @@ export default function Home() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("role")}</div>,
+      cell: ({ row }) => <div className="flex px-2 py-1">
+      <div className="flex flex-col justify-center">
+        <h6 className="mb-0 text-sm leading-normal dark:text-white">
+          {row.getValue("role") == 'admin' ? <span class="badge bg-warning text-black">Admin</span> : <span class="badge bg-success">Cattleman</span>}
+        </h6>
+        <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
+        </p>
+      </div>
+    </div>,
     },
     {
       accessorKey: 'id',
@@ -240,10 +247,8 @@ export default function Home() {
     }
   }
 
-  const handleSelectChange = (event) => {
-    const name = event.target.name;
-    const { value } = event.target.selectedOptions[0];
-    console.log(value);
+  const handleInputChangeRole = (event) => {
+    const { name, value } = event.target;
     setUser({ ...User, [name]: value });
   }
 
@@ -419,7 +424,6 @@ export default function Home() {
 
     
     const bodyFormData = new FormData();
-    // bodyFormData.append('avatar', User.avatar);
     if (selectedFile) {
       bodyFormData.append('avatar', selectedFile);
     }
@@ -429,7 +433,6 @@ export default function Home() {
     bodyFormData.append('email', User.email);
     bodyFormData.append('password', User.password);
     bodyFormData.append('role', User.role);
-
 
     var res = await axios.post(
       `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${User.id}`,
@@ -537,21 +540,18 @@ export default function Home() {
       <div className="card">
         <div className="card-body">
           <div className="d-flex justify-content-between align-items-center">
-            <h3>User Account</h3>
+            <h2>User Account</h2><br></br>
             <div>
-              <Button variant="outline" onClick={createData}>Create Account</Button>
-
-
+              <Button className="mt-4" variant="outline" onClick={createData}>Create Account</Button>
               <Dialog open={open} onOpenChange={setOpen}>
-
-
                 {/* Add a ref to the dialog */}
-                <DialogContent >
+                <DialogContent className="max-h-screen overflow-y-scroll">
                   <DialogHeader>
                     <DialogTitle className="mb-4">{User.id != 0 ? 'Update' : 'Create'} User</DialogTitle>
                     <DialogDescription>
                       <form method="dialog" onSubmit={User.id != 0 ? updateUser : createUser}>
                         {/* untuk masukkan file, gunakan dropify */}
+                        <label className="mb-2 text-black float-start"> Avatar </label>
                         <input
                           className="file-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           // value={User.avatar}
@@ -560,6 +560,7 @@ export default function Home() {
                           placeholder="Chose your avatar"
                           onChange={handleFileSelect}
                         />
+                        <label className="mb-2 text-black float-start"> Name </label>
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={User.name}
@@ -568,7 +569,7 @@ export default function Home() {
                           placeholder="Username"
                           onChange={handleInputChange}
                         />
-
+                        <label className="mb-2 text-black float-start"> Address </label>
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={User.address}
@@ -577,7 +578,7 @@ export default function Home() {
                           placeholder="Masukkan Alamatmu"
                           onChange={handleInputChange}
                         />
-
+                        <label className="mb-2 text-black float-start"> Phone Number </label>
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={User.phone_number}
@@ -586,7 +587,7 @@ export default function Home() {
                           placeholder="Masukkan Nomor Telponmu"
                           onChange={handleInputChange}
                         />
-
+                        <label className="mb-2 text-black float-start"> Email </label>
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={User.email}
@@ -595,7 +596,7 @@ export default function Home() {
                           placeholder="Masukkan Emailmu"
                           onChange={handleInputChange}
                         />
-
+                        <label className="mb-2 text-black float-start"> Password </label>
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           value={User.password}
@@ -604,23 +605,21 @@ export default function Home() {
                           placeholder="Masukkan Passwordmu! minimal 8 karakter"
                           onChange={handleInputChange}
                         />
-
+                        <label className="mb-2 text-black float-start"> Role </label>
                         <label className="w-full input-bordered">
                           <select
                             name="role"
                             // value={User.role}
-                            onChange={handleSelectChange}
+                            onChange={handleInputChangeRole}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           >
-                            <option value="" disabled>Pilih Role User</option>
+                            <option value="">Pilih Role User</option>
                             <option value="admin">Admin</option>
                             <option value="cattleman">Peternak</option>
-
                           </select>
                         </label>
-
                         <div className="flex justify-end gap-3 mt-5">
-                          <button type="submit" className="btn">{User.id != 0 ? 'Update' : 'Create'} User</button>
+                          <button type="submit" className="btn-modal">{User.id != 0 ? 'Update' : 'Create'} User</button>
                         </div>
                       </form>
                     </DialogDescription>

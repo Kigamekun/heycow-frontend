@@ -116,7 +116,7 @@ export default function Device() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("installation_date")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("installation_date")}</div>,
     },
     {
       accessorKey: "status",
@@ -490,7 +490,7 @@ export default function Device() {
                           <option value="inactive">Inactive</option>
                         </select>
                         <div className="flex justify-end gap-3 mt-5">
-                          <button type="submit" className="btn btn-primary">{device.id != 0 ? 'Update' : 'Create'}</button>
+                          <button type="submit" className="btn-modal">{device.id != 0 ? 'Update' : 'Create'}</button>
                         </div>
                       </form>
                     </DialogDescription>

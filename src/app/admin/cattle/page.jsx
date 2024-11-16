@@ -83,7 +83,7 @@ export default function Cattle() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
     },
     {
       accessorKey: "user_id",
@@ -98,7 +98,7 @@ export default function Cattle() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("user_id")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("user_id")}</div>,
     },
     {
       accessorKey: "breed.name",
@@ -116,11 +116,11 @@ export default function Cattle() {
       cell: ({ row }) => {
 
         if (row.original.breed != null) {
-          return <div className="lowercase">{row.original.breed.name}</div>
+          return <div className="">{row.original.breed.name}</div>
         }
         else {
 
-          return <div className="lowercase">-</div>
+          return <div className="">-</div>
         }
 
       },
@@ -194,7 +194,7 @@ export default function Cattle() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("type")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("type")}</div>,
     },
 
     {
@@ -213,11 +213,11 @@ export default function Cattle() {
       cell: ({ row }) => {
 
         if (row.original.farm != null) {
-          return <div className="lowercase">{row.original.farm.name}</div>
+          return <div className="">{row.original.farm.name}</div>
         }
         else {
 
-          return <div className="lowercase">-</div>
+          return <div className="">-</div>
         }
 
       },
@@ -237,7 +237,7 @@ export default function Cattle() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("birth_date")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("birth_date")}</div>,
     },
 
     {
@@ -253,7 +253,7 @@ export default function Cattle() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("birth_weight")} kg</div>,
+      cell: ({ row }) => <div className="">{row.getValue("birth_weight")} kg</div>,
     },
 
 
@@ -270,7 +270,7 @@ export default function Cattle() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("birth_height")} cm</div>,
+      cell: ({ row }) => <div className="">{row.getValue("birth_height")} cm</div>,
     },
 
     {
@@ -289,11 +289,11 @@ export default function Cattle() {
       cell: ({ row }) => {
 
         if (row.original.iot_device != null) {
-          return <div className="lowercase">{row.original.iot_device.serial_number}</div>
+          return <div className="">{row.original.iot_device.serial_number}</div>
         }
         else {
 
-          return <div className="lowercase">-</div>
+          return <div className="">-</div>
         }
 
       },
@@ -315,11 +315,11 @@ export default function Cattle() {
       },
       cell: ({ row }) => {
         if (row.original.last_vaccination != null) {
-          return <div className="lowercase">{row.original.last_vaccination}</div>
+          return <div className="">{row.original.last_vaccination}</div>
         }
         else {
 
-          return <div className="lowercase">-</div>
+          return <div className="">-</div>
         }
       }
       ,
@@ -362,6 +362,8 @@ export default function Cattle() {
 
   const [farmData, setFarmData] = useState([]);
 
+  const [userData, setuserData] = useState([]);
+
 
   const table = useReactTable({
     data: cattleData,
@@ -396,6 +398,41 @@ export default function Cattle() {
   }
 
   const [open, setOpen] = useState(false)
+
+  const getUserData = async () => {
+    var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
+      headers: {
+        'content-type': 'text/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      }
+    })
+      .then(function (response) {
+        if (response.data.data != undefined) {
+          setuserData(response.data.data);
+          console.log(response.data.data);
+        }
+      }).catch(function (error) {
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          })
+
+          logout()
+
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'error terjadi',
+            text: 'mohon coba lagi nanti.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      })
+  }
 
   // Breed Data
   const getBreedsData = async () => {
@@ -554,6 +591,7 @@ export default function Cattle() {
 
     const bodyFormData = new FormData();
     bodyFormData.append('name', cattle.name);
+    bodyFormData.append('user_id', cattle.user_id)
     bodyFormData.append('breed_id', cattle.breed_id);
     bodyFormData.append('status', cattle.status);
     bodyFormData.append('gender', cattle.gender);
@@ -584,6 +622,7 @@ export default function Cattle() {
       setCattle({
         id: 0,
         name: "",
+        user_id: "",
         breed_id: "",
         gender: "",
         type: "",
@@ -628,6 +667,7 @@ export default function Cattle() {
       setCattle({
         id: ct.id,
         name: ct.name,
+        user_id: cr.user_id,
         breed_id: ct.breed_id,
         gender: ct.gender,
         type: ct.type,
@@ -647,6 +687,7 @@ export default function Cattle() {
     setCattle({
       id: 0,
       name: "",
+      user_id: "",
       breed_id: "",
       farm: "",
       gender: "",
@@ -673,6 +714,7 @@ export default function Cattle() {
     });
     var bodyFormData = new FormData();
     bodyFormData.append('name', cattle.name);
+    bodyFormData.append('user_id', cattle.user_id);
     bodyFormData.append('breed_id', cattle.breed_id);
     bodyFormData.append('status', cattle.status);
     bodyFormData.append('gender', cattle.gender);
@@ -686,22 +728,10 @@ export default function Cattle() {
 
     var res = await axios.put(
       `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${cattle.id}`,
-      {
-        name: cattle.name,
-        breed_id: cattle.breed_id,
-        gender: cattle.gender,
-        type: cattle.type,
-        farm: cattle.farm,
-        status: cattle.status,
-        birth_date: cattle.birth_date,
-        birth_weight: cattle.birth_weight,
-        birth_height: cattle.birth_height,
-        iot_device_id: cattle.iot_device_id,
-        last_vaccination: cattle.last_vaccination
-      },
+        bodyFormData,
       {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
       },
@@ -711,6 +741,7 @@ export default function Cattle() {
         setCattle({
           id: 0,
           name: "",
+          user_id: "",
           breed_id: "",
           gender: "",
           type: "",
@@ -790,6 +821,7 @@ export default function Cattle() {
     getBreedsData();
     getFarmData();
     getIotDeviceData();
+    getUserData();
   }, []);
 
   return (
@@ -823,6 +855,22 @@ export default function Cattle() {
                           placeholder="Name"
                           onChange={handleInputChange}
                         />
+                                                <div>
+                          <label className="w-full input-bordered">
+                            User
+                            <select
+                              name="user_id"
+                              value={cattle.user_id}
+                              onChange={handleSelectChange}
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                            >
+                              <option value="">User</option>
+                              {userData && userData.map((b) => (
+                                <option key={b.id} value={b.id}>{b.name}</option>
+                              ))}
+                            </select>
+                          </label>
+                        </div>
 
 
                         <div>
@@ -830,6 +878,7 @@ export default function Cattle() {
                             Breed
                             <select
                               name="breed_id"
+                              value={cattle.breed_id}
                               onChange={handleSelectChange}
                               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                             >
@@ -844,7 +893,7 @@ export default function Cattle() {
                         <label className="w-full input-bordered">
                           <select
                             name="status"
-                            // value={cattle.status}
+                            value={cattle.status}
                             onChange={handleSelectChange}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4">
                             <option value="">Pilih Status Sapimu</option>
@@ -880,7 +929,7 @@ export default function Cattle() {
                         <label className="w-full input-bordered">
                           <select
                             name="type"
-                            // value={cattle.type}
+                            value={cattle.type}
                             onChange={handleSelectChange}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           >
@@ -963,7 +1012,7 @@ export default function Cattle() {
                         </div>
 
                         <div className="flex justify-end gap-3 ">
-                          <button type="submit" className="btn">{cattle.id != 0 ? 'Update' : 'Create'} Cattle</button>
+                          <button type="submit" className="btn-modal">{cattle.id != 0 ? 'Update' : 'Create'} Cattle</button>
                         </div>
                       </form>
                     </DialogDescription>

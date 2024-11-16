@@ -115,7 +115,7 @@ export default function AsignDevice() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("installation_date")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("installation_date")}</div>,
     },
     {
       accessorKey: "status",
@@ -160,7 +160,7 @@ export default function AsignDevice() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("user_name")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("user_name")}</div>,
     },
 
     {
@@ -543,7 +543,6 @@ export default function AsignDevice() {
                           class="bg-gray-50 mb-4 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           name="status"
                           disabled
-
                           value={device.status}
                           onChange={handleInputChange}
                         >
@@ -553,7 +552,6 @@ export default function AsignDevice() {
                         </select>
                         <select
                           name="user_id"
-                          // s
                           onChange={handleSelectChange}
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                         >
@@ -569,7 +567,7 @@ export default function AsignDevice() {
                           }
                         </select>
                         <div className="flex justify-end gap-3 mt-5">
-                          <button type="submit" className="btn btn-primary">{device.id != 0 ? 'Update' : 'Create'}</button>
+                          <button type="submit" className="btn-modal">{device.id != 0 ? 'Update' : 'Create'}</button>
                         </div>
                       </form>
                     </DialogDescription>

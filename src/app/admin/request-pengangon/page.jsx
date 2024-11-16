@@ -43,6 +43,8 @@ export default function Home() {
 
         })
     const [rowSelection, setRowSelection] = useState({})
+    const [processedRequests, setProcessedRequests] = useState([]);
+
 
     //  security by role 
     const alert = () => {
@@ -97,14 +99,12 @@ export default function Home() {
             },
             cell: ({ row }) => (
 
-                <div className="flex px-2 py-1">
-                    <div className="flex flex-col justify-center">
-                        <img src={row.getValue("full_avatar_url") ?? 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} alt="avatar" className="w-10 h-10">
+                    <div className="flex items-center justify-center">
+                        <img src={row.getValue("full_avatar_url") ?? 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} 
+                        alt="avatar" className="w-16 h-16 rounded-full">
                         </img>
                     </div>
-                </div>
             ),
-
         },
 
         {
@@ -120,7 +120,7 @@ export default function Home() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
         },
         {
             accessorKey: "address",
@@ -135,7 +135,7 @@ export default function Home() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("address")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("address")}</div>,
         },
         {
             accessorKey: "phone_number",
@@ -150,7 +150,7 @@ export default function Home() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("phone_number")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("phone_number")}</div>,
         },
 
         {
@@ -166,7 +166,7 @@ export default function Home() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("email")}</div>,
         },
 
         {
@@ -182,7 +182,7 @@ export default function Home() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("nik")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("nik")}</div>,
         },
 
         {
@@ -198,7 +198,7 @@ export default function Home() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">Rp {row.getValue("upah")}</div>,
+            cell: ({ row }) => <div className="">Rp {row.getValue("upah")}</div>,
         },
         {
             accessorKey: "ktp",
@@ -250,13 +250,13 @@ export default function Home() {
                 <div>
                     <button
                         className="text-xs text-white btn btn-success"
-                        onClick={() => handleApprove(info.getValue())}
+                        onClick={() => handleApprove(info.getValue('id'))}
                     >
                         Approve
                     </button>
                     <button
                         className="ml-2 text-xs btn btn-danger"
-                        onClick={() => handleReject(info.getValue())}
+                        onClick={() => handleReject(info.getValue('id'))}
                     >
                         Reject
                     </button>
@@ -321,8 +321,7 @@ export default function Home() {
             });
     }
 
-    const handleApprove = async (e) => {
-        e.preventDefault();
+    const handleApprove = async (id) => {
         Swal.fire({
             title: 'Loading...',
 
@@ -370,8 +369,8 @@ export default function Home() {
                     selfie_ktp: '',
 
                 })
-                Swal.close()
-
+                setProcessedRequests(prev => [...prev, id]);
+                Swal.close();
                 setOpen(false);
 
             }).catch(function (error) {
@@ -427,6 +426,7 @@ export default function Home() {
                         }
                     );
                     await getRequestPengangonData();
+                    setProcessedRequests(prev => [...prev, id]);
                     Swal.fire(
                         'Unnasign!',
                         'The device has been unassigned.',

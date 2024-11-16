@@ -130,7 +130,7 @@ export function Sidebar() {
                         <span>Request Pengagon</span>
                     </Link>
                 </li>
-                <button>
+                <button className="mb-6">
                     <li className="sidebar-item">
                         <a className="sidebar-link" onClick={onClickLogout}>
                             <i className="bi bi-box-arrow-right" />
