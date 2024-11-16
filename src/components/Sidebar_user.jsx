@@ -98,6 +98,12 @@ export function Sidebar() {
                          <span className="">Help Center</span>
                      </Link>
                  </li>
+                 <li className={`sidebar-item ${pathname === "/peternak/contract" ? "active" : ""}`}>
+                     <Link className="sidebar-link" href="/peternak/contract">
+                            <i class="bi bi-pass-fill"></i>
+                            <span className="">contract</span>
+                     </Link>
+                 </li>
                  <li className={`sidebar-item ${pathname === "/peternak/history" ? "active" : ""}`}>
                      <Link className="sidebar-link" href="/peternak/history">
                             <i class="bi bi-clock-history "></i>

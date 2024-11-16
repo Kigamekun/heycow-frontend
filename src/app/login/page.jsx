@@ -5,10 +5,11 @@ import { Input } from "@/components/ui/input";
 import heycow from '@/images/hey_cow.svg';
 import { useAuth } from "@/lib/hooks/auth";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import Link from "next/link";
+
 
 export default function Page() {
 
@@ -56,7 +57,7 @@ export default function Page() {
                         <div className="mx-4 card-body">
                             <form onSubmit={submitHandler} action="" className="space-y-6">
                                 <div>
-                                    <label htmlFor="email"><h5>Email</h5></label>       
+                                    <label htmlFor="email"><h5>Email</h5></label>
                                     <Input type="text" 
                                         id="email"
                                         className="input input-bordered w-full h-[50px] " onChange={(event) => setEmail(event.target.value)}
@@ -76,16 +77,11 @@ export default function Page() {
                                 </div>
 
                                 <br />
-                                {/* <button
-                                    type="submit"
-                                    className="w-[350px] h-[] justify-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-                                >
-                                    Login
-                                </button> */}
+                            
                                 <button type="submit" className="bg-[#20A577] rounded-xl font-bold text-xl text-white h-[3rem] w-full">
                                     Login
                                 </button> 
-                                {/* <div className="text-red-200 divider">atau</div> */}
+                                {/* <div className="divider text-red-200">atau</div> */}
                                 <div className="text-center">
                                     <p className="text-lg font-bold"> Belum punya akun?{" "}</p>
                                     <p className="text-lg font-bold">

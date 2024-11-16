@@ -3,113 +3,146 @@ import { heycow } from '@/images/hey_cow.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Image from 'next/image';
 import '../styles/globals.css';
+import Image from 'next/image';
+import {heycow} from '@/images/hey_cow.svg'
+import Link from 'next/link';
+import '../public/assets_lp/vendor/bootstrap/css/bootstrap.min.css';
+import { iphone2 } from '@/public/assets_lp/img/phone2.png'
+// import { Button } from 'bootstrap';
+// import { Button } from '@/public/assets_lp/vendor/bootstrap/js/bootstrap';
 export default function Home() {
   return (
     <>
-      <header>
-        <Image src={heycow}/>
-        <title>HeyCow!</title>
-        <meta name="description" content="HeyCow! Landing Page" />
-        <link rel="icon" href={heycow} />
-        {/* You can link any external CSS or JS libraries here */}
-      </header>
+      {/* Head Section */}
+      <Head>
+        <title>HeyCow</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <link rel="icon" href="/assets_lp/img/favicomatic/favicon-1.png" />
+        <link rel="apple-touch-icon" href="/assets_lp/img/favicomatic/apple-touch-icon-1.png" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap"
+          rel="stylesheet"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet"
+        />
+        <link href="/assets_lp/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="/assets_lp/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+        <link href="/assets_lp/css/main.css" rel="stylesheet" />
+      </Head>
 
-      
-      {/* Navbar Section */}
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <div className="container header">
-          <a className="navbar-brand" href="/login">HeyCow! (Kalo mau login disini aja)</a>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="ml-auto navbar-nav">
-              <li className="nav-item"><a className="nav-link" href="#about">About</a></li>
-              <li className="nav-item"><a className="nav-link" href="#services">Services</a></li>
-              <li className="nav-item"><a className="nav-link" href="#contact">Contact</a></li>
-              <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-            </ul>
-          </div>
-        </div>
-      </nav>
+      {/* Body */}
+      <body className="index-page">
+        {/* Header */}
+        <header id="header" className="header d-flex align-items-center fixed-top">
+          <div className="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+            <Link href="/" className="logo d-flex align-items-center">
+                <Image src="/public/assets_lp/img/logosapi.png" alt="Logo" width={50} height={50} />
+                <h1 className="sitename">HeyCow</h1>
+            </Link>
 
-      {/* Hero Section */}
-      <section id="hero" className="d-flex align-items-center dark-background">
-        <div className="container text-center">
-          <h1>Welcome to HeyCow!</h1>
-          <h2>Managing your livestock has never been easier.</h2>
-          <a href="#about" className="btn-get-started scrollto">Get Started</a>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section id="about" className="about">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-6">
-              <img src="/assets_lp/img/about.jpg" className="img-fluid" alt="About" />
-            </div>
-            <div className="pt-4 col-lg-6 pt-lg-0">
-              <h3>About HeyCow!</h3>
-              <p>HeyCow! is an app designed to simplify cattle management through technology and IoT.</p>
+            <nav id="navmenu" className="navmenu">
               <ul>
-                <li><i className="bi bi-check"></i> Cattle health monitoring.</li>
-                <li><i className="bi bi-check"></i> Grazing management services.</li>
-                <li><i className="bi bi-check"></i> IoT device integration for efficiency.</li>
+                <li>
+                  <Link href="#hero" className='active'>
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#about">
+                    About
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#contact">
+                    Contact
+                  </Link>
+                </li>
               </ul>
-            </div>
-          </div>
-        </div>
-      </section>
+              <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </nav>
 
-      {/* Services Section */}
-      <section id="services" className="services section-bg">
-        <div className="container">
-          <div className="section-title">
-            <h2>Services</h2>
-            <p>Our services are designed to make cattle farming easier and more efficient.</p>
+            <Link href="/login" >
+              <button className="btn btn-light">Login</button>
+            </Link>
           </div>
-          <div className="row">
-            <div className="col-lg-4 col-md-6">
-              <div className="icon-box">
-                <div className="icon"><i className="bi bi-bullseye"></i></div>
-                <h4><a href="">Cattle Tracking</a></h4>
-                <p>Track your cattle in real-time with our advanced IoT solutions.</p>
-              </div>
-            </div>
-            <div className="mt-4 col-lg-4 col-md-6 mt-md-0">
-              <div className="icon-box">
-                <div className="icon"><i className="bi bi-heart-pulse"></i></div>
-                <h4><a href="">Health Monitoring</a></h4>
-                <p>Monitor the health and activity levels of your cattle to ensure well-being.</p>
-              </div>
-            </div>
-            <div className="mt-4 col-lg-4 col-md-6 mt-lg-0">
-              <div className="icon-box">
-                <div className="icon"><i className="bi bi-box"></i></div>
-                <h4><a href="">Grazing Services</a></h4>
-                <p>Let HeyCow! handle grazing management to optimize productivity.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+        </header>
 
-      {/* Contact Section */}
-      <section id="contact" className="contact">
-        <div className="container">
-          <div className="section-title">
-            <h2>Contact</h2>
-            <p>Contact us to get started with HeyCow!</p>
-          </div>
-          <div className="row">
-            <div className="col-lg-4">
-              <div className="info">
-                <div className="address">
-                  <i className="bi bi-geo-alt"></i>
-                  <h4>Location:</h4>
-                  <p>123 HeyCow Street, Cattle Town, Indonesia</p>
+        {/* Hero Section */}
+        <main className="main">
+          <section id="hero" className="hero section dark-background">
+            <div className="container">
+              <div className="row gy-4">
+                <div className="col-lg-4 order-lg-last hero-img">
+                  <img
+                    src="/public/assets_lp/img/phone2.png"
+                    alt="Phone 1"
+                    width={300}
+                    height={600}
+                    className="phone-1"
+                  />
+                  <img
+                    src="/assets_lp/img/phone1.png"
+                    alt="Phone 2"
+                    width={300}
+                    height={600}
+                    className="phone-2"
+                  />
                 </div>
+                <div className="text-center col-lg-8 d-flex flex-column justify-content-center align-items-center text-md-start">
+                  <h2>Ngangonkan Sapi Mu Sekarang Juga!</h2>
+                  <p>
+                    Aplikasi HeyCow berfungsi untuk memonitoring kesehatan, gejala, dan penyakit
+                    pada sapi secara real-time yang terintegrasi dengan IoT yang dapat mendeteksi
+                    suhu tubuh, dan parameter lainnya.
+                  </p>
+                  <div className="mt-4 d-flex justify-content-center justify-content-md-start">
+                    <a href="#" className="download-btn">
+                      <i className="bi bi-google-play"></i> <span>Google Play</span>
+                    </a>
+                    <a href="#" className="download-btn">
+                      <i className="bi bi-apple"></i> <span>App Store</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* About Section */}
+          <section id="about" className="about section">
+            <div className="container">
+              <div className="row align-items-center gy-5">
+                <div className="col-xl-6">
+                  <Image
+                    src="/assets_lp/img/sapi_3.jpg"
+                    alt="Cow Image"
+                    width={600}
+                    height={400}
+                    className="rounded img-fluid"
+                  />
+                </div>
+                <div className="col-xl-6 content">
+                  <h2>About HeyCow.com</h2>
+                  <p>
+                    Aplikasi HeyCow! menyediakan layanan manajemen ternak sapi yang mencakup
+                    pengelolaan ternak, integrasi perangkat IoT, dan pemantauan kesehatan ternak.
+                  </p>
+                  <a href="#" className="read-more">
+                    <span>Read More</span>
+                    <i className="bi bi-arrow-right"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Add other sections here */}
+        </main>
+      </body>
                 <div className="email">
                   <i className="bi bi-envelope"></i>
                   <h4>Email:</h4>

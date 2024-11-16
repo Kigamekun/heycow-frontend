@@ -91,18 +91,22 @@ export default function Home() {
     if (barChart !== undefined) {
       barChart.destroy();
     }
-
+    const sickCattle = cattleData.filter(cattle => cattle.status === 'sakit');
+    const soldCattle = cattleData.filter(cattle => cattle.status === 'dijual');
+    const deathCattle = cattleData.filter(cattle => cattle.status === 'mati');
+    const sehatCattle = cattleData.filter(cattle => cattle.status === 'sehat');
+    
     const label = chartData.map((items) => items.firstName)
     const data = chartData.map((items) => items.weight)
-
+  
     new Chart(doughnutCanvas.current, {
       type: 'doughnut',
       data: {
-        labels: ['Sehat', 'Sakit', 'Mati'],
+        labels:  ['Sehat', 'Sakit', 'Mati'],
         datasets: [
           {
             label: 'Dataset Sapi',
-            data: [23, 12, 4],
+            data: [sickCattle.length, soldCattle.length, deathCattle.length,sehatCattle.length],
             backgroundColor: [
               'rgba(32, 165, 119, 1)',
               'rgba(250, 204, 21, 1)',
@@ -166,7 +170,8 @@ export default function Home() {
       },
     });
   }, [chartData]);
-
+  const sickCattle = cattleData.filter(cattle => cattle.status === 'sakit');
+  const totalIotDevices = cattleData.filter(cattle => cattle.iot_device).length;
   return (
     <>
       <header className="mb-3">
@@ -177,45 +182,46 @@ export default function Home() {
       
       <h3 className="mb-4 ml-2 text-emerald-600">Home</h3>
         <div className="row">
-          <div className="col-sm-6 col-md-3 mb-3">
-              <div className="border border-success card">
-                <div className="gap-10 float-start card-body d-flex">
-                  <i className="bi bi-emoji-laughing-fill text-emerald-600 text-[2rem]" />
-                    <div className="flex-col d-flex ">
-                      <h6 className="text-emerald-600">Sehat</h6>
-                      <p>15</p>
-                    </div>
+          <div className="mb-3 col-sm-6 col-md-3">
+            <div className="border border-success card">
+              <div className="gap-10 float-start card-body d-flex">
+                <Cow className="text-emerald-600" size={50} />
+                <div className="flex-col d-flex ">
+                  <h6 className="text-emerald-600">Sapi</h6>
+                  <p>{cattleData.length}</p>
                 </div>
               </div>
             </div>
-          <div className="col-sm-6 col-md-3 mb-3">
+          </div>
+
+          <div className="mb-3 col-sm-6 col-md-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
                 <i className="bi bi-emoji-dizzy-fill text-red-400 text-[2rem]" />
-                  <div className="flex-col d-flex ">
-                    <h6 className="text-red-400">Sakit</h6>
-                    <p>2</p>
-                  </div>
+                <div className="flex-col d-flex ">
+                  <h6 className="text-red-400">Sakit</h6>
+                  <p>{sickCattle.length}</p>
+                </div>
               </div>
             </div>
           </div>
-          <div className="col-sm-6 col-md-3 mb-3">
+          <div className="mb-3 col-sm-6 col-md-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
                 <i className="bi bi-emoji-sunglasses-fill text-yellow-600 text-[2rem]" />
                   <div className="flex-col d-flex ">
-                    <h6 className="text-yellow-600">Dijual</h6>
-                    <p>7</p>
+                    <h6 className="text-emerald-600">Device</h6>
+                    <p>{totalIotDevices}</p>
                   </div>
               </div>
             </div>
           </div>
-          <div className="col-sm-6 col-md-3 mb-3">
+          <div className="mb-3 col-sm-6 col-md-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
                 <i className="bi bi-emoji-dizzy-fill text-red-800 text-[2rem]" />
                   <div className="flex-col d-flex ">
-                    <h6 className="text-red-600">Mati</h6>
+                    <h6 className="text-emerald-600">Total Contract</h6>
                     <p>15</p>
                   </div>
               </div>
@@ -224,7 +230,7 @@ export default function Home() {
         </div>
 
       <div className="row">
-        <div className="col-md-8 mb-3">
+        <div className="mb-3 col-md-8">
           <div className="card">
             <div className="justify-center card-body">
               <div className="justify-center">
@@ -236,7 +242,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="col-md-4 mb-3">
+        <div className="mb-3 col-md-4">
           <div className="card">
             <div className="card-body">
               <div className="justify-center">
@@ -251,7 +257,7 @@ export default function Home() {
       </div>
       <h3 className="mb-4 ml-2 text-emerald-600">Daftar Ternak</h3>
       <div className="row">
-        <div className="container flex-col max-w-screen-xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mt-5 cursor-pointer">
+        <div className="container grid flex-col max-w-screen-xl grid-cols-1 gap-3 mt-5 cursor-pointer sm:grid-cols-2 md:grid-cols-3">
           {cattleData && cattleData.map((cattle) => (
             <Link key={cattle.id} href={`/peternak/cattle/${cattle.id}?user=${user && user.id}`}>
               <div className="card">

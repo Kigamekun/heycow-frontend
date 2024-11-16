@@ -11,7 +11,7 @@ export function Navbar() {
     const pathname = usePathname();
     const [userAvatar, setUserAvatar] = useState(null);
     const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' });
-
+    const [notificationData, setNotificationData] = useState([]);
     // Define routes where the back button should be shown
     const showBackButtonOnRoutes = [
         '/peternak/angon/[id]',
@@ -37,9 +37,32 @@ export function Navbar() {
             }
         });
     };
+
+    const getNotificationData = async () => {
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/notifications`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            console.log('Notification data:', response.data.data);  
+            setNotificationData(response.data.data);
+        } catch (error) {
+            console.error('Error fetching notification data:', error);
+        }
+    }
+
     useEffect(() => {
-        console.log('User:', user);
     }, [pathname, user]);
+    useEffect(() => {
+        getNotificationData();
+        const interval = setInterval(() => {
+            getNotificationData();
+        }, 60000); // Fetch notifications every 60 seconds
+
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <header className="header">
@@ -52,33 +75,69 @@ export function Navbar() {
                             </button>
                         )}
                     </div>
-                    <Popover>
-                        <PopoverTrigger>
-                            <div className="gap-3 profile d-flex align-items-center">
-                                <div className="text-right profile-info">
-                                    <h4>{user ? user.name : 'User'}</h4>
-                                    <p>{user ? user.role : 'Role'}</p>
+                    <div className='gap-3 d-flex'>
+                        <Popover>
+                            <PopoverTrigger>
+                                <div className="notification d-flex mt-[-2.7rem] align-items-center gap-1">
+                                    <i className="text-3xl bi bi-bell" />
+                                    <span className="px-2 text-white bg-red-600 rounded-full badge">{notificationData.length}</span>
                                 </div>
-                                <img src={user ? user.avatar : "https://images.unsplash.com/broken"} alt="Profile" className="rounded-full mt-[-1.5rem] w-[60px]" />
-                            </div>
-                        </PopoverTrigger>
-                        <PopoverContent className="bg-white p-2 mt-[-2rem] cursor-pointer">
-                            <div className="w-[10rem]">
-                                <Link href='/peternak/profile'>
-                                    <div className="justify-center gap-3 text-lg text-black d-flex">
-                                        <i className="bi bi-person-circle" />
-                                        <p>Profile</p>
+                            </PopoverTrigger>
+                            <PopoverContent className="bg-white p-2 mt-[-2rem]  cursor-pointer">
+                            <div className="w-[11rem] h-[12rem] overflow-y-auto">
+                                {notificationData.length > 0 ? notificationData.map((notification, index) => (
+                                    <div key={index} className="justify-center gap-3 p-2 text-black d-flex">
+                                        <i className="bi bi-bell" />
+                                        <p>{notification.message}</p>
                                     </div>
-                                </Link>
-                                <div onClick={handleLogout} className="justify-center gap-3 text-lg font-bold text-red-600 d-flex">
-                                    <i className="bi bi-box-arrow-right" />
-                                    <p>Logout</p>
-                                </div>
+                                )) : (
+                                    <div className="justify-center gap-3 text-lg text-black mt-p-5 d-flex">
+                                        <i className="bi bi-bell" />
+                                        <p>No notifications</p>
+                                    </div>
+                                )}
+                                {notificationData.length > 0 && (
+                                    <Link href='/peternak/notification'>
+                                        <div className="justify-center gap-3 mt-2 text-lg text-blue-600 d-flex">
+                                            <i className="bi bi-arrow-right-circle" />
+                                            <p>See more</p>
+                                        </div>
+                                    </Link>
+                                )}
                             </div>
-                        </PopoverContent>
-                    </Popover>
+                            </PopoverContent>
+                        </Popover>
+                    
+                       
+                        <Popover>
+                            <PopoverTrigger>
+                                <div className="gap-3 profile d-flex align-items-center">
+                                    <div className="text-right profile-info">
+                                        <h4>{user ? user.name : 'User'}</h4>
+                                        <p>{user ? user.role : 'Role'}</p>
+                                    </div>
+                                    <img src={user ? user.avatar : "https://images.unsplash.com/broken"} alt="Profile" className="rounded-full mt-[-1.5rem] w-[60px]" />
+                                </div>
+                            </PopoverTrigger>
+                            <PopoverContent className="bg-white p-2 mt-[-2rem] cursor-pointer">
+                                <div className="w-[10rem]">
+                                    <Link href='/peternak/profile'>
+                                        <div className="justify-center gap-3 text-lg text-black d-flex">
+                                            <i className="bi bi-person-circle" />
+                                            <p>Profile</p>
+                                        </div>
+                                    </Link>
+                                    <div onClick={handleLogout} className="justify-center gap-3 text-lg font-bold text-red-600 d-flex">
+                                        <i className="bi bi-box-arrow-right" />
+                                        <p>Logout</p>
+                                    </div>
+                                </div>
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                    
                 </div>
-                {user && !(user.is_pengangon === 0 && user.role === 'admin') && <Request />}
+                {user && user.role==='cattleman'&& user.is_pengangon === 0 && <Request />}
             </nav>
         </header>
     );

@@ -1,9 +1,8 @@
 'use client'
 
-import React from 'react';
 // Import untuk form 
-import { Editor } from '@tinymce/tinymce-react';
-import { useRef } from "react";
+// import { Editor } from '@tinymce/tinymce-react';
+// import { useRef } from "react";
 
 // import Uppy from "@uppy/core";
 // import Dashboard from "@uppy/dashboard";
@@ -16,29 +15,27 @@ import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import { Button, Textarea } from '@nextui-org/react';
-
+import { useState } from 'react';
 
 
 export default function Home() {
-  const { user, logout } = useAuth({ middleware: 'cattleman' })
+  useAuth({ middleware: 'cattleman' })
 //   new Uppy().use(Dashboard, { inline: true, target: '#uppy-dashboard' });
-    const editorRef = useRef();
-    const handleEditorChange = (content, editor) => {
-        console.log('Content was updated:', content);
-
-    }
-    const [helpCenterData, setHelpCenterData] = React.useState({
+    // const editorRef = useRef();
+    // const handleEditorChange = (content, editor) => {
+    //     console.log('Content was updated:', content);
+    // }
+    const [helpCenterData, setHelpCenterData] = useState({
         name: '',
         email: '',
-        question_details: ''
-    },[])
+        question: ''
+    })
     const postHelpCenter = async () => {
         console.log('mengirim data....')
         const bodyFormData = new FormData();
         bodyFormData.append('name', helpCenterData.name);
         bodyFormData.append('email', helpCenterData.email);
-        bodyFormData.append('question-details', helpCenterData.question_details);
-
+        bodyFormData.append('question', helpCenterData.question);
         
         try{
             var response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/help_centers`, bodyFormData, {
@@ -48,11 +45,11 @@ export default function Home() {
                 }
             })
             console.log('Response:', response.data)
-            if(response.data.status === 'success'){
+            if(response.data){
                 setHelpCenterData({
                     name: '',
                     email: '',
-                    question_details: ''
+                    question: ''
                 },
                 Swal.fire({
                     title: "Success",
@@ -64,6 +61,12 @@ export default function Home() {
             }
         }catch(error){
             console.log('Error:', error)
+            Swal.fire({
+                title: "Error",
+                text: "Terjadi kesalahan saat mengirim pertanyaan Anda",
+                icon: "error",
+                confirmButtonText: "OK"
+            })
         }
     }
 
@@ -85,7 +88,8 @@ export default function Home() {
         <div className="justify-center mt-10 d-flex">
             <div className="card p-5 w-[50rem] ">
                 <div className="card-boy " >
-                    <form onSubmit={postHelpCenter}>
+                  
+                    <form onSubmit={(e) => { e.preventDefault(); postHelpCenter(); }}>
                         <div className="mb-3">
                             <label htmlFor="name" className="form-label text-xl">Name</label>
                             <Input type="text" value={helpCenterData.name} className="form-control h-10" id="name" name="name" placeholder="Name" onChange={handleInputChange} />
@@ -97,7 +101,7 @@ export default function Home() {
                        
                         <div className="mb-3">
                             <label htmlFor="message" className="form-label text-xl">Pertanyaan</label>
-                            <Textarea className="form-control h-[20rem]" name="question" value={setHelpCenterData.question} onChange={handleInputChange} id="message" placeholder="Masukkan Pertanyaan Anda" />
+                            <Textarea className="form-control h-[20rem]" type="text" name="question" value={setHelpCenterData.question} onChange={handleInputChange} id="message" placeholder="Masukkan Pertanyaan Anda" />
                             {/* <Editor  
                                 apiKey='vbch5as7kp2v4czumq6x79pj95t4gpblp8wb90gijtnke8n4'
                                 init={{
@@ -124,7 +128,7 @@ export default function Home() {
                                   }}
 
                                   initialValue="Masukkan Keluhan Anda"
-                                  value={helpCenterData.question_details}
+                                  value={helpCenterData.question}
                                     onEditorChange={handleEditorChange}
                             /> */}
                         </div>

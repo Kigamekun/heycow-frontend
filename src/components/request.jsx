@@ -36,7 +36,7 @@ export default function Request() {
                     }
                 }
             );
-            console.log('data', res.data);
+            // console.log('data', res.data);
             setUser(res.data);
         } catch (error) {
             console.error('Error fetching user data:', error);
@@ -64,7 +64,7 @@ export default function Request() {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
             });
-            console.log('update:', res.data);
+            // console.log('update:', res.data);
             setUserData(res.data);
         } catch (error) {
             console.error('Error updating user data:', error);

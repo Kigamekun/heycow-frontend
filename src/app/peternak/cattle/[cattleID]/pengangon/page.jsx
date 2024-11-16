@@ -2,8 +2,7 @@
 
 
 import ReactStars from "react-stars"
-import { Button } from "@/components/ui/button"
-import * as React from "react"
+import { useState, useEffect } from "react"
 import { hoshino } from "@/images/hoshino.jpg"
 import {
   getCoreRowModel,
@@ -21,15 +20,16 @@ import Swal from "sweetalert2"
 import Cattle from "@/app/admin/cattle/page"
 
 import Link from "next/link"
+import Image from "next/image"
 export default function Pengangon( {params} ) {
   const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' })
   const router = useRouter();
-  const [userData, setUserData] = React.useState(
+  const [userData, setUserData] = useState(
     []
   )
-  const [cattleData, setCattleData] = React.useState([])
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const [updateData, setUpdateData] = React.useState({
+  const [cattleData, setCattleData] = useState([])
+  const [searchQuery, setSearchQuery] = useState('');
+  const [updateData, setUpdateData] = useState({
     cattle_id: params.cattleID,
     name: "",
     farm: "",
@@ -119,7 +119,7 @@ export default function Pengangon( {params} ) {
 const handleSearchChange = (event) => {
   setSearchQuery(event.target.value);
 };
-  React.useEffect(() => {
+  useEffect(() => {
     getUserData();
   }, [])
   return (
@@ -145,7 +145,7 @@ const handleSearchChange = (event) => {
           {filteredUserData.map((user, index) => (
             <div key={index} className="card">
               <div className="card-body image dan profile d-flex gap-4">
-                <img src={user.full_avatar_url || "https://via.placeholder.com/130"} alt="user" className="w-[130px]" />
+                <img src={user && user.avatar || "https://via.placeholder.com/130"} alt="user" className="w-[150px]" />
                 <div className="d-flex flex-col grid ">
                   <h4 className="text-black font-bold">{user.name}</h4>
                   <p className="text-md text-black font-bold">{user.farm}</p>

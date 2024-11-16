@@ -1,5 +1,5 @@
 'use client'
-import * as React from "react";
+// import * as from "react";
 
 // import { useQuery } from "react-query";
 import { Button } from "@/components/ui/button";
@@ -41,13 +41,14 @@ import { swal } from "@/public/assets/extensions/sweetalert2/sweetalert2.all";
 export default function Page( {params} ){
     const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
-
+    const [statusData, setStatusData] = useState(['sehat', 'sakit', 'dijual', 'mati']);
+    const { isOpen: isIotModalOpen, onOpen: onIotModalOpen, onOpenChange: onIotModalOpenChange, onClose: onIotModalClose } = useDisclosure();
 // State Cattle 
-const [cattleData, setCattleData] = React.useState(
+const [cattleData, setCattleData] = useState(
     null
   );
   
-  const [cattle, setCattle] = React.useState({
+  const [cattle, setCattle] = useState({
     name: '',
     breed: {
       name: '',
@@ -60,15 +61,15 @@ const [cattleData, setCattleData] = React.useState(
     },
   });
   // State IOT DEVICE
-  const [IotDeviceData, setIotDeviceData] = React.useState(
+  const [IotDeviceData, setIotDeviceData] = useState(
     []
   );
   // State Breeds
-  const [breedsData, setBreedsData] = React.useState(
+  const [breedsData, setBreedsData] = useState(
     []
   );
   // State Farm
-  const [farmData, setFarmData] = React.useState(
+  const [farmData, setFarmData] = useState(
     []
   );
 
@@ -231,11 +232,7 @@ const [cattleData, setCattleData] = React.useState(
 
     const bodyFormData = new FormData();
     bodyFormData.append('name', cattle.name);
-    bodyFormData.append('breed_id', cattle.breed_id);
     bodyFormData.append('status', cattle.status);
-    bodyFormData.append('gender', cattle.gender);
-    bodyFormData.append('type', cattle.type);
-    bodyFormData.append('farm', cattle.farm);
     bodyFormData.append('birth_date', cattle.birth_date);
     bodyFormData.append('birth_weight', cattle.birth_weight);
     bodyFormData.append('birth_height', cattle.birth_height);
@@ -248,31 +245,35 @@ const [cattleData, setCattleData] = React.useState(
         bodyFormData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           }
         }
       );
-      console.log(res.data) ;
+      console.log(res.data.data) ;
       // Refresh cattle data
       getCattleData();
-
+      if(res.data.data)
+        {
+          setCattle({
+          id: 0,
+          name: "",
+          gender : "",
+          status : "",
+          birth_date : "",
+          birth_weight : "",
+          birth_height : "",
+          last_vaccination : ""
+        }, 
+      Swal.fire({
+        icon: 'success',
+        title: 'Cattle updated successfully',
+        showConfirmButton: false,
+        timer: 1500
+      }));
+}
       // Reset form fields
-      setCattle({
-        id: 0,
-        name: "",
-        breed_id: "" ,
-        gender : "",
-        type : "",
-        farm : "",
-        status : "",
-        birth_date : "",
-        birth_weight : "",
-        birth_height : "",
-        iot_device_id : "",
-        last_vaccination : ""
-      });
-
+      
       setOpen(false);
 
       Swal.close();
@@ -299,7 +300,7 @@ const [cattleData, setCattleData] = React.useState(
   };
   const [data, setData] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     getCattleData();
     getBreedsData();
     getFarmData();
@@ -368,42 +369,129 @@ const [cattleData, setCattleData] = React.useState(
     }
 
     const deleteCattle = async () => {
-      
-        try {
-            const response = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${params.id}`, {
-                headers: {
-                    'content-type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                }
-            });
-            console.log('Delete response:', response.data);
-            Swal.fire({
-                icon: 'success',
-                title: 'Cattle deleted successfully',
-                showConfirmButton: false,
-                timer: 1500
-            });
-        } catch (error) {
-            console.error('Error deleting cattle:', error);
-            if (error.response && error.response.status === 401) {
-                Swal.fire({
-                    icon: 'error',
-                    title: error.response.data.message,
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-                logout();
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error occurred',
-                    text: 'Please try again later.',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            }
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          deleteCattle();
+        }
+      });
+      try {
+        const response = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${params.cattleID}`, {
+          headers: {
+            'content-type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          }
+        });
+        console.log('Delete response:', response.data);
+        Swal.fire({
+          icon: 'success',
+          title: 'Cattle deleted successfully',
+          showConfirmButton: false,
+          timer: 1500
+        }).then(() => {
+          window.location.href = '/peternak/cattle'; // Redirect to /peternak/cattle after deletion
+        });
+      } catch (error) {
+        console.error('Error deleting cattle:', error);
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          });
+          logout();
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error occurred',
+            text: 'Please try again later.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
       }
     };
+  
+    const handleSelectChange2 = (value) => {
+      setCattle({ ...cattle, iot_device_id: value });
+    };
+    const assignIotDevices = async (e) => {
+      e.preventDefault();
+  
+      Swal.fire({
+        title: 'Loading...',
+        text: 'Mohon tunggu sebentar...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+  
+      const bodyFormData = new FormData();
+      bodyFormData.append('iot_device_id', cattle.iot_device_id);
+  
+      try {
+        const res = await axios.patch(
+          `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/assign-iot-devices/${params.cattleID}`,
+          bodyFormData,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            }
+          }
+        );
+        console.log(res.data.data) ;
+        // Refresh cattle data
+        getCattleData();
+        if(res.data.data)
+          {
+            setCattle({
+            iot_device_id : "",
+
+          }, 
+        Swal.fire({
+          icon: 'success',
+          title: 'IoT Devices assigned successfully',
+          showConfirmButton: false,
+          timer: 1500
+        }));
+  }
+        // Reset form fields
+        
+        setOpen(false);
+  
+        Swal.close();
+      } catch (error) {
+        console.error('Error:', error.response);  // Log error lengkap dari response
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          });
+          logout();
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error terjadi',
+            text: 'Mohon coba lagi nanti.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      }
+    };
+
     const handleSelectChange1 = (value) => {
       setCattle({ ...cattle, breed_id: value });
     };
@@ -413,6 +501,12 @@ const [cattleData, setCattleData] = React.useState(
         ...prevCattle,
         [name]: value,
       }));
+    };
+    const handleTypeChange = (value) => {
+      setCattle({ ...cattle, type: value });
+    };
+    const handleStatusChange = (value) => {
+      setCattle({ ...cattle, status: value });
     };
     return (
         <>
@@ -438,15 +532,15 @@ const [cattleData, setCattleData] = React.useState(
                       <ModalContent className="w-[800px] h-[650px] bg-white rounded-xl ">
                       {(onClose) => (
                       <>
-                      <ModalHeader className="dialog-title flex flex-col gap-1 px-6 mt-6">
+                      <ModalHeader className="dialog-title flex flex-col gap-2 px-6 mt-6">
                           <h3 className="text-black font-bold text-center">Edit Cattle</h3>
                       </ModalHeader>
                       <ModalBody className="grid grid-cols-2">
                           {/* Cattle Name */}
-                          <div className="grid grid-cols-1 gap-1">
+                          <div className="grid grid-cols-1">
                               <label htmlFor="name" className="text-black font-bold">
                               <h6>
-                                  Cattle Name<span className="text-red-600">*</span>
+                                  Cattle Name
                               </h6>
                               </label>
                               <Input
@@ -459,38 +553,14 @@ const [cattleData, setCattleData] = React.useState(
                               placeholder="Input your cattle name"
                               variant="bordered"
                               className="w-full h-[2.8rem] "
-                              onChange={handleInputChange}
+                              // onChange={handleInputChange}
                               />
                           </div>
 
-                          {/* Breed */}
                           <div className="grid grid-cols-1">
-                            <label htmlFor="breed" className="font-bold text-black mb-[-1rem]">
-                              <h6>Breed</h6>
-                            </label>
-                            <Select
-                              id="breed"
-                              name="breed_id"
-                              variant="bordered"
-                              autoFocus
-                              defaultValue={cattle.breed.name}
-                              value={cattle.breed_id}
-                              placeholder="Select an animal"
-                              onChange={(e) => handleSelectChange1(e.target.value)}
-                              className="w-full mt-[0.5rem] h-[2.8rem]"
-                            >
-                              {breedsData && breedsData.map((breed) => (
-                                <SelectItem key={breed.id} value={breed.id} className="bg-white">
-                                  {breed.name}
-                                </SelectItem>
-                              ))}
-                            </Select>
-                          </div>
-                          
-                          <div className="grid grid-cols-1 gap-1">
                               <label htmlFor="date" className="text-black font-bold">
                               <h6>
-                                  Birth Date<span className="text-red-600">*</span>
+                                  Birth Date
                               </h6>
                               </label>
                               <Input
@@ -503,36 +573,33 @@ const [cattleData, setCattleData] = React.useState(
                               placeholder="Input your cattle name"
                               variant="bordered"
                               className="w-full h-[2.8rem] "
+                              // onChange={handleInputChange}
+                              />
+                          </div>
+                          <div className="grid grid-cols-1">
+                              <label htmlFor="date" className="text-black font-bold">
+                              <h6>
+                                  Last Vaccination
+                              </h6>
+                              </label>
+                              <Input
+                              name="last_vaccination"
+                              id="date"
+                              autoFocus
+                              value={cattle.last_vaccination}
+                              type="date"
+                              label="text"
+                              placeholder="Your cattle last vaccination"
+                              variant="bordered"
+                              className="w-full h-[2.8rem] "
                               onChange={handleInputChange}
                               />
                           </div>
-                          
-                          {/* Farm */}
-                          <div className="grid grid-cols-1=">
-                              <label htmlFor="farm" className="text-black font-bold">
-                              <h6>Farm</h6>
-                              </label>
-                              <Select
-                                id="farm"
-                                name="farm"
-                                variant="bordered"
-                                placeholder="Select a category"
-                                className="w-full h-[2.8rem]"
-                                value={cattle.farm && cattle.farm.name}
-                                onChange={handleSelectChange}
-                              >
-                                {cattleData && cattleData.map((cattle) => (
-                                  <SelectItem key={cattle && cattle.id} value={cattle.farm && cattle.farm.name}>
-                                    {cattle.farm && cattle.farm.name}
-                                  </SelectItem>
-                                ))}
-                              </Select>
-                          </div>
-                          {/* Cattle Height */}
-                          <div className="grid grid-cols-1 gap-1">
+                   
+                          <div className="grid grid-cols-1">
                               <label htmlFor="height" className="text-black font-bold">
                               <h6>
-                                  Cattle Height<span className="text-red-600">*</span>
+                                  Cattle Height
                               </h6>
                               </label>
                               <Input
@@ -550,10 +617,10 @@ const [cattleData, setCattleData] = React.useState(
                           </div>
 
                           {/* Cattle Weight */}
-                          <div className="grid grid-cols-1 gap-1">
+                          <div className="grid grid-cols-1">
                               <label htmlFor="weight" className="text-black font-bold">
                               <h6>
-                                  Cattle Weight<span className="text-red-600">*</span>
+                                  Cattle Weight
                               </h6>
                               </label>
                               <Input
@@ -569,7 +636,27 @@ const [cattleData, setCattleData] = React.useState(
                               onChange={handleInputChange}
                               />
                           </div>
-                        
+
+                          <div className="grid grid-cols-1 gap-1">
+                            <label htmlFor="status" className="text-black font-bold">
+                              <h6>
+                                Status
+                              </h6>
+                            </label>
+                            <select
+                              name="status"
+                              id="status"
+                              value={cattle.status}
+                              onChange={handleSelectChange}
+                              className="w-full h-[2.8rem] shadow-md"
+                            >
+                              <option value=''>Pilih Status Sapi</option>
+                              <option value='sehat'>Sehat</option>
+                              <option value='sakit'>Sakit</option>
+                              <option value='mati'>Mati</option>
+                            </select>
+                          </div>
+                      
                           </ModalBody>
                           <ModalFooter>
 
@@ -598,7 +685,7 @@ const [cattleData, setCattleData] = React.useState(
                                
                                 <p className="text-lg text-black text-center">From : <span className="font-bold">{cattle.farm &&cattle.farm.name}</span></p>
                             </div>
-                            <div className="d-flex justify-around">
+                            {cattle && cattle.diAngon === false && ( <div className="d-flex justify-around">
                                <Link href={`/peternak/cattle/${cattle.id}/pengangon`}>
                                   <Button className="bg-yellow-300" >
                                     Angonkan
@@ -612,18 +699,19 @@ const [cattleData, setCattleData] = React.useState(
                                   </Button>
                                 </Link>
                            
-                            </div>
+                            </div>)}
+                           
                         </div>
                         <div className="grid grid-cols-1 gap-3 w-full">
                             <div>
                                 <div className="title-iot d-flex justify-between">
                                     
                                     <div className="d-flex gap-3">
-                                      <i class="bi bi-trash-fill text-2xl cursor-pointer text-red-700" onClick={() => { alert('yakin mau di delete?'); deleteCattle(); }}></i>
+                                      <i class="bi bi-trash-fill text-2xl cursor-pointer text-red-700" onClick={() => { deleteCattle() }}></i>
                                         
                                         <i class="bi m-[-1re] bi-pencil-fill cursor-pointer text-2xl text-emerald-600" onClick={onOpen}></i>
                                     </div>
-                                    <Button className="bg-emerald-600">Detail IoT</Button>
+                                    <Button  className="bg-emerald-600" onClick={onIotModalOpen }>Set IoT</Button>
                                 </div>
                             </div>
                             <div >
@@ -641,10 +729,7 @@ const [cattleData, setCattleData] = React.useState(
                                       {/* {cattleData?.map((cattle) => (
                                         <TableCell key={cattle.id} className="font-thin text-sm">{cattle.breed_id}</TableCell>
                                       ))} */}
-
                                       <TableCell className="font-thin text-sm">{cattle.breed && cattle.breed.name}</TableCell>
-                                     
-                                        
                                     </TableRow>
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">Gender</TableCell>
@@ -668,13 +753,21 @@ const [cattleData, setCattleData] = React.useState(
                                         {cattle.iot_device && cattle.iot_device.serial_number}
                                       </TableCell>
                                     </TableRow>
+                                    <TableRow className="text-black">
+                                      <TableCell className="font-bold text-lg">Last Vaccination</TableCell>
+                                      <TableCell className="font-thin text-sm">
+                                        {cattle.last_vaccination ? cattle.last_vaccination : 'belum ada vaksinasi'}
+                                      </TableCell>
+                                    </TableRow>
                                 </TableBody>
                               </Table>
                           </div>
                           <div className="mt-5">
                             <div className="title-iot d-flex justify-between">
                              <h5 className="text-black font-bold">Health Monitoring</h5>
+                                 <Link href={`/peternak/cattle/${cattle.id}/health_monitor`}>
                                   <Button className="bg-emerald-600">Detail Kesehatan</Button>
+                                </Link>
                             </div>
                             </div>
                             <div >
@@ -702,6 +795,62 @@ const [cattleData, setCattleData] = React.useState(
                     </div>
                 </div>
             </div>
+          
+
+            <Modal 
+                    isOpen={isIotModalOpen} 
+                    onOpenChange={onIotModalOpenChange}
+                    scrollBehavior="inside"
+                    placement="center"
+                    backdrop="opaque"
+                    classNames={{
+                    backdrop: "bg-black bg-opacity-50"
+                    }}
+                    >
+                    <form onSubmit={assignIotDevices}>
+                      <ModalContent className="w-[800px] h-[320px] bg-white rounded-xl ">
+                      {(onIotModalClose) => (
+                      <>
+                      <ModalHeader className="dialog-title flex flex-col gap-2 px-6 mt-6">
+                          <h3 className="text-black font-bold text-center">Set IoT Devices</h3>
+                      </ModalHeader>
+                      <ModalBody className="grid">
+                          {/* Cattle Name */}
+                          <div className="grid-cols-1">
+                          <label htmlFor="iot_devices" className="font-bold text-black mb-[-1rem]">
+                            <h6>Iot Devices</h6>
+                          </label>
+                          <Select
+                            id="iot_devices"
+                            variant="bordered"
+                            name="iot_device_id"
+                            autoFocus
+                            value={cattle.iot_device_id}
+                            placeholder="Select your iot devices"
+                            onChange={(e) => handleSelectChange2(e.target.value)}
+                            className="w-full mt-[1rem]"
+                          >
+                            {IotDeviceData && IotDeviceData.map((iot_devices) => (
+                              <SelectItem key={iot_devices.serial_number} value={iot_devices.serial_number} className="bg-white">
+                                {iot_devices.serial_number}
+                              </SelectItem>
+                            ))}
+                          </Select>
+                        </div>
+                      
+                          </ModalBody>
+                          <ModalFooter>
+
+                          <Button isSubmit className="bg-emerald-600 text-md" onPress={onIotModalClose}>
+                          Submit
+                          </Button>
+                          </ModalFooter>
+                      </>
+                      )}
+                  </ModalContent>
+                </form>
+              </Modal>
+
         </>
     )
 }

@@ -1,79 +1,78 @@
 'use client'
 
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 export default function History() {
     const [isCollapsed, setIsCollapsed] = useState(true);
     const [isBouncing, setIsBouncing] = useState(false);
-
-    const toggleCollapse = () => {
+    const [collapsedIndex, setCollapsedIndex] = useState(null);
+    const [historyData, setHistoryData] = useState([]);
+    const toggleCollapse = (index) => {
         setIsCollapsed(!isCollapsed);
-        setIsBouncing(true);
-        setTimeout(() => setIsBouncing(false), 500);
+        // setIsBouncing(true);
+        // setTimeout(() => setIsBouncing(false), 500);
+        setCollapsedIndex(collapsedIndex === index ? null : index);
     };
 
+    const getHistoryData = async () => {
+        console.log('Fetching history data...');
+        try{
+            var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/history_records`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            console.log('History data:', res.data.data);
+            setHistoryData(res.data.data);
+        }catch(error){
+            console.error('Error fetching history data:', error);
+        }
+    }
+    const getStatusClass = (record_type) => { 
+        if (record_type === 'iot_device') {
+          return 'bg-yellow-400';
+        } else if (record_type === 'height') {
+          return 'bg-green-400';
+        } else if (record_type === 'declined') {
+          return 'bg-red-400';
+        }
+      }
+    console.log(historyData.message)
+    useEffect(() => {
+        getHistoryData();
+    }, []);
     return (
         <>
-        <h3 className="mb-4 ml-2 text-emerald-600">History</h3>
-        <div className="p-4 bg-white border rounded-lg shadow-sm">
-            <div
-                className="flex items-center justify-between cursor-pointer"
-                onClick={toggleCollapse}
-            >
-                <h3 className="text-lg font-semibold">November 2024</h3>
-                <span
-                    className={`text-gray-500 transition-transform duration-200 ${
-                        isBouncing ? 'transform scale-125' : ''
-                    }`}
-                >
-                    {isCollapsed ? '+' : '-'}
-                </span>
-            </div>
-            <p className="text-gray-600">
-                {isCollapsed ? '1 Activity' : '1 Activity (click to hide details)'}
-            </p>
-
-            <div
-                className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                    isCollapsed ? 'max-h-0 opacity-0' : 'max-h-screen opacity-100'
-                }`}
-            >
-                {/* First Activity */}
-                <div className="flex items-center w-full p-2 mx-auto mb-3 bg-white rounded-lg shadow-sm">
-                    {/* Date Icon */}
-                    <div className="flex flex-col items-center justify-center ml-2 font-semibold leading-tight text-white rounded-full w-14 h-14 bg-emerald-500">
-                        <div className="text-center">
-                            <h5 className="mt-2 text-lg text-white">28</h5>
-                            <p className="-mt-2 text-xs">Senin</p>
+         <h3 className="mb-4 ml-2 text-emerald-600">History</h3>
+            <div className="grid grid-cols-1 gap-6">
+                {historyData && historyData.map((history, index) => (
+                <div key={index} className="d-flex justify-center">
+                    <div className="w-[60rem] p-4 bg-white border border-gray-300 rounded-lg shadow-sm">
+                        <div
+                            className="grid grid-cols-[1fr_auto] items-center cursor-pointer border-black "
+                            onClick={() => toggleCollapse(index)}
+                        >
+                            <h3 className="text-xl font-semibold float-start">{history.message}</h3>
+                            <span
+                            className={`text-gray-500 transition-transform duration-200 ${collapsedIndex === index ? 'transform scale-125' : ''}`}
+                            >
+                            {collapsedIndex === index ? '-' : '+'}
+                            </span>
+                        </div>
+                        <div
+                            className={`transition-all duration-300 ease-in-out overflow-hidden ${collapsedIndex === index ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}
+                        >
+                            <div className="grid">
+                                <p className="text-md font-thin">Data Lama = <span className="text-black font-bold">{history.old_value}</span></p>
+                                <p className="text-md font-thin">Data Baru = <span  className="text-black font-bold">{history.new_value}</span></p>
+                            </div>
                         </div>
                     </div>
-
-                    {/* Activity Details */}
-                    <div className="items-center mt-2 ml-4 space-y-1">
-                        <h6 className="font-semibold text-gray-800">Temperature Measurement</h6>
-                        <p className="text-gray-600">Cattle 1</p>
-                        <p className="text-gray-600">Temperature: 39 ℃</p>
-                    </div>
                 </div>
-
-                {/* Second Activity */}
-                <div className="flex items-center w-full p-2 mx-auto bg-white rounded-lg shadow-sm">
-                    {/* Date Icon */}
-                    <div className="flex flex-col items-center justify-center ml-2 font-semibold leading-tight text-white rounded-full w-14 h-14 bg-emerald-500">
-                        <div className="text-center">
-                            <h5 className="mt-2 text-lg text-white">29</h5>
-                            <p className="-mt-2 text-xs">Rabu</p>
-                        </div>
-                    </div>
-
-                    {/* Activity Details */}
-                    <div className="items-center mt-4 ml-4">
-                        <h6 className="font-semibold text-gray-800">Weight Measurement</h6>
-                        <p className="text-gray-600">Weight: 173 kg</p>
-                    </div>
-                </div>
+                ))}
             </div>
-        </div>
         </>
     );
 }

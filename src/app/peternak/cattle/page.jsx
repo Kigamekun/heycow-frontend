@@ -1,7 +1,7 @@
 'use client'
 
 // import { Button } from "@/components/ui/button"
-import * as React from "react"
+// import * as from "react"
 
 
 import { Input } from "@/components/ui/input"
@@ -28,18 +28,18 @@ import { Select, SelectItem } from "@nextui-org/react"
 import axios from "axios"
 import Swal from "sweetalert2"
 
-import { animals } from "./dummy"
+import { useEffect, useState } from "react"
 export default function Home() {
-  const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  ' })
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
-  const [searchQuery, setSearchQuery] = React.useState('')
+  const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
+  const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
+  const [searchQuery, setSearchQuery] = useState('')
   // State Cattle 
-  const [cattleData, setCattleData] = React.useState(
+  const [cattleData, setCattleData] = useState(
     []
   );
-
-  const [statusData, setStatusData] = React.useState(['sehat', 'sakit', 'dijual', 'mati']);
-  const [cattle, setCattle] = React.useState({
+  
+  const [statusData, setStatusData] = useState(['sehat', 'sakit', 'dijual', 'mati']);
+  const [cattle, setCattle] = useState({
     id: 0,
     name: "",
     farm: "",
@@ -53,16 +53,16 @@ export default function Home() {
     last_vaccination: ""
   });
   // State IOT DEVICE
-  const [IotDeviceData, setIotDeviceData] = React.useState(
+  const [IotDeviceData, setIotDeviceData] = useState(
     []
   );
   // State Breeds
-  const [breedsData, setBreedsData] = React.useState(
+  const [breedsData, setBreedsData] = useState(
     []
   );
 
   // State Farm
-  const [farmData, setFarmData] = React.useState(
+  const [farmData, setFarmData] = useState(
     []
   );
 
@@ -199,7 +199,7 @@ export default function Home() {
     }
   };
   console.log(cattleData);
-  React.useEffect(() => {
+  useEffect(() => {
     getCattleData();
     getBreedsData();
     getIotDeviceData();
@@ -243,27 +243,35 @@ export default function Home() {
           }
         }
       );
-      console.log(res.data);
-      // Refresh cattle data
-      getCattleData();
+      console.log(res.data) ;
+ 
 
       // Reset form fields
       setCattle({
         id: 0,
         name: "",
-        breed_id: "",
-        gender: "",
-        type: "",
-        farm: "",
-        status: "",
-        birth_date: "",
-        birth_weight: "",
-        birth_height: "",
-        iot_device_id: "",
-        last_vaccination: ""
-      });
+        breed_id: "" ,
+        gender : "",
+        type : "",
+        farm : "",
+        status : "",
+        birth_date : "",
+        birth_weight : "",
+        birth_height : "",
+        iot_device_id : "",
+        last_vaccination : ""
+      },
+      Swal.fire({
+        title: "Success",
+        text: "Cattle berhasil ditambahkan",
+        icon: "success",
+        confirmButtonText: "OK"
 
-      setOpen(false);
+      })),
+      // Show success message;
+     // Refresh cattle data
+     getCattleData();
+       onClose();
 
       Swal.close();
     } catch (error) {
@@ -316,10 +324,7 @@ export default function Home() {
     setCattle({ ...cattle, breed_id: value });
   };
 
-  const handleSelectChange2 = (value) => {
-    setCattle({ ...cattle, iot_device_id: value });
-  };
-
+  
   const handleStatusChange = (value) => {
     setCattle({ ...cattle, status: value });
   };
@@ -330,7 +335,11 @@ export default function Home() {
   const filteredCattleData = cattleData.filter(cattle =>
     cattle.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
+  const sickCattle = cattleData.filter(cattle => cattle.status === 'sakit');
+  const soldCattle = cattleData.filter(cattle => cattle.status === 'dijual');
+  const deathCattle = cattleData.filter(cattle => cattle.status === 'mati');
+  const sehatCattle = cattleData.filter(cattle => cattle.status === 'sehat');
+  
   console.log('test', IotDeviceData)
   return (
     <>
@@ -461,7 +470,7 @@ export default function Home() {
                             </label>
                           </div>
                         </div>
-                        {/* Farm */}
+                        {/* Farm
                         <div className="grid grid-cols-1">
                           <label htmlFor="breed" className="font-bold text-black">
                             <h6>Farm</h6>
@@ -478,7 +487,7 @@ export default function Home() {
                             {(animal) => <SelectItem className="bg-white"
                               variant="bordered">{animal.label}</SelectItem>}
                           </Select>
-                        </div>
+                        </div> */}
                         {/* Cattle Height */}
                         <div className="grid grid-cols-1 gap-1">
                           <label htmlFor="height" className="font-bold text-black">
@@ -521,7 +530,7 @@ export default function Home() {
                         </div>
 
                         {/* IoT devices */}
-                        <div className="grid grid-cols-1">
+                        {/* <div className="grid grid-cols-1">
                           <label htmlFor="iot_devices" className="font-bold text-black mb-[-1rem]">
                             <h6>Iot Devices</h6>
                           </label>
@@ -540,7 +549,7 @@ export default function Home() {
                               </SelectItem>
                             ))}
                           </Select>
-                        </div>
+                        </div> */}
 
                         {/* status */}
 
@@ -628,46 +637,46 @@ export default function Home() {
           </div>
           <div className="row mt-3">
             <div className="col-sm-3">
+                <div className="border border-success card">
+                  <div className="gap-10 float-start card-body d-flex">
+                    <Cow size={50} className=" text-emerald-500 text-[2rem]" />
+                      <div className="flex-col d-flex ">
+                        <h6 className="text-emerald-600">Sehat</h6>
+                        <p>{sehatCattle.length}</p>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            <div className="col-sm-3">
               <div className="border border-success card">
                 <div className="gap-10 float-start card-body d-flex">
-                  <Cow size={50} className=" text-emerald-500 text-[2rem]" />
-                  <div className="flex-col d-flex ">
-                    <h6 className="text-emerald-600">Sehat</h6>
-                    <p>15</p>
-                  </div>
+                <Cow size={50} className=" text-red-500 text-[3rem]" />
+                    <div className="flex-col d-flex ">
+                      <h6 className="text-red-600">Sakit</h6>
+                      <p>{sickCattle.length} </p>
+                    </div>
                 </div>
               </div>
             </div>
             <div className="col-sm-3">
               <div className="border border-success card">
                 <div className="gap-10 float-start card-body d-flex">
-                  <Cow size={50} className=" text-red-500 text-[3rem]" />
-                  <div className="flex-col d-flex ">
-                    <h6 className="text-red-600">Sakit</h6>
-                    <p>2</p>
-                  </div>
+                <Cow size={50} className=" text-yellow-400 text-[3rem]" />
+                    <div className="flex-col d-flex ">
+                      <h6 className="text-yellow-600">Dijual</h6>
+                      <p>{soldCattle.length}</p>
+                    </div>
                 </div>
               </div>
             </div>
             <div className="col-sm-3">
               <div className="border border-success card">
                 <div className="gap-10 float-start card-body d-flex">
-                  <Cow size={50} className=" text-yellow-400 text-[3rem]" />
-                  <div className="flex-col d-flex ">
-                    <h6 className="text-yellow-600">Dijual</h6>
-                    <p>7</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-sm-3">
-              <div className="border border-success card">
-                <div className="gap-10 float-start card-body d-flex">
-                  <Cow size={50} className=" text-red-700 text-[3rem]" />
-                  <div className="flex-col d-flex ">
-                    <h6 className="text-red-600">Mati</h6>
-                    <p>15</p>
-                  </div>
+                <Cow size={50} className=" text-red-700 text-[3rem]" />
+                    <div className="flex-col d-flex ">
+                      <h6 className="text-red-600">Mati</h6>
+                      <p>{deathCattle.length}</p>
+                    </div>
                 </div>
               </div>
             </div>
