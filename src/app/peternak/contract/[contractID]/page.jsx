@@ -269,6 +269,8 @@ export default function ContractID( {params} ) {
                     <div className='d-flex px-28 justify-start'>
                         <p className='text-lg text-black'>{contract.request && contract.request.peternak && contract.request.peternak.name}</p>
                     </div>
+
+                    
                     {contract.payment_status !== null && (
                         <div className='mt-4'>
                             <div className='d-flex justify-end gap-6 px-16'>
@@ -282,7 +284,7 @@ export default function ContractID( {params} ) {
                                     </Button>    
                                 </div>
                             )}
-                             {contract.request && contract.request.peternak && contract.request.peternak_id !== user?.id && contract.status === 'returned' && (
+                             {contract.request && contract.request.peternak && contract.request.peternak_id !== user?.id && contract.status === 'returned' && contract.rate === null ? (
                                 <form className='mt-4' onSubmit={RatePengangon}>
                                     <div className='d-flex justify-center'>
                                         <ReactStars count={5} size={45} value={returnContractData.rate} edit={true} color2={'#ffd700'} onChange={(newRating) => setReturnContractData({ ...returnContractData, rate: newRating })} />
@@ -294,7 +296,17 @@ export default function ContractID( {params} ) {
                                     </div>
                                         
                                 </form>
-                            )}
+                            )
+                            :
+                            (
+                            <div>
+                                <Link href='/peternak/cattle' className='d-flex justify-center'>
+                                    <Button className='bg-emerald-600 rounded-lg text-white text-xl mt-4'>
+                                        Kembali ke Sapi
+                                    </Button>
+                                </Link>
+                            </div>
+                        )}
                         </div>
                     )}
                     {contract.payment_status === null && (

@@ -6,18 +6,16 @@ import Chart from 'chart.js/auto';
 import Link from "next/link";
 import { useEffect, useRef, useState } from 'react';
 import Swal from 'sweetalert2';
-import { Cow } from "@phosphor-icons/react";
+import { Book, Cow, Lasso, PaperPlane } from "@phosphor-icons/react";
 export default function Home() {
   const { user, logout } = useAuth({ middleware: 'admin' });
   const [cattleData, setCattleData] = useState([]);
   const doughnutCanvas = useRef();
   const barCanvas = useRef();
   const [chartData, setChartData] = useState([])
-
+  const [contractData, setContractData] = useState([])
   // get Cattle Data
   const getCattleData = async () => {
-
-  
     try {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle`, {
         headers: {
@@ -66,6 +64,39 @@ export default function Home() {
         return 'bg-gray-400';
     }
   };
+
+  const getContract = async () => {
+    try {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/contract`, {
+        headers: {
+          'content-type': 'text/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      });
+      console.log(res.data.data);
+      setContractData(res.data.data);
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+  
+        logout();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'error terjadi',
+          text: 'mohon coba lagi nanti.',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch("https://dummyjson.com/users")
@@ -172,6 +203,7 @@ export default function Home() {
   }, [chartData]);
   const sickCattle = cattleData.filter(cattle => cattle.status === 'sakit');
   const totalIotDevices = cattleData.filter(cattle => cattle.iot_device).length;
+  const contractJumlah = contractData.length;
   return (
     <>
       <header className="mb-3">
@@ -197,7 +229,7 @@ export default function Home() {
           <div className="mb-3 col-sm-6 col-md-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
-                <i className="bi bi-emoji-dizzy-fill text-red-400 text-[2rem]" />
+              <Cow className="text-red-400" size={50} />
                 <div className="flex-col d-flex ">
                   <h6 className="text-red-400">Sakit</h6>
                   <p>{sickCattle.length}</p>
@@ -208,9 +240,9 @@ export default function Home() {
           <div className="mb-3 col-sm-6 col-md-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
-                <i className="bi bi-emoji-sunglasses-fill text-yellow-600 text-[2rem]" />
+                <Lasso className="text-yellow-600" size={50} />
                   <div className="flex-col d-flex ">
-                    <h6 className="text-emerald-600">Device</h6>
+                    <h6 className="text-yellow-600">Device</h6>
                     <p>{totalIotDevices}</p>
                   </div>
               </div>
@@ -218,11 +250,11 @@ export default function Home() {
           </div>
           <div className="mb-3 col-sm-6 col-md-3">
             <div className="border border-success card">
-              <div className="gap-10 float-start card-body d-flex">
-                <i className="bi bi-emoji-dizzy-fill text-red-800 text-[2rem]" />
+              <div className="gap-14 float-start card-body d-flex">
+                <i className="bi bi-pass-fill text-gray-800 text-[2.5rem]" />
                   <div className="flex-col d-flex ">
-                    <h6 className="text-emerald-600">Total Contract</h6>
-                    <p>15</p>
+                    <h6 className="text-gray-800">Total Contract</h6>
+                    <p>{contractJumlah}</p>
                   </div>
               </div>
             </div>

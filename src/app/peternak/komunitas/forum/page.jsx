@@ -337,9 +337,8 @@ export default function ForumPage() {
 
             <div className="d-flex justify-center">
             <div className="grid grid-cols-1 container-post">
-                  <Link href={`/peternak/komunitas/forum/${post.id}`}>
                     {forumData?.map((post, index) => (
-                     
+                      <Link href={`/peternak/komunitas/forum/${post.id}`}>
                         <div key={index} className="card mt-3 w-[800px] grid grid-cols-1 gap-6">
                             <div className="card-body">
                               <div className="settings post float-end">
@@ -374,21 +373,29 @@ export default function ForumPage() {
                                     {/* <img src={post.image} alt="post" className="w-[100%] max-h-[400px] border" /> */}
                                     <img src={post.full_image_url || 'https://icons.iconarchive.com/icons/fa-team/fontawesome/256/FontAwesome-Image-icon.png'} alt="post" className="w-[30rem]"/>
                                 </div>
-                                <div className="gap-4 mt-10 container-post-action d-flex">
+                                <div className="gap-4 mt-10 container-post-action d-flex justify-between">
+                                  <div className="d-flex gap-4">
                                     <div className="gap-2 Likes-count d-flex text-md">
-                                        <i class="bi bi-heart-fill text-red-600"></i>
-                                        <p className="text-black">{post.likes_count}</p>
-                                    </div>
-                                    <div className="gap-2 Likes-count d-flex text-md ">
-                                        <i class="bi bi-chat-dots-fill text-emerald-500"></i>
-                                        <p className="text-black">{post.comments_count}</p>
+                                          <i class="bi bi-heart-fill text-red-600"></i>
+                                          <p className="text-black">{post.likes_count}</p>
+                                      </div>
+                                      <div className="gap-2 Likes-count d-flex text-md ">
+                                          <i class="bi bi-chat-dots-fill text-emerald-500"></i>
+                                          <p className="text-black">{post.comments_count}</p>
+                                      </div>
+                                  </div>
+                                    <div>
+                                      <Link href={`/peternak/komunitas/forum/${post.id}`}>
+                                        <Button className="text-white text-md font-bold bg-emerald-600">Lihat Detail</Button>
+                                      </Link>
                                     </div>
                                 </div>
+                               
                             </div>
                         </div>
+                      </Link>
                        
                     ))}
-                  </Link>
                 </div>
             </div>
         </main>
