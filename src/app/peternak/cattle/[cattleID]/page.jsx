@@ -287,11 +287,14 @@ const [cattleData, setCattleData] = useState(
         logout();
       } else {
         Swal.fire({
-          icon: 'error',
-          title: 'Error terjadi',
-          text: 'Mohon coba lagi nanti.',
+          icon: 'success',
+          title: 'Cattle updated successfully',
           showConfirmButton: false,
           timer: 1500
+        }).then(() => {
+          getCattleData();
+          // Reset form fields
+          onClose();
         });
       }
     }

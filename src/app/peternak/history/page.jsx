@@ -8,6 +8,8 @@ export default function History() {
     const [isBouncing, setIsBouncing] = useState(false);
     const [collapsedIndex, setCollapsedIndex] = useState(null);
     const [historyData, setHistoryData] = useState([]);
+    const [cattleHistory, setCattleHistory] = useState([]);
+    const [cattleData, setCattleData] = useState([]);
     const toggleCollapse = (index) => {
         setIsCollapsed(!isCollapsed);
         // setIsBouncing(true);
@@ -30,18 +32,52 @@ export default function History() {
             console.error('Error fetching history data:', error);
         }
     }
+
+    const getCattleData = async() => {
+        console.log('Fetching cattle data...');
+        try{
+            var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            console.log('Cattle data:', res.data.data);
+            setCattleData(res.data.data);
+        }catch(error){
+            console.error('Error fetching cattle data:', error);
+        }
+    }
+    const getCattleHistory = async (cattleId) => {
+        console.log('Fetching cattle history data...');
+        try {
+            var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/history_records?cattle_id=${cattleData.id}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            setCattleHistory(res.data.data);
+            console.log('Cattle history data:', res.data.data);
+            setHistoryData(res.data.data);
+        } catch (error) {
+            console.error('Error fetching cattle history data:', error);
+        }
+    }
     const getStatusClass = (record_type) => { 
         if (record_type === 'iot_device') {
           return 'bg-yellow-400';
         } else if (record_type === 'height') {
-          return 'bg-green-400';
-        } else if (record_type === 'declined') {
-          return 'bg-red-400';
+          return 'bg-blue-400';
+        } else if (record_type === 'weight') {
+          return 'bg-purple-400';
         }
       }
     console.log(historyData.message)
     useEffect(() => {
         getHistoryData();
+        getCattleData();
+        getCattleHistory()
     }, []);
     return (
         <>
@@ -55,6 +91,7 @@ export default function History() {
                             onClick={() => toggleCollapse(index)}
                         >
                             <h3 className="text-xl font-semibold float-start">{history.message}</h3>
+                            <h3 className={`text-sm rounded-md p-2  font-semibold float-end text-white ${getStatusClass(history.record_type)}`}>{history.record_type}</h3>
                             <span
                             className={`text-gray-500 transition-transform duration-200 ${collapsedIndex === index ? 'transform scale-125' : ''}`}
                             >

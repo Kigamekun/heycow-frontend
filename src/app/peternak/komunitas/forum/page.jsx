@@ -267,7 +267,7 @@ export default function ForumPage() {
       };
       const handleSort = (order) => {
         setSortOrder(order);
-        const sortedData = [...jualData].sort((a, b) => {
+        const sortedData = [...forumData].sort((a, b) => {
           if (order === 'asc') {
             return new Date(a.created_at) - new Date(b.created_at);
           } else {
@@ -321,16 +321,19 @@ export default function ForumPage() {
                       </div>  
                       
                       <Divider orientation="vertical" color="black"/>
-                      <div className="gap-3 cursor-pointer d-flex" onClick={() => window.location.href = '/peternak/komunitas/forum'}>
-                        <i class="bi bi-question-circle text-black text-xl"></i>
-                        <p className="text-lg text-black">Tanyakan</p>
-                      </div>
-
+                      <Link href="/peternak/komunitas/forum">
+                        <div className="gap-3 cursor-pointer d-flex" >
+                          <i class="bi bi-question-circle text-black text-xl"></i>
+                          <p className="text-lg text-black">Tanyakan</p>
+                        </div>
+                      </Link>
                       <Divider orientation="vertical"/>
-                      <div className="gap-3 cursor-pointer d-flex" onClick={() => window.location.href = '/peternak/komunitas/jual'}>
-                        <i class="bi bi-currency-exchange  text-black text-xl"></i>
-                        <p className="text-lg text-black">Jual</p>
-                      </div>
+                      <Link href="/peternak/komunitas/jual">
+                        <div className="gap-3 cursor-pointer d-flex">
+                          <i class="bi bi-currency-exchange  text-black text-xl"></i>
+                          <p className="text-lg text-black">Jual</p>
+                        </div>
+                      </Link>
                   </div>
                 </div>
             </div>
@@ -370,8 +373,9 @@ export default function ForumPage() {
                                     <p className="text-black">
                                         {post.content}
                                     </p>
+                                    
                                     {/* <img src={post.image} alt="post" className="w-[100%] max-h-[400px] border" /> */}
-                                    <img src={post.full_image_url || 'https://icons.iconarchive.com/icons/fa-team/fontawesome/256/FontAwesome-Image-icon.png'} alt="post" className="w-[30rem]"/>
+                                    <img src={post.full_image_url || 'https://icons.iconarchive.com/icons/fa-team/fontawesome/256/FontAwesome-Image-icon.png'} alt="post" className="w-[40rem] mx-auto"/>
                                 </div>
                                 <div className="gap-4 mt-10 container-post-action d-flex justify-between">
                                   <div className="d-flex gap-4">

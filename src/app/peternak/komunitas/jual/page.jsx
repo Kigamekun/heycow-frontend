@@ -300,6 +300,7 @@ export default function JualPage() {
         }
     };
       const handleSort = (order) => {
+        
         setSortOrder(order);
         const sortedData = [...jualData].sort((a, b) => {
           if (order === 'asc') {
