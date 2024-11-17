@@ -163,11 +163,18 @@ export default function Device() {
       },
       cell: ({ row }) => (
 
-              <div className="flex items-center justify-center">
-                  <img src={row.getValue("qr_image") ?? 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} 
-                  alt="qr image" className="w-16 h-16 rounded-sm">
-                  </img>
-              </div>
+<div className="flex items-center justify-center">
+  <img
+    src={
+      row.getValue('qr_image')
+        ? `https://heycow.my.id/storage/${row.getValue('qr_image')}`
+        : 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'
+    }
+    alt="qr image"
+    className="w-16 h-16 rounded-sm"s
+  />
+</div>
+
       ),
   },
 
@@ -175,7 +182,7 @@ export default function Device() {
       accessorKey: 'id',
       header: 'Actions',
       cell: info => (
-        <div className="flex space-x-2"s>
+        <div className="flex space-x-2">
           <button className="text-xs text-white btn btn-warning" onClick={() => editDevice(Number(info.getValue()))}>Edit</button>
           <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteDevice(Number(info.getValue()))}>Delete</button>
         </div>
@@ -291,7 +298,6 @@ export default function Device() {
         serial_number: '',
         installation_date: '',
         status: '',
-        qr_image: ''
       });
 
       setOpen(false);
@@ -344,12 +350,9 @@ export default function Device() {
   }
 
   const updateDevice = async (e) => {
-
-
     e.preventDefault();
     Swal.fire({
       title: 'Loading...',
-
       text: 'Mohon tunggu sebentar...',
       allowOutsideClick: false,
       didOpen: () => {
