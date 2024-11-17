@@ -274,8 +274,8 @@ export default function Profile() {
                                                 id="nama"
                                                 autoFocus
                                                 type="text"
-                                                name="nama"
-                                                value={userData.nama ? userData.nama : ''}
+                                                name="name"
+                                                value={userData.name ? userData.name : ''}
                                                 variant="bordered"
                                                 className="w-full h-[2.8rem] "
                                                 onChange={handleInputChange}
@@ -576,9 +576,9 @@ export default function Profile() {
                             </div>
                             <div className="gap-2">
                                 <p className="text-md font-thin">Data Lama = <span className="text-black font-bold">{formatDate(iot.installation_date)}</span></p>
-                                <p className="text-md font-thin">Data Baru = <span  className="text-black font-bold">{iot.status}</span></p>
-                                <p className="text-md font-thin">Data Baru = <span  className="text-black font-bold">{iot.ssid}</span></p>
-                                <p className="text-md font-thin">Data Baru = <span  className="text-black font-bold">{iot.passwrd ? iot.password : 'null'}</span></p>
+                                <p className="text-md font-thin">Status IoT = <span  className="text-black font-bold">{iot.status}</span></p>
+                                <p className="text-md font-thin">SSID = <span  className="text-black font-bold">{iot.ssid ? iot.ssid : 'null'}</span></p>
+                                <p className="text-md font-thin">Password IoT = <span  className="text-black font-bold">{iot.password ? iot.password : 'null'}</span></p>
                             </div>
                         </div>
                     </div>

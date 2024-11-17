@@ -92,8 +92,8 @@ export function Sidebar() {
                             <span className="">Angon</span>
                      </Link>
                  </li> */}
-                    <li className={`sidebar-item ${pathname === "/peternak/notifications" && "/peternak/notifications/pengangon" ? "active" : ""}`}>
-                        <Link className="sidebar-link" href="/peternak/notifications">
+                    <li className={`sidebar-item ${pathname === "/peternak/notification" && "/peternak/notification" ? "active" : ""}`}>
+                        <Link className="sidebar-link" href="/peternak/notification">
                             <div className='ph'>
                                 <Bell className="ph-bell" size={20} />
                             </div>

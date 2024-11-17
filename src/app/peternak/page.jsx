@@ -6,7 +6,7 @@ import Chart from 'chart.js/auto';
 import Link from "next/link";
 import { useEffect, useRef, useState } from 'react';
 import Swal from 'sweetalert2';
-
+import { Cow } from "@phosphor-icons/react";
 export default function Home() {
   const { user, logout } = useAuth({ middleware: 'admin' });
   const [cattleData, setCattleData] = useState([]);
