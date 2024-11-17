@@ -1,5 +1,6 @@
 'use client'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Head from 'next/head';
 import Image from 'next/image';
 import {heycow} from '@/images/hey_cow.svg'
 import Head from 'next/head';

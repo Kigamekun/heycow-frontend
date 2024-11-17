@@ -92,7 +92,7 @@ export function Navbar() {
                                         <p>{notification.message}</p>
                                     </div>
                                 )) : (
-                                    <div className="justify-center gap-3 mt-p-5 text-lg text-black d-flex">
+                                    <div className="justify-center gap-3 text-lg text-black mt-p-5 d-flex">
                                         <i className="bi bi-bell" />
                                         <p>No notifications</p>
                                     </div>
@@ -112,7 +112,7 @@ export function Navbar() {
                        
                         <Popover>
                             <PopoverTrigger>
-                                <div className="profile d-flex align-items-center gap-3">
+                                <div className="gap-3 profile d-flex align-items-center">
                                     <div className="text-right profile-info">
                                         <h4>{user ? user.name : 'User'}</h4>
                                         <p className='text-black'>{user ? user.role : 'Role'}</p>

@@ -148,12 +148,34 @@ export default function Device() {
       ),
 
     },
+    {
+      accessorKey: "qr_image",
+      header: ({ column }) => {
+          return (
+              <Button
+                  variant="ghost"
+                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              >
+                  QR Image
+                  <ArrowUpDown className="w-4 h-4 ml-2" />
+              </Button>
+          )
+      },
+      cell: ({ row }) => (
+
+              <div className="flex items-center justify-center">
+                  <img src={row.getValue("qr_image") ?? 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'} 
+                  alt="qr image" className="w-16 h-16 rounded-sm">
+                  </img>
+              </div>
+      ),
+  },
 
     {
       accessorKey: 'id',
       header: 'Actions',
       cell: info => (
-        <div>
+        <div className="flex space-x-2"s>
           <button className="text-xs text-white btn btn-warning" onClick={() => editDevice(Number(info.getValue()))}>Edit</button>
           <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteDevice(Number(info.getValue()))}>Delete</button>
         </div>
@@ -166,6 +188,7 @@ export default function Device() {
     serial_number: '',
     installation_date: '',
     status: '',
+    qr_image: '',
   });
 
 
@@ -268,6 +291,7 @@ export default function Device() {
         serial_number: '',
         installation_date: '',
         status: '',
+        qr_image: ''
       });
 
       setOpen(false);
@@ -332,25 +356,17 @@ export default function Device() {
         Swal.showLoading();
       }
     });
-    var bodyFormData = new FormData();
-
-    bodyFormData.append('serial_number', device.serial_number);
-    bodyFormData.append('installation_date', device.installation_date);
-    bodyFormData.append('status', device.status);
-
     var res = await axios.put(
       `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/iot_devices/${device.id}`,
       {
         serial_number: device.serial_number,
         installation_date: device.installation_date,
         status: device.status,
-
       },
       {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
-
         },
       }
     )

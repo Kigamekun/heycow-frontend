@@ -64,7 +64,7 @@ export default function Contract() {
             cell: ({ row }) => row.index + 1, // Display row index, starting from 1
         },
         {
-            accessorKey: "contract_code",
+            accessorKey: "title",
             header: ({ column }) => {
                 return (
                     <Button
@@ -76,82 +76,54 @@ export default function Contract() {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="">{row.getValue("contract_code")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("title")}</div>,
         },
         {
-            accessorKey: "request_id",
+            accessorKey: "tanggal",
             header: ({ column }) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Request ID
+                        Contract Date
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="">{row.getValue("request_id")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("tanggal")}</div>,
 
         },
         {
-            accessorKey: "cattle_id",
+            accessorKey: "status",
             header: ({ column }) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Cattle ID
+                        Status Contract
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="">{row.getValue("cattle_id")}</div>,
-
-        },
-        {
-            accessorKey: "farm_id",
-            header: ({ column }) => {
-                return (
-                    <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    >
-                        Farm ID
-                        <ArrowUpDown className="w-4 h-4 ml-2" />
-                    </Button>
-                )
-            },
-            cell: ({ row }) => <div className="">{row.getValue("farm_id")}</div>,
-
-        },
-        {
-            accessorKey: "start_date",
-            header: ({ column }) => {
-                return (
-                    <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    >
-                        Start Date
-                        <ArrowUpDown className="w-4 h-4 ml-2" />
-                    </Button>
-                )
-            },
-            cell: ({ row }) => <div className="">{row.getValue("start_date")}</div>,
-
-        },
-        {
-            accessorKey: 'id',
-            header: 'Actions',
-            cell: info => (
-                <div>
-                    <button className="text-xs text-white btn btn-warning" onClick={() => editFarm(Number(info.getValue()))}>Edit</button>
-                    <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteFarm(Number(info.getValue()))}>Delete</button>
+            cell: ({ row }) =>
+            <div className="flex px-2 py-1">
+                <div className="flex flex-col justify-center">
+                    <h6 className="mb-0 text-sm leading-normal dark:text-white">
+                        {row.getValue("status") === 'completed' && <span className="bg-green-500 badge">Completed</span>}
+                        {row.getValue("status") === 'pending' && <span className="bg-yellow-500 badge">Pending</span>}
+                        {row.getValue("status") === 'active' && <span className="bg-blue-500 badge">Active</span>}
+                        {row.getValue("status") === 'returned' && <span className="bg-red-500 badge">Returned</span>}
+                    </h6>
+                    <p className="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                        {/* Additional description if needed */}
+                    </p>
                 </div>
-            ),
+            </div>
+
         }
+
     ];
 
     const [contract, setContract] = useState({
@@ -200,8 +172,8 @@ export default function Contract() {
             });
 
             if (response.data.data !== undefined) {
-                setcontractData(response.data.data.data);
-                console.log('Contract :', response.data.data.data);
+                setcontractData(response.data.data);
+                console.log('Contract :', response.data.data);
             }
         } catch (error) {
             if (error.response && error.response.status === 401) {

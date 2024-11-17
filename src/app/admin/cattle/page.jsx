@@ -1,13 +1,5 @@
 'use client'
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -86,7 +78,7 @@ export default function Cattle() {
       cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
     },
     {
-      accessorKey: "user_id",
+      accessorKey: "farm.user_id",
       header: ({ column }) => {
         return (
           <Button
@@ -98,7 +90,17 @@ export default function Cattle() {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="">{row.getValue("user_id")}</div>,
+      cell: ({ row }) => {
+
+        if (row.original.farm != null) {
+          return <div className="">{row.original.farm.user_id}</div>
+        }
+        else {
+
+          return <div className="">-</div>
+        }
+
+      },
     },
     {
       accessorKey: "breed.name",
@@ -205,7 +207,7 @@ export default function Cattle() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Farm Adrress
+            Farm Address
             <ArrowUpDown className="w-4 h-4 ml-2" />
           </Button>
         )
@@ -329,8 +331,7 @@ export default function Cattle() {
       accessorKey: 'id',
       header: 'Actions',
       cell: info => (
-        <div>
-          <button className="text-xs text-white btn btn-warning" onClick={() => editCattle(Number(info.getValue()))}>Edit</button>
+        <div className="flex space-x-2">
           <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteCattle(Number(info.getValue()))}>Delete</button>
         </div>
       ),
@@ -394,7 +395,7 @@ export default function Cattle() {
     const name = event.target.name;
     const { value } = event.target.selectedOptions[0];
     console.log(value);
-    setCattle({ ...cattle,  [name]: value });
+    setCattle({ ...cattle, [name]: value });
   }
 
   const [open, setOpen] = useState(false)
@@ -667,7 +668,7 @@ export default function Cattle() {
       setCattle({
         id: ct.id,
         name: ct.name,
-        user_id: cr.user_id,
+        user_id: ct.user_id,
         breed_id: ct.breed_id,
         gender: ct.gender,
         type: ct.type,
@@ -728,7 +729,7 @@ export default function Cattle() {
 
     var res = await axios.put(
       `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${cattle.id}`,
-        bodyFormData,
+      bodyFormData,
       {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -835,191 +836,6 @@ export default function Cattle() {
         <div className="card-body">
           <div className="d-flex justify-content-between align-items-left">
             <h3>Cattle</h3>
-            <div>
-              <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" onClick={createData}>Create Cattle</Button>
-                </DialogTrigger>
-
-                {/* Add a ref to the dialog */}
-                <DialogContent className={"lg:max-w-[200px]-lg overflow-y-scroll max-h-screen"} >
-                  <DialogHeader>
-                    <DialogTitle className="mb-4">{cattle.id != 0 ? 'Update' : 'Create'} Cattle</DialogTitle>
-                    <DialogDescription>
-                      <form method="dialog" onSubmit={cattle.id != 0 ? updateCattle : createCattle}>
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={cattle.name}
-                          type="text"
-                          name="name"
-                          placeholder="Name"
-                          onChange={handleInputChange}
-                        />
-                                                <div>
-                          <label className="w-full input-bordered">
-                            User
-                            <select
-                              name="user_id"
-                              value={cattle.user_id}
-                              onChange={handleSelectChange}
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                            >
-                              <option value="">User</option>
-                              {userData && userData.map((b) => (
-                                <option key={b.id} value={b.id}>{b.name}</option>
-                              ))}
-                            </select>
-                          </label>
-                        </div>
-
-
-                        <div>
-                          <label className="w-full input-bordered">
-                            Breed
-                            <select
-                              name="breed_id"
-                              value={cattle.breed_id}
-                              onChange={handleSelectChange}
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                            >
-                              <option value="">Breed</option>
-                              {breedsData && breedsData.map((b) => (
-                                <option key={b.id} value={b.id}>{b.name}</option>
-                              ))}
-                            </select>
-                          </label>
-                        </div>
-
-                        <label className="w-full input-bordered">
-                          <select
-                            name="status"
-                            value={cattle.status}
-                            onChange={handleSelectChange}
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4">
-                            <option value="">Pilih Status Sapimu</option>
-                            <option value="sehat">Sehat</option>
-                            <option value="sakit">Sakit</option>
-                            <option value="mati">Mati</option>
-                          </select>
-                        </label>
-
-                        <div className="flex justify-start w-full gap-3 mb-3 input-bordered ">
-                          <label>
-                            <input
-                              type="radio"
-                              name="gender"
-                              value="jantan"
-                              checked={cattle.gender === 'jantan'}
-                              onChange={handleInputChange}
-                            />
-                            Jantan
-                          </label>
-                          <label>
-                            <input
-                              type="radio"
-                              name="gender"
-                              value="betina"
-                              checked={cattle.gender === 'betina'}
-                              onChange={handleInputChange}
-                            />
-                            Betina
-                          </label>
-                        </div>
-
-                        <label className="w-full input-bordered">
-                          <select
-                            name="type"
-                            value={cattle.type}
-                            onChange={handleSelectChange}
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          >
-                            <option value="">Pilih Jenis Sapimu</option>
-                            <option value="pedaging">Sapi Pedaging</option>
-                            <option value="peranakan">Sapi Peternak</option>
-                            <option value="perah">Sapi Perah</option>
-                          </select>
-                        </label>
-
-                        <div>
-                          <label className="w-full input-bordered">
-                            <select
-                              name="farm"
-                              value={cattle.farm}
-                              onChange={handleSelectChange}
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                            >
-                              <option value="">Pilih nama farm mu</option>
-                              {Array.isArray(farmData) && farmData.map(b => {
-                                return <option key={b.id} value={b.id}>{b.name}</option>;
-                              })}
-                            </select>
-                          </label>
-                        </div>
-
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={cattle.birth_date}
-                          type="date"
-                          name="birth_date"
-                          placeholder="birth_date"
-                          onChange={handleInputChange}
-                        />
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={cattle.birth_weight}
-                          type="text"
-                          name="birth_weight"
-                          placeholder="birth_weight"
-                          onChange={handleInputChange}
-                        />
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={cattle.birth_height}
-                          type="text"
-                          name="birth_height"
-                          placeholder="birth_height"
-                          onChange={handleInputChange}
-                        />
-
-                        <label className="w-full input-bordered">
-                          <select
-                            name="iot_device_id"
-                            value={cattle.iot_device_id}
-                            onChange={handleSelectChange}
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          >
-                            <option value="">IOT Device</option>
-                            {
-                              IotDeviceData && IotDeviceData.map((b) => {
-                                return <option key={b.id} value={b.id}>{b.serial_number}</option>
-                              })
-                            }
-
-                          </select>
-                        </label>
-
-                        <div className="flex flex-col items-start ">
-                          <label htmlFor="last_vaccination" className="w-full">Last Vaccination</label>
-                          <input
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                            id="last_vaccination"
-                            value={cattle.last_vaccination}
-                            type="date"
-                            name="last_vaccination"
-                            placeholder="last_vaccination"
-                            onChange={handleInputChange}
-                          />
-                        </div>
-
-                        <div className="flex justify-end gap-3 ">
-                          <button type="submit" className="btn-modal">{cattle.id != 0 ? 'Update' : 'Create'} Cattle</button>
-                        </div>
-                      </form>
-                    </DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-            </div>
           </div>
           <br />
           <div className="flex-auto px-0 pt-0 pb-2">
