@@ -9,8 +9,6 @@ import {
 import { useAuth } from "@/lib/hooks/auth";
 import { Divider } from "@nextui-org/react";
 import axios from "axios";
-import * as React from "react";
-import { useState } from "react";
 import Swal from "sweetalert2";
 import Link from "next/link";
 import {
@@ -21,22 +19,22 @@ import {
   ModalHeader,
   useDisclosure
 } from '@nextui-org/modal';
-
+import { useState, useEffect } from "react";
 import { Select, SelectItem, SelectSection } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 
 export default function Page() {
     const{user, middleware} = useAuth(['cattleman', 'admin'])
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
-    const [blogPostsData, setBlogPostsData] = React.useState(
+    const [blogPostsData, setBlogPostsData] = useState(
         []
     );
-    // const [blogImagesData, setBlogImagesData] = React.useState(null);
-    const [userData, setUserData] = React.useState(
+    // const [blogImagesData, setBlogImagesData] = useState(null);
+    const [userData, setUserData] = useState(
         []
     )
     
-    const [blogPost, setBlogPost] = React.useState({
+    const [blogPost, setBlogPost] = useState({
         id: 0,
         title: '',
         content: '',
@@ -44,8 +42,8 @@ export default function Page() {
         image : ''
     });
     
-    const [cattleData, setCattleData] = React.useState([]);
-    const [cattle, setCattle] = React.useState({
+    const [cattleData, setCattleData] = useState([]);
+    const [cattle, setCattle] = useState({
         id: 0,
         name: "",
         breed_id: "" ,
@@ -357,7 +355,7 @@ export default function Page() {
   };
 
 
-    React.useEffect(() => {
+    useEffect(() => {
         getBlogPostsData(),
         // fetchUserImage(),
         getUserData(),

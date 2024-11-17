@@ -6,7 +6,7 @@ import Chart from 'chart.js/auto';
 import Link from "next/link";
 import { useEffect, useRef, useState } from 'react';
 import Swal from 'sweetalert2';
-
+import { Cow } from "@phosphor-icons/react";
 export default function Home() {
   const { user, logout } = useAuth({ middleware: 'admin' });
   const [cattleData, setCattleData] = useState([]);
@@ -182,7 +182,7 @@ export default function Home() {
       
       <h3 className="mb-4 ml-2 text-emerald-600">Home</h3>
         <div className="row">
-          <div className="mb-3 col-sm-6 col-md-3">
+          <div className="col-sm-6 col-md-3 mb-3">
             <div className="border border-success card">
               <div className="gap-10 float-start card-body d-flex">
                 <Cow className="text-emerald-600" size={50} />

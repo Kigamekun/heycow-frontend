@@ -339,6 +339,7 @@ export default function JualPage({params}) {
           setJual((prevJual) => ({ ...prevJual, cattle_id: params.cattleID }));
         }
       }, [params.cattleID]);
+    console.log('cattle data jual', cattleData)
   return (
     <>
         <main>
@@ -512,7 +513,18 @@ export default function JualPage({params}) {
                                               Pilih Sapi yang ingin dijual!
                                             </h6>
                                           </label>
-                                          <Select
+                                          <Input 
+                                            value={cattleData.name}
+                                            id="cattle_id"
+                                            name="cattle_id"
+                                            type="text"
+                                            isDisabled
+                                            placeholder="Input your cattle id"
+                                            variant="bordered"
+                                            className="w-full h-[2.8rem] "
+                                            onChange={handleInputChange}
+                                          />
+                                          {/* <Select
                                             id="cattle_id"
                                             name="cattle_id"
                                             value={jual.cattle_id}
@@ -526,7 +538,7 @@ export default function JualPage({params}) {
                                                 {cattle.name}
                                               </SelectItem>
                                             ))}
-                                          </Select>
+                                          </Select> */}
                                         </div>
 
                                         <div className="grid grid-cols-1 gap-1">
