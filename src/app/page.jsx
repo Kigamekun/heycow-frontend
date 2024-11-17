@@ -1,13 +1,10 @@
 'use client'
-import { heycow } from '@/images/hey_cow.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Head from 'next/head';
 import Image from 'next/image';
-import '../styles/globals.css';
-import Image from 'next/image';
-import {heycow} from '@/images/hey_cow.svg'
 import Link from 'next/link';
 import '../public/assets_lp/vendor/bootstrap/css/bootstrap.min.css';
-import { iphone2 } from '@/public/assets_lp/img/phone2.png'
+import '../styles/globals.css';
 // import { Button } from 'bootstrap';
 // import { Button } from '@/public/assets_lp/vendor/bootstrap/js/bootstrap';
 export default function Home() {
@@ -153,8 +150,6 @@ export default function Home() {
                   <h4>Call:</h4>
                   <p>+62 1234 5678 90</p>
                 </div>
-              </div>
-            </div>
             <div className="mt-5 col-lg-8 mt-lg-0">
               <form action="forms/contact.php" method="post" role="form" className="php-email-form">
                 <div className="row">
@@ -176,9 +171,6 @@ export default function Home() {
                 </div>
               </form>
             </div>
-          </div>
-        </div>
-      </section>
     </>
   );
 }

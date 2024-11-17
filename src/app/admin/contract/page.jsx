@@ -122,17 +122,8 @@ export default function Contract() {
                 </div>
             </div>
 
-        },
-        {
-            accessorKey: 'id',
-            header: 'Actions',
-            cell: info => (
-                <div>
-                    <button className="text-xs text-white btn btn-warning" onClick={() => editFarm(Number(info.getValue()))}>Edit</button>
-                    <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteFarm(Number(info.getValue()))}>Delete</button>
-                </div>
-            ),
         }
+
     ];
 
     const [contract, setContract] = useState({

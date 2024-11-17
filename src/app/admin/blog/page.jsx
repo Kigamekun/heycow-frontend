@@ -429,7 +429,6 @@ export default function Home() {
     });
 
     const bodyFormData = new FormData();
-    // bodyFormData.append('avatar', User.avatar);
     if (selectedFile) {
       bodyFormData.append('image', selectedFile);
     }
@@ -454,8 +453,6 @@ export default function Home() {
           }
         }
       );
-
-      // Refresh User data
       getBlogPostData();
 
       // Reset form fields
@@ -514,6 +511,7 @@ export default function Home() {
         published: bp.published,
         published_at: bp.published_at,
       });
+      setSelectedFile(null);
       setOpen(true);
     }
   }
@@ -536,66 +534,111 @@ export default function Home() {
     setOpen(true);
   }
 
-    const updateBlogPost = async (e) => {
-      e.preventDefault();
-      Swal.fire({
-        title: 'Loading...',
-        text: 'Mohon tunggu sebentar...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading(),
+  const updateBlogPost = async (e) => {
+    e.preventDefault();
+    Swal.fire({
+      title: 'Loading...',
+      text: 'Mohon tunggu sebentar...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
+  
+    const bodyFormData = new FormData();
+    if (selectedFile) {
+      bodyFormData.append('image', selectedFile);
+    }
+  
+    bodyFormData.append('user_id', BlogPost.user_id);
+    bodyFormData.append('title', BlogPost.title);
+    bodyFormData.append('content', BlogPost.content);
+    bodyFormData.append('category', BlogPost.category);
+    bodyFormData.append('price', BlogPost.price);
+    bodyFormData.append('cattle_id', BlogPost.cattle_id);
+    bodyFormData.append('published', BlogPost.published);
+    bodyFormData.append('published_at', BlogPost.published_at);
+  
+    console.log('Data being sent:', Object.fromEntries(bodyFormData.entries())); // Debugging
+  
+    try {
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${BlogPost.id}`,
+        bodyFormData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+  
+      console.log('API response:', response.data); // Debugging
+      getBlogPostData(); // Ensure it fetches fresh data
+      setBlogPost({
+        id: 0,
+        user_id: '',
+        title: '',
+        content: '',
+        category: '',
+        image: '',
+        price: '',
+        cattle_id: '',
+        published: '',
+        published_at: '',
       });
-    
-      const bodyFormData = new FormData();
-      if (selectedFile) {
-        bodyFormData.append('image', selectedFile);
-      }
-    
-      bodyFormData.append('user_id', BlogPost.user_id);
-      bodyFormData.append('title', BlogPost.title);
-      bodyFormData.append('content', BlogPost.content);
-      bodyFormData.append('category', BlogPost.category);
-      bodyFormData.append('price', BlogPost.price);
-      bodyFormData.append('cattle_id', BlogPost.cattle_id);
-      bodyFormData.append('published', BlogPost.published);
-      bodyFormData.append('published_at', BlogPost.published_at);
-    
-      try {
-        const response = await axios.put(
-          `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${BlogPost.id}`,
-          bodyFormData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
+      setOpen(false);
+      Swal.close();
+    } catch (error) {
+      console.error('Error:', error.response || error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error occurred',
+        text: 'Please try again later.',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  };
+  
+    const deleteBlogPost = async (id) => {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Loading...',
+            text: 'Mohon tunggu sebentar...',
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            }
+          });
+  
+          try {
+            await axios.delete(
+              `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${id}`,
+              {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+              }
+            );
+            await getBlogPostData();
+            Swal.fire(
+              'Deleted!',
+              'Your User has been deleted.',
+              'success'
+            );
+          } catch (error) {
+  
           }
-        );
-        console.log('Response:', response); // Debugging
-        getBlogPostData(); // Ensure it fetches fresh data
-        Swal.close();
-        setBlogPost({
-          id: 0,
-          user_id: '',
-          title: '',
-          content: '',
-          category: '',
-          image: '',
-          price: '',
-          cattle_id: '',
-          published: '',
-          published_at: '',
-        });
-        setOpen(false);
-      } catch (error) {
-        console.error('Error:', error.response || error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error occurred',
-          text: 'Please try again later.',
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      }
+        }
+      });
     };
     
 
@@ -617,7 +660,7 @@ export default function Home() {
           <div className="d-flex justify-content-between align-items-center">
             <h3>Community Blog Post</h3>
             <div>
-              <Button variant="outline" onClick={createData}>Create Blog Post</Button>
+              <Button variant="outline" onClick={createBlogPost}>Create Blog Post</Button>
 
 
               <Dialog open={open} onOpenChange={setOpen}>
@@ -642,7 +685,7 @@ export default function Home() {
                         <label className="mb-2 text-black float-start"> User </label>
                         <select
                           name="user_id"
-                          // s
+                          value={BlogPost.user_id}
                           onChange={handleSelectChange}
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                         >
@@ -674,7 +717,7 @@ export default function Home() {
                         <label className="mb-3 text-black float-start"> Category </label>
                           <select
                             name="category"
-                            value={BlogPost.type}
+                            value={BlogPost.category}
                             onChange={handleSelectChange}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           >
@@ -693,8 +736,8 @@ export default function Home() {
                         />
                         <label className="mb-3 text-black float-start"> Publish Status </label>
                           <select
-                            name="type"
-                            value={BlogPost.type}
+                            name="publish"
+                            value={BlogPost.published}
                             onChange={handleSelectChange}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
                           >
@@ -702,15 +745,6 @@ export default function Home() {
                             <option value="draft">Draft</option>
                             <option value="published">Published</option>
                           </select>
-                        <label className="mb-2 text-black float-start"> Publish Date </label>
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          value={BlogPost.published_at}
-                          type="datetime-local"
-                          name="published_at"
-                          placeholder="Masukkan tanggal publsih"
-                          onChange={handleInputChange}
-                        />
                         <div className="flex justify-end gap-3 mt-5">
                           <button type="submit" className="btn-modal">{BlogPost.id != 0 ? 'Update' : 'Create'} Blog Post</button>
                         </div>
