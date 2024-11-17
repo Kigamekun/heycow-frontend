@@ -389,10 +389,10 @@ export default function Page() {
                         </PopoverTrigger>
                         <PopoverContent>
                           <div onClick={() => handleSort('asc')}>
-                            <p className="text-lg text-black">Sorting dari yang terbaru</p>
+                            <p className="text-lg text-black">Sorting dari yang terlama</p>
                           </div>
                           <div onClick={() => handleSort('desc')}>
-                            <p className="text-lg text-black">Sorting dari yang terlama</p>
+                            <p className="text-lg text-black">Sorting dari yang terbaru</p>
                           </div>
                         </PopoverContent>
                       </Popover>
@@ -404,7 +404,7 @@ export default function Page() {
                       </div>  
                       
                       <Divider orientation="vertical" color="black"/>
-                      <Link href='/peternak/komunitas/jual'>
+                      <Link href='/peternak/komunitas/forum'>
                       <div className="gap-3 cursor-pointer d-flex">
                         <i class="bi bi-question-circle text-black text-xl"></i>
                         <p className="text-lg text-black">Tanyakan</p>
@@ -413,10 +413,13 @@ export default function Page() {
                     
 
                       <Divider orientation="vertical"/>
-                      <div className="gap-3 cursor-pointer d-flex" onClick={() => window.location.href = '/peternak/komunitas/jual'}>
-                        <i class="bi bi-currency-exchange  text-black text-xl"></i>
-                        <p className="text-lg text-black">Jual</p>
-                      </div>
+                      <Link href={'/peternak/komunitas/jual'}>
+                        <div className="gap-3 cursor-pointer d-flex" onClick={() => window.location.href = '/peternak/komunitas/jual'}>
+                          <i class="bi bi-currency-exchange  text-black text-xl"></i>
+                          <p className="text-lg text-black">Jual</p>
+                        </div>
+                      </Link>
+                      
                   </div>
                 </div>
             </div>

@@ -439,7 +439,6 @@ const [cattleData, setCattleData] = useState(
   
       const bodyFormData = new FormData();
       bodyFormData.append('iot_device_id', cattle.iot_device_id);
-
   
       try {
         const res = await axios.patch(
@@ -454,7 +453,6 @@ const [cattleData, setCattleData] = useState(
         );
         console.log(res.data.data) ;
         // Refresh cattle data
-        getCattleData();
         if(res.data.data)
           {
             setCattle({
@@ -469,6 +467,7 @@ const [cattleData, setCattleData] = useState(
         }));
   }
         // Reset form fields
+        getCattleData();
         
         setOpen(false);
   
@@ -483,15 +482,7 @@ const [cattleData, setCattleData] = useState(
             timer: 1500
           });
           logout();
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error terjadi',
-            text: 'Mohon coba lagi nanti.',
-            showConfirmButton: false,
-            timer: 1500
-          });
-        }
+        } 
       }
     };
 

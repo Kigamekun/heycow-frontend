@@ -142,26 +142,28 @@ const handleSearchChange = (event) => {
       {/* Angon atau farmer section */}
       {filteredUserData.length > 0 ? (
         <div className="container grid grid-cols-2 gap-3 mt-4">
-          {filteredUserData.map((user, index) => (
-            <div key={index} className="card">
-              <div className="card-body image dan profile d-flex gap-4">
-                <img src={user && user.avatar || "https://via.placeholder.com/130"} alt="user" className="w-[150px]" />
-                <div className="d-flex flex-col grid ">
-                  <h4 className="text-black font-bold">{user.name}</h4>
-                  <p className="text-md text-black font-bold">{user.farm}</p>
-                  <p className="text-bold ">{user.upah}</p>
-                  <p className="font-bold">{user.address}</p>
+          {filteredUserData
+            .filter(filteredUser => filteredUser.id !== user?.id) // Exclude logged-in user
+            .map((user, index) => (
+              <div key={index} className="card">
+                <div className="card-body image dan profile d-flex gap-4">
+                  <img src={user && user.avatar || "https://via.placeholder.com/130"} alt="user" className="w-[150px]" />
+                  <div className="d-flex flex-col grid ">
+                    <h4 className="text-black font-bold">{user.name}</h4>
+                    <p className="text-md text-black font-bold">{user.farm}</p>
+                    <p className="text-bold ">{user.upah}</p>
+                    <p className="font-bold">{user.address}</p>
+                  </div>
+                </div>
+                <div className="rating card-body mt-[-20px] d-flex justify-between">
+                  {/* rating */}
+                  <ReactStars count={5} value={user.rate} size={24} color2={'#ffd700'} />
+                  
+                  {/* button */}
+                  <Link href={`/peternak/cattle/${params.cattleID}/pengangon/${user.id}`}><button className="btn btn-success">Pilih</button></Link>
                 </div>
               </div>
-              <div className="rating card-body mt-[-20px] d-flex justify-between">
-                {/* rating */}
-                <ReactStars count={5} value={user.rate} size={24} color2={'#ffd700'} />
-                
-                {/* button */}
-                <Link href={`/peternak/cattle/${params.cattleID}/pengangon/${user.id}`}><button className="btn btn-success">Pilih</button></Link>
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
       ) : (
         <div className="mt-4 text-center text-gray-500">No results found</div>
