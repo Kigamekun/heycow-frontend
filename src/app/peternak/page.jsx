@@ -7,6 +7,9 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from 'react';
 import Swal from 'sweetalert2';
 import { Book, Cow, Lasso, PaperPlane } from "@phosphor-icons/react";
+import Head from "next/head";
+
+
 export default function Home() {
   const { user, logout } = useAuth({ middleware: 'admin' });
   const [cattleData, setCattleData] = useState([]);
@@ -204,8 +207,13 @@ export default function Home() {
   const sickCattle = cattleData.filter(cattle => cattle.status === 'sakit');
   const totalIotDevices = cattleData.filter(cattle => cattle.iot_device).length;
   const contractJumlah = contractData.length;
+  
   return (
     <>
+      <title>{pageTitle} | Heycow!</title>
+      
+
+
       <header className="mb-3">
         <a href="#" className="burger-btn d-block d-xl-none">
           <i className="bi bi-justify fs-3" />

@@ -13,7 +13,6 @@ import { Button } from '@nextui-org/react';
 import { Input } from '@nextui-org/react';
 export default function Page({params}) {
     const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' });
-
     const [forumDetail, setForumDetail] = useState([]); // State to store the jual detail
     const [cattle, setCattleData] =useState([]);
     const [my, myData] = useState([]);
@@ -137,6 +136,54 @@ export default function Page({params}) {
           } 
         }
     };
+    const [likes, setLikes] = useState({
+        
+    });
+    const LikePosts = async () => {
+        const bodyFormData = new FormData();
+        bodyFormData.append('like', 1);
+        try {
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${params.forumID}/likes`, bodyFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            console.log(res.data);
+            setLikes(res.data);
+            // Optionally, you can add code here to update the UI after successful like
+        } catch (error) {
+            console.error('Error:', error.response);  // Log error lengkap dari response
+            Swal.fire({
+                icon: 'error',
+                title: 'Error liking post',
+                text: error.response.data.message,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+    const unLikePosts = async () => {
+        try {
+            const res = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${params.forumID}/likes`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            console.log(res.data);
+            // Optionally, you can add code here to update the UI after successful unlike
+        } catch (error) {
+            console.error('Error:', error.response);  // Log error lengkap dari response
+            Swal.fire({
+                icon: 'error',
+                title: 'Error unliking post',
+                text: error.response.data.message,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    };
     const handleInputChange = (e) => {
         setComments({ ...comments, content: e.target.value });
     };
@@ -199,12 +246,24 @@ export default function Page({params}) {
                             </div>
                             <div className="detail-cattle mt-3">
                                 <div className="gap-4 mt-3 container-post-action d-flex">
-                                    <div className="gap-2 Likes-count d-flex text-md">
-                                        <i class="bi bi-heart-fill text-red-600"></i>
-                                        <p className="text-black">{forumDetail.likes_count}</p>
+                                    <div className="gap-2 Likes-count d-flex text-2xl">
+                                        <div
+                                            className="like-button" 
+                                            onClick={async () => {
+                                                if (forumDetail.isLiked) {
+                                                    await unLikePosts(forumDetail.id);
+                                                } else {
+                                                    await LikePosts(forumDetail.id);
+                                                }
+                                                getForumDetail();
+                                            }}
+                                        >
+                                            <i className={`bi ${forumDetail.isLiked ? ' bi-heart-fill text-red-600' : '  bi-heart text-red-600'}`}></i>
+                                        </div>
+                                        <p className="text-black  ">{forumDetail.likes_count}</p>
                                     </div>
-                                    <div className="gap-2 Likes-count d-flex text-md ">
-                                        <i class="bi bi-chat-dots-fill text-emerald-500"></i>
+                                    <div className="gap-3 Likes-count d-flex text-2xl ">
+                                        <i class="bi bi-chat-dots-fill   text-emerald-500"></i>
                                         <p className="text-black">{forumDetail.comments_count}</p>
                                     </div>
                                 </div>

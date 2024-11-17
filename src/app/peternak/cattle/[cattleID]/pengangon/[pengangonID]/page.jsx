@@ -2,7 +2,6 @@
 
 import ReactStars from "react-stars";
 import { Button } from "@/components/ui/button";
-import * as React from "react";
 import { Image } from "@nextui-org/react";
 import {
   Table,
@@ -29,17 +28,17 @@ import { Select, SelectItem, SelectSection } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import duration from "@/public/assets/extensions/dayjs/plugin/duration";
 
-
+import { useState, useEffect } from "react";
 
 export default function PengangonDetail({ params }) {
   const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' });
   const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
-  const [setRequestData] = React.useState([]);
+  const [setRequestData] = useState([]);
   const [cattleID, pengangonID] = [params.cattleID, params.pengangonID];
-  const [detailData, setDetailData] = React.useState([]);
-  const [userData, setUserData] = React.useState([]);
-  const [cattleData, setCattleData] = React.useState([]);
-  const [requests, setRequests] = React.useState({
+  const [detailData, setDetailData] = useState([]);
+  const [userData, setUserData] = useState([]);
+  const [cattleData, setCattleData] = useState([]);
+  const [requests, setRequests] = useState({
     id: 0,
     duration: '',
     cattle_id: '',
@@ -198,12 +197,12 @@ console.log('nama',cattleData.name)
     }
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     console.log('Cattle ID:', cattleID);
     console.log('Pengangon ID:', pengangonID);
   }, [cattleID, pengangonID]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (detailData.pengangon) {
       setRequests((prevRequests) => ({ ...prevRequests, peternak_id: detailData.pengangon.id }));
     }
@@ -212,7 +211,7 @@ console.log('nama',cattleData.name)
     }
   }, [detailData, cattleData]);
   
-  React.useEffect(() => {
+  useEffect(() => {
     getUserData();
     getUserDataDetail();
     getCattleData();

@@ -3,7 +3,6 @@
 import { swal } from "@/public/assets/extensions/sweetalert2/sweetalert2.all";
 import axios from "axios";
 import Script from "next/script";
-import * as React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
@@ -35,9 +34,9 @@ import Link from "next/link";
 
 export default function JualPage({params}) {
     const [cattleID] = [params.cattleID]
-    const [jualData, setJualData] = React.useState([]);
+    const [jualData, setJualData] = useState([]);
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
-    const [jual, setJual] = React.useState({
+    const [jual, setJual] = useState({
         id: 0,
         title: '',
         content: '',
@@ -46,7 +45,7 @@ export default function JualPage({params}) {
         category: 'jual',
     });
     const categories = ['forum', 'jual'];
-    const [cattleData, setCattleData] = React.useState([]);
+    const [cattleData, setCattleData] = useState([]);
     const {user, middleware} = useAuth(['cattleman', 'admin'])
     const getForumData = async () => {
         try{
@@ -332,7 +331,7 @@ export default function JualPage({params}) {
       };
     
     console.log('data jualnya: ',jualData);
-    React.useEffect(() => {
+    useEffect(() => {
         getForumData();
         getCattleData();
         if (params.cattleID) {

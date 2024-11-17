@@ -3,7 +3,6 @@
 import { swal } from "@/public/assets/extensions/sweetalert2/sweetalert2.all";
 import axios from "axios";
 import Script from "next/script";
-import * as React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
@@ -36,8 +35,9 @@ import { useAuth } from "@/lib/hooks/auth";
 import Link from "next/link";
 export default function ForumPage() {
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
-    const [forumData, setForumData] = React.useState([]);
-    const [forum, setForum] = React.useState({
+    const [forumData, setForumData] = useState([]);
+    const [sortOrder, setSortOrder] = useState('asc');
+    const [forum, setForum] = useState({
         id: 0,
         title: '',
         content: '',
@@ -289,7 +289,7 @@ export default function ForumPage() {
         setForum({ ...forum, category: event.target.value });
     };
     console.log(forumData);
-    React.useEffect(() => {
+    useEffect(() => {
         getForumData()
       }, [])
   return (
