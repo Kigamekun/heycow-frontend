@@ -1,7 +1,5 @@
 'use client'
-import Head from 'next/head';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/globals.css';
 import Image from 'next/image';
 import {heycow} from '@/images/hey_cow.svg'
 import Link from 'next/link';

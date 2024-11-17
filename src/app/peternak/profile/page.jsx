@@ -224,7 +224,10 @@ export default function Profile() {
             console.error('Error fetching user image:', error);
         }
     };
-
+    const formatDate = (dateString) => {
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        return new Date(dateString).toLocaleDateString('id-ID', options);
+    };
     useEffect(() => {
         getUserData();
         fetchUserImage();
@@ -550,7 +553,7 @@ export default function Profile() {
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-1 gap-6">
+            <div className="w-[40rem] mx-auto grid grid-cols-1 gap-6">
                 {iot && iot.map((iot, index) => (
                 <div key={index} className="d-flex justify-center">
                     <div className="w-[60rem] p-4 bg-white border border-gray-300 rounded-lg shadow-sm">
@@ -566,14 +569,16 @@ export default function Profile() {
                             </span>
                         </div>
                         <div
-                            className={`transition-all duration-300 ease-in-out overflow-hidden ${collapsedIndex === index ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}
+                            className={`transition-all duration-300 ease-in-out d-flex justify-around overflow-hidden ${collapsedIndex === index ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}
                         >
                             <div>
-                                <img src={iot.qr_image} alt="QR Code" className="w-20 h-20" />
+                                <img src={'https://heycow.my.id/storage/'+iot.qr_image} alt="QR Code" className="w-[10rem] h-10rem]" />
                             </div>
-                            <div className="grid">
-                                <p className="text-md font-thin">Data Lama = <span className="text-black font-bold">{iot.installation_date}</span></p>
-                                <p className="text-md font-thin">Data Baru = <span  className="text-black font-bold">{iot.serial_number}</span></p>
+                            <div className="gap-2">
+                                <p className="text-md font-thin">Data Lama = <span className="text-black font-bold">{formatDate(iot.installation_date)}</span></p>
+                                <p className="text-md font-thin">Data Baru = <span  className="text-black font-bold">{iot.status}</span></p>
+                                <p className="text-md font-thin">Data Baru = <span  className="text-black font-bold">{iot.ssid}</span></p>
+                                <p className="text-md font-thin">Data Baru = <span  className="text-black font-bold">{iot.passwrd ? iot.password : 'null'}</span></p>
                             </div>
                         </div>
                     </div>

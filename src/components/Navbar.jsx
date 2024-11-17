@@ -80,7 +80,7 @@ export function Navbar() {
                         <Popover>
                             <PopoverTrigger>
                                 <div className="notification d-flex mt-[-2.7rem] align-items-center gap-1">
-                                    <i className="bi bi-bell text-3xl" />
+                                    <i className="bi bi-bell text-3xl text-black" />
                                     <span className="badge bg-red-600 rounded-full text-white px-2">{notificationData.length}</span>
                                 </div>
                             </PopoverTrigger>
@@ -115,7 +115,7 @@ export function Navbar() {
                                 <div className="profile d-flex align-items-center gap-3">
                                     <div className="text-right profile-info">
                                         <h4>{user ? user.name : 'User'}</h4>
-                                        <p>{user ? user.role : 'Role'}</p>
+                                        <p className='text-black'>{user ? user.role : 'Role'}</p>
                                     </div>
                                     <img src={user ? user.avatar : "https://images.unsplash.com/broken"} alt="Profile" className="rounded-full mt-[-1.5rem] w-[60px]" />
                                 </div>
