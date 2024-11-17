@@ -227,6 +227,7 @@ export default function Home() {
     bodyFormData.append('gender', cattle.gender);
     bodyFormData.append('type', cattle.type);
     bodyFormData.append('farm', cattle.farm);
+    // bodyFormData.append('image', cattle.image);
     bodyFormData.append('birth_date', cattle.birth_date);
     bodyFormData.append('birth_weight', cattle.birth_weight);
     bodyFormData.append('birth_height', cattle.birth_height);
@@ -260,6 +261,7 @@ export default function Home() {
         birth_weight : "",
         birth_height : "",
         iot_device_id : "",
+        image:"",
         last_vaccination : ""
       },
       Swal.fire({
@@ -333,6 +335,10 @@ export default function Home() {
   const handleTypeChange = (value) => {
     setCattle({ ...cattle, type: value });
   };
+  const handleFileChange = (event) => {
+    setCattle({ ...cattle, image: event.target.files[0] });
+};
+
   const filteredCattleData = cattleData.filter(cattle =>
     cattle.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -622,6 +628,26 @@ export default function Home() {
                           />
                         </div>
 
+                        <div className="grid grid-cols-1 gap-1">
+                          <label htmlFor="image" className="font-bold text-black">
+                            <h6>
+                              Image<span className="text-red-600">*</span>
+                            </h6>
+                          </label>
+                          <Input
+                            isRequired
+                            id="image"
+                            name="image"
+                            autoFocus
+                            type="file"
+                            placeholder="Input your cattle birth date"
+                            variant="bordered"
+                            className="w-full h-[2.8rem]"
+                            onChange={handleFileChange}
+                            // data-height="300"
+                            //  data-max-file-size="3M"
+                          />
+                        </div>
                       </ModalBody>
                       <ModalFooter>
 

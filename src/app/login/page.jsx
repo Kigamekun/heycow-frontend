@@ -7,7 +7,6 @@ import { useAuth } from "@/lib/hooks/auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
 import Link from "next/link";
 
 export default function Page() {

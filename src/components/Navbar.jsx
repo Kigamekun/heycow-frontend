@@ -1,11 +1,12 @@
 'use client';
-import Request from '@/components/request';
 import { useAuth } from '@/lib/hooks/auth';
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
+import axios from "axios";
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import Request from '@/components/request';
 export function Navbar() {
     const router = useRouter();
     const pathname = usePathname();
@@ -75,12 +76,12 @@ export function Navbar() {
                             </button>
                         )}
                     </div>
-                    <div className='gap-3 d-flex'>
+                    <div className='d-flex gap-3'>
                         <Popover>
                             <PopoverTrigger>
                                 <div className="notification d-flex mt-[-2.7rem] align-items-center gap-1">
-                                    <i className="text-3xl bi bi-bell" />
-                                    <span className="px-2 text-white bg-red-600 rounded-full badge">{notificationData.length}</span>
+                                    <i className="bi bi-bell text-3xl text-black" />
+                                    <span className="badge bg-red-600 rounded-full text-white px-2">{notificationData.length}</span>
                                 </div>
                             </PopoverTrigger>
                             <PopoverContent className="bg-white p-2 mt-[-2rem]  cursor-pointer">
@@ -114,7 +115,7 @@ export function Navbar() {
                                 <div className="gap-3 profile d-flex align-items-center">
                                     <div className="text-right profile-info">
                                         <h4>{user ? user.name : 'User'}</h4>
-                                        <p>{user ? user.role : 'Role'}</p>
+                                        <p className='text-black'>{user ? user.role : 'Role'}</p>
                                     </div>
                                     <img src={user ? user.avatar : "https://images.unsplash.com/broken"} alt="Profile" className="rounded-full mt-[-1.5rem] w-[60px]" />
                                 </div>

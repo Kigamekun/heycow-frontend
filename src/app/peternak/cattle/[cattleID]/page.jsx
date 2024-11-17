@@ -37,6 +37,7 @@ import { animals } from "../dummy";
 import axios from "axios"
 import Swal from "sweetalert2"
 import { swal } from "@/public/assets/extensions/sweetalert2/sweetalert2.all";
+import Image from "next/image";
 
 export default function Page( {params} ){
     const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin  '})
@@ -240,7 +241,7 @@ const [cattleData, setCattleData] = useState(
     bodyFormData.append('last_vaccination', cattle.last_vaccination);
 
     try {
-      const res = await axios.put(
+      const res = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/${params.cattleID}`,
         bodyFormData,
         {
@@ -252,31 +253,28 @@ const [cattleData, setCattleData] = useState(
       );
       console.log(res.data.data) ;
       // Refresh cattle data
+    if (res.data.data) {
+      setCattle({
+        id: 0,
+        name: "",
+        gender: "",
+        status: "",
+        birth_date: "",
+        birth_weight: "",
+        birth_height: "",
+        last_vaccination: ""
+      });
+    }
+    Swal.fire({
+      icon: 'success',
+      title: 'Cattle updated successfully',
+      showConfirmButton: false,
+      timer: 1500
+    }).then(() => {
       getCattleData();
-      if(res.data.data)
-        {
-          setCattle({
-          id: 0,
-          name: "",
-          gender : "",
-          status : "",
-          birth_date : "",
-          birth_weight : "",
-          birth_height : "",
-          last_vaccination : ""
-        }, 
-      Swal.fire({
-        icon: 'success',
-        title: 'Cattle updated successfully',
-        showConfirmButton: false,
-        timer: 1500
-      }));
-}
       // Reset form fields
-      
-      setOpen(false);
-
-      Swal.close();
+      onClose();
+    });
     } catch (error) {
       console.error('Error:', error.response);  // Log error lengkap dari response
       if (error.response && error.response.status === 401) {
@@ -368,6 +366,10 @@ const [cattleData, setCattleData] = useState(
         return <div>Loading...</div>;
     }
 
+    const formatDate = (dateString) => {
+      const options = { day: 'numeric', month: 'long', year: 'numeric' };
+      return new Date(dateString).toLocaleDateString('id-ID', options);
+    };
     const deleteCattle = async () => {
       Swal.fire({
         title: 'Are you sure?',
@@ -437,6 +439,7 @@ const [cattleData, setCattleData] = useState(
   
       const bodyFormData = new FormData();
       bodyFormData.append('iot_device_id', cattle.iot_device_id);
+
   
       try {
         const res = await axios.patch(
@@ -492,6 +495,80 @@ const [cattleData, setCattleData] = useState(
       }
     };
 
+    const removeIoTDevices = async (e) => {
+      e.preventDefault();
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, remove it!'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Loading...',
+            text: 'Mohon tunggu sebentar...',
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            }
+          });
+    
+          try {
+            const res = await axios.delete(
+              `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle/remove-iot-devices/${params.cattleID}`,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+              }
+            );
+            console.log(res.data.data);
+            // Refresh cattle data
+            getCattleData();
+            if (res.data.data) {
+              setCattle({
+                ...cattle,
+                iot_device_id: null,
+                iot_device: {
+                  ...cattle.iot_device,
+                  status: "inactive",
+                }
+              });
+              Swal.fire({
+                icon: 'success',
+                title: 'IoT Devices removed successfully',
+                showConfirmButton: false,
+                timer: 1500
+              });
+            }
+          } catch (error) {
+            console.error('Error:', error.response);  // Log error lengkap dari response
+            if (error.response && error.response.status === 401) {
+              Swal.fire({
+                icon: 'error',
+                title: error.response.data.message,
+                showConfirmButton: false,
+                timer: 1500
+              });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error terjadi',
+                text: 'Mohon coba lagi nanti.',
+                showConfirmButton: false,
+                timer: 1500
+              });
+            }
+          } finally {
+            Swal.close();
+          }
+        }
+      });
+    };
     const handleSelectChange1 = (value) => {
       setCattle({ ...cattle, breed_id: value });
     };
@@ -508,6 +585,11 @@ const [cattleData, setCattleData] = useState(
     const handleStatusChange = (value) => {
       setCattle({ ...cattle, status: value });
     };
+    const handleInputChange1 = (e) => {
+      const { name, value } = e.target;
+      setCattle({ ...cattle, iot_device: { ...cattle.iot_device, [name]: value } });
+    };
+    const iotDeviceUser = IotDeviceData ? IotDeviceData.filter((iot) => iot.user_id === user?.id) : [];
     return (
         <>
             {/* card 1 untuk destroy dan edit */}
@@ -515,8 +597,12 @@ const [cattleData, setCattleData] = useState(
 
             
                 <div className="card w-[800px]">
-                    <div className="card-body d-flex justify-start">
+                    <div className="card-body d-flex justify-between">
                       <h5 className="text-black font-bold"> {cattle.name}</h5>
+                      <div>
+                        <i class="bi bi-trash-fill text-2xl cursor-pointer text-red-700" onClick={() => { deleteCattle() }}></i>
+                        <i class="bi m-[-1re] bi-pencil-fill cursor-pointer text-2xl text-emerald-600" onClick={onOpen}></i>
+                      </div>
                     </div>
                     <Modal 
                     isOpen={isOpen} 
@@ -680,7 +766,7 @@ const [cattleData, setCattleData] = useState(
                             <div>
                                 <div className="title-iot d-flex justify-center">
                                  {/* <img src="https://i.pinimg.com/564x/df/e2/9f/dfe29f50ec425d8b4bd1eafb86f3ff2a.jpg" alt="cattle" width={250} height={250} /> */}
-                                <img src={cattle.imageUrl} alt="cattle" width={250} height={250} />
+                                  <Image src={'https://heycow.my.id/storage'+cattle.image} alt="cattle" width={250} height={250} />
                                 </div>
                                
                                 <p className="text-lg text-black text-center">From : <span className="font-bold">{cattle.farm &&cattle.farm.name}</span></p>
@@ -707,11 +793,13 @@ const [cattleData, setCattleData] = useState(
                                 <div className="title-iot d-flex justify-between">
                                     
                                     <div className="d-flex gap-3">
-                                      <i class="bi bi-trash-fill text-2xl cursor-pointer text-red-700" onClick={() => { deleteCattle() }}></i>
-                                        
-                                        <i class="bi m-[-1re] bi-pencil-fill cursor-pointer text-2xl text-emerald-600" onClick={onOpen}></i>
+                                     
                                     </div>
+                                    <div className="gap-3 d-flex">
+                                    <Button  className="bg-red-600" onClick={removeIoTDevices }>Remove IoT</Button>
                                     <Button  className="bg-emerald-600" onClick={onIotModalOpen }>Set IoT</Button>
+                                    </div>
+                                    
                                 </div>
                             </div>
                             <div >
@@ -737,7 +825,7 @@ const [cattleData, setCattleData] = useState(
                                     </TableRow>
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">Date of Birth</TableCell>
-                                      <TableCell className="font-thin text-sm">{cattle.birth_date && cattle.birth_date}</TableCell>
+                                      <TableCell className="font-thin text-sm">{formatDate(cattle.birth_date && cattle.birth_date)}</TableCell>
                                     </TableRow>
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">Weight</TableCell>
@@ -756,7 +844,7 @@ const [cattleData, setCattleData] = useState(
                                     <TableRow className="text-black">
                                       <TableCell className="font-bold text-lg">Last Vaccination</TableCell>
                                       <TableCell className="font-thin text-sm">
-                                        {cattle.last_vaccination ? cattle.last_vaccination : 'belum ada vaksinasi'}
+                                        {formatDate(cattle.last_vaccination ? cattle.last_vaccination : 'belum ada vaksinasi')}
                                       </TableCell>
                                     </TableRow>
                                 </TableBody>
@@ -808,36 +896,72 @@ const [cattleData, setCattleData] = useState(
                     }}
                     >
                     <form onSubmit={assignIotDevices}>
-                      <ModalContent className="w-[800px] h-[320px] bg-white rounded-xl ">
+                      <ModalContent className="w-[800px] h-[600px] bg-white rounded-xl px-4">
                       {(onIotModalClose) => (
                       <>
-                      <ModalHeader className="dialog-title flex flex-col gap-2 px-6 mt-6">
+                      <ModalHeader className="dialog-title flex flex-col gap-2">
                           <h3 className="text-black font-bold text-center">Set IoT Devices</h3>
                       </ModalHeader>
                       <ModalBody className="grid">
                           {/* Cattle Name */}
                           <div className="grid-cols-1">
-                          <label htmlFor="iot_devices" className="font-bold text-black mb-[-1rem]">
-                            <h6>Iot Devices</h6>
-                          </label>
-                          <Select
-                            id="iot_devices"
-                            variant="bordered"
-                            name="iot_device_id"
-                            autoFocus
-                            value={cattle.iot_device_id}
-                            placeholder="Select your iot devices"
-                            onChange={(e) => handleSelectChange2(e.target.value)}
-                            className="w-full mt-[1rem]"
-                          >
-                            {IotDeviceData && IotDeviceData.map((iot_devices) => (
-                              <SelectItem key={iot_devices.serial_number} value={iot_devices.serial_number} className="bg-white">
-                                {iot_devices.serial_number}
-                              </SelectItem>
-                            ))}
-                          </Select>
-                        </div>
-                      
+                            <label htmlFor="iot_devices" className="font-bold text-black mb-[-1rem]">
+                              <h6>Iot Devices</h6>
+                            </label>
+                            <Select
+                              id="iot_devices"
+                              variant="bordered"
+                              name="iot_device_id"
+                              autoFocus
+                              value={cattle.iot_device_id}
+                              placeholder="Select your iot devices"
+                              onChange={(e) => handleSelectChange2(e.target.value)}
+                              className="w-full mt-[1rem]"
+                            >
+                              {/* {IotDeviceData && IotDeviceData.map((iot_devices) => (
+                                <SelectItem key={iot_devices.serial_number} value={iot_devices.serial_number} className="bg-white">
+                                  {iot_devices.serial_number}
+                                </SelectItem>
+                              ))} */}
+                              {iotDeviceUser.map((iot) => (
+                                <SelectItem key={iot.serial_number} value={iot.serial_number} className="bg-white">
+                                  {iot.serial_number}
+                                </SelectItem>
+                              ))}
+                            </Select>
+                          </div>
+                          <div className="grid-cols-1">
+                            <label htmlFor="ssid" className="font-bold text-black mb-[-1rem]">
+                              <h6>SSID</h6>
+                            </label>
+                            <Input
+                              id="ssid"
+                              name="ssid"
+                              autoFocus
+                              type="text"
+                              value={cattle.iot_device && cattle.iot_device.ssid}
+                              placeholder="Input your cattle birth weight"
+                              variant="bordered"
+                              className="w-full h-[2.8rem]"
+                              onChange={handleInputChange1}
+                            />
+                          </div>
+                          <div className="grid-cols-1">
+                            <label htmlFor="password" className="font-bold text-black mb-[-1rem]">
+                              <h6>Password</h6>
+                            </label>
+                            <Input
+                              id="password"
+                              name="password"
+                              autoFocus
+                              type="password"
+                              value={cattle.iot_device && cattle.iot_device.password}
+                              placeholder="Input your IoT device password"
+                              variant="bordered"
+                              className="w-full h-[2.8rem]"
+                              onChange={handleInputChange1}
+                            />
+                          </div>
                           </ModalBody>
                           <ModalFooter>
 

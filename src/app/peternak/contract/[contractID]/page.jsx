@@ -62,7 +62,7 @@ export default function ContractID( {params} ) {
         if (status === 'pending') {
             return 'bg-orange-400';
         } else if (status === 'active') {
-            return 'bg-yellow-400';
+            return 'bg-blue-500';
         } else if (status === 'completed') {
                 return 'bg-emerald-400';
         } else if (status === 'returned') {
@@ -100,6 +100,37 @@ export default function ContractID( {params} ) {
             })
         }
       };
+
+    const RatePengangon = async () => {
+        const bodyFormData = new FormData();
+        bodyFormData.append('rate', returnContractData.rate);
+        try {
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/contract/${params.contractID}/return`, bodyFormData,{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            console.log('Contract data:', res.data.data);
+            Swal.fire({
+                icon: 'success',
+                title: 'Kontrak berhasil dinilai',
+                showConfirmButton: false,
+                timer: 1500,
+            });
+            setReturnContractData();
+        } catch (error) {
+            console.error('Error fetching contract data:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error occurred',
+                text: ['Please try again later.', error],
+                showConfirmButton: false,
+                timer: 1500,
+            })
+        }
+     }
+    
     const formatDate = (dateString) => {
         const options = { day: 'numeric', month: 'long', year: 'numeric' };
         return new Date(dateString).toLocaleDateString('id-ID', options);
@@ -182,9 +213,7 @@ export default function ContractID( {params} ) {
                         <div className='d-flex gap-10'>
                             <div className='gap-2'>
                                 <img src={contract.request && contract.request.peternak && contract.request.peternak.full_avatar_url || "https://via.placeholder.com/130"} alt="user" className="w-[20rem]" />
-                                <div className='d-flex justify-center'>
-                                    <ReactStars count={5} size={45} value={contract.rate} edit={false} color2={'#ffd700'} />
-                                </div>
+                                
                             </div>
                             
                             <div className=''>
@@ -246,19 +275,25 @@ export default function ContractID( {params} ) {
                                 <i className="bi bi-check-circle text-emerald-600 text-2xl font-bold"></i>
                                 <p className='text-emerald-600 text-2xl font-bold'>Lunas</p> 
                              </div>
-                            {contract.request && contract.request.peternak && contract.request.peternak_id === user.id && user.id && contract.status !== 'returned' && (
+                            {contract.request && contract.request.peternak && contract.request.peternak_id === user?.id && contract.status !== 'returned' && (
                                 <div className='d-flex justify-center mt-4'>
                                     <Button className='bg-emerald-600 rounded-lg text-white text-xl' onClick={onReturnOpen}>
                                         Selesaikan Kontrak
                                     </Button>    
                                 </div>
                             )}
-                             {contract.request && contract.request.peternak && contract.request.peternak_id !== user.id && user.id && contract.status === 'returned' && (
-                                <div className='d-flex justify-center mt-4'>
-                                    <Button className='bg-emerald-600 rounded-lg text-white text-xl' onClick={onReturnOpen}>
+                             {contract.request && contract.request.peternak && contract.request.peternak_id !== user?.id && contract.status === 'returned' && (
+                                <form className='mt-4' onSubmit={RatePengangon}>
+                                    <div className='d-flex justify-center'>
+                                        <ReactStars count={5} size={45} value={returnContractData.rate} edit={true} color2={'#ffd700'} onChange={(newRating) => setReturnContractData({ ...returnContractData, rate: newRating })} />
+                                    </div>
+                                    <div className='d-flex justify-center'>
+                                    <Button className='mx-auto bg-emerald-600 rounded-lg text-white text-xl' type="submit">
                                         Berikan Rating pada Peternak!
-                                    </Button>    
-                                </div>
+                                    </Button>
+                                    </div>
+                                        
+                                </form>
                             )}
                         </div>
                     )}

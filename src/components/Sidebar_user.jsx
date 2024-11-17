@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 
 import heycow from '@/images/heycow_img.svg';
-import { Barn, Cow } from '@phosphor-icons/react';
+import { Barn, Bell, Cow } from '@phosphor-icons/react';
 import Image from "next/image";
 import Swal from "sweetalert2";
 export function Sidebar() {
@@ -84,34 +84,42 @@ export function Sidebar() {
                             <span className="">Cattle</span>
                         </Link>
                     </li>
-                    <li className={`sidebar-item ${pathname === "/peternak/angon" && "/peternak/angon/pengangon" ? "active" : ""}`}>
+                    {/* <li className={`sidebar-item ${pathname === "/peternak/angon" && "/peternak/angon/pengangon" ? "active" : ""}`}>
                         <Link className="sidebar-link" href="/peternak/angon">
                             <div className='ph'>
                                 <Barn className="ph-barn" size={20} />
                             </div>
                             <span className="">Angon</span>
                      </Link>
-                 </li>
-                 <li className={`sidebar-item ${pathname === "/peternak/help-center" ? "active" : ""}`}>
-                     <Link className="sidebar-link" href="/peternak/help-center">
-                         <i className=" bi bi-telephone-fill" />
-                         <span className="">Help Center</span>
+                 </li> */}
+                    <li className={`sidebar-item ${pathname === "/peternak/notification" && "/peternak/notification" ? "active" : ""}`}>
+                        <Link className="sidebar-link" href="/peternak/notification">
+                            <div className='ph'>
+                                <Bell className="ph-bell" size={20} />
+                            </div>
+                            <span className="">Notification</span>
                      </Link>
-                 </li>
-                 <li className={`sidebar-item ${pathname === "/peternak/contract" ? "active" : ""}`}>
-                     <Link className="sidebar-link" href="/peternak/contract">
-                            <i class="bi bi-pass-fill"></i>
-                            <span className="">contract</span>
-                     </Link>
-                 </li>
-                 <li className={`sidebar-item ${pathname === "/peternak/history" ? "active" : ""}`}>
-                     <Link className="sidebar-link" href="/peternak/history">
+                    </li>
+                    <li className={`sidebar-item ${pathname === "/peternak/help-center" ? "active" : ""}`}>
+                        <Link className="sidebar-link" href="/peternak/help-center">
+                            <i className=" bi bi-telephone-fill" />
+                            <span className="">Help Center</span>
+                        </Link>
+                    </li>
+                    <li className={`sidebar-item ${pathname === "/peternak/contract" ? "active" : ""}`}>
+                        <Link className="sidebar-link" href="/peternak/contract">
+                                <i class="bi bi-pass-fill"></i>
+                                <span className="">contract</span>
+                        </Link>
+                    </li>
+                    <li className={`sidebar-item ${pathname === "/peternak/history" ? "active" : ""}`}>
+                        <Link className="sidebar-link" href="/peternak/history">
                             <i class="bi bi-clock-history "></i>
                             <span className="">History</span>
                         </Link>
                     </li>
 
-
+                    
 
                 </ul>
             </div>
