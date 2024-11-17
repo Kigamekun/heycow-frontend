@@ -316,8 +316,7 @@ export default function ContractID( {params} ) {
                                 <p className='text-red-600 text-2xl font-bold'>Belum Dibayar</p> 
                             </div>
                             
-                            {contract.request.user && contract.request.peternak_id && contract.request.peternak_id !== user.id && 
-                             user.id &&  user.id &&(
+                            {contract.request.user && contract.request.peternak_id && contract.request.peternak_id !== user?.id  &&(
                                 <div className='d-flex justify-center mt-4'>
                                     <Button className='bg-emerald-600 rounded-lg text-white text-xl' onClick={onOpen}>
                                         Bayar Sekarang

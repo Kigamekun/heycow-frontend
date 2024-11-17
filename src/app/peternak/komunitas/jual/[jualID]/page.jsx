@@ -11,7 +11,6 @@ import {
 import Swal from 'sweetalert2';
 import { Button } from '@nextui-org/react';
 import { Input } from '@nextui-org/react';
-import Link from 'next/link';
 export default function Page({params}) {
     const { user, logout } = useAuth({ middleware: 'cattleman' || 'admin' });
     const [likes, setLikes] = useState({
@@ -130,9 +129,31 @@ export default function Page({params}) {
         }
     }
 
+    // const unLikePosts = async () => {
+    //     const bodyFormData = new FormData();
+    //     bodyFormData.delete('like', 0);
+    //     try {
+    //         const res = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${params.jualID}/likes`, {
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'Authorization': `Bearer ${localStorage.getItem('token')}`
+    //             }
+    //         });
+    //         console.log(res.data);
+            
+    //         // Optionally, you can add code here to update the UI after successful unlike
+    //     } catch (error) {
+    //         console.error('Error:', error.response);  // Log error lengkap dari response
+    //         Swal.fire({
+    //             icon: 'error',
+    //             title: 'Error unliking post',
+    //             text: error.response.data.message,
+    //             showConfirmButton: false,
+    //             timer: 1500
+    //         });
+    //     }
+    // }
     const unLikePosts = async () => {
-        const bodyFormData = new FormData();
-        bodyFormData.delete('like', 0);
         try {
             const res = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${params.jualID}/likes`, {
                 headers: {
@@ -141,7 +162,6 @@ export default function Page({params}) {
                 }
             });
             console.log(res.data);
-            
             // Optionally, you can add code here to update the UI after successful unlike
         } catch (error) {
             console.error('Error:', error.response);  // Log error lengkap dari response
@@ -205,12 +225,6 @@ export default function Page({params}) {
     };
     const handleInputChange = (e) => {
         setComments({ ...comments, content: e.target.value });
-    };
-    const formatPhoneNumber = (phoneNumber) => {
-        if (phoneNumber && phoneNumber.startsWith('081')) {
-            return '62' + phoneNumber.slice(1);
-        }
-        return phoneNumber;
     };
     react.useEffect(() => {
         getJualDetail();
@@ -279,9 +293,7 @@ export default function Page({params}) {
                                 </div>
                                 <div className="Harga-Button d-flex justify-between mt-[2rem]">
                                     <h3 className="text-black font-bold">Harga : {jualDetail && jualDetail.price}</h3>
-                                    <Link href={`https://wa.me/`+formatPhoneNumber(jualDetail.user && jualDetail.user.phone_number)}>
                                     <Button className="bg-emerald-600 text-white text-xl rounded-lg">Beli</Button>
-                                    </Link>
                                 </div>
                                 <div className="gap-4 mt-3 container-post-action d-flex">
                                     <div className="gap-2 Likes-count d-flex text-md">

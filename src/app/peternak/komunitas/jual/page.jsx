@@ -268,7 +268,7 @@ export default function JualPage() {
           })
         }
       }
-
+      const [sortOrder, setSortOrder] = useState('asc');
       const DeletePosts = async (id) => {
         if (user && user.role === 'admin') {
             try {
@@ -300,6 +300,7 @@ export default function JualPage() {
         }
     };
       const handleSort = (order) => {
+        
         setSortOrder(order);
         const sortedData = [...jualData].sort((a, b) => {
           if (order === 'asc') {
@@ -379,6 +380,7 @@ export default function JualPage() {
             <div className="grid grid-cols-1 container-post">
                     {jualData?.map((post, index) => (
                         <div key={index} className="card mt-3 w-[50rem] grid grid-cols-1 gap-6">
+                          
                             <div className="card-body">
                               <div className="settings post float-end">
                                 <Popover size="sm">
@@ -411,7 +413,7 @@ export default function JualPage() {
                                     </p>
                                     {/* <img src={post.image} alt="post" className="w-[100%] max-h-[400px] border" /> */}
                                     <div className="d-flex justify-center">
-                                      <img src={post.full_image_url || 'https://icons.iconarchive.com/icons/fa-team/fontawesome/256/FontAwesome-Image-icon.png'} alt="post" className="w-[45rem]"/>
+                                      <img src={post.full_image_url || 'https://icons.iconarchive.com/icons/fa-team/fontawesome/256/FontAwesome-Image-icon.png'} alt="post" className="w-[35rem]"/>
                                     </div>
                                     
                                     <div className="d-flex justify-between mt-5">
@@ -422,13 +424,13 @@ export default function JualPage() {
                                     </div>
                                 </div>
                                 <div className="gap-4 mt-3 container-post-action d-flex">
-                                    <div className="gap-2 Likes-count d-flex text-md">
+                                    <div className="gap-3 Likes-count d-flex text-2xl">
                                         <i class="bi bi-heart-fill text-red-600"></i>
-                                        <p className="text-black">{post.likes_count}</p>
+                                        <p className="text-black text-2xl">{post.likes_count}</p>
                                     </div>
-                                    <div className="gap-2 Likes-count d-flex text-md ">
+                                    <div className="gap-3 Likes-count d-flex text-2xl ">
                                         <i class="bi bi-chat-dots-fill text-emerald-500"></i>
-                                        <p className="text-black">{post.comments_count}</p>
+                                        <p className="text-black text-2xl">{post.comments_count}</p>
                                     </div>
                                 </div>
                             </div>

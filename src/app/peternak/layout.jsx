@@ -5,10 +5,17 @@ import "../globals.css";
 import '@/styles/app.css';
 import '@/styles/iconly.css';
 
+// export const metadata = {
+//     title: 'Heycow!',
+//     description: '...',
+//   }
+
+
 import { Navbar } from '@/components/Navbar'; // Import Sidebar
 import { Sidebar } from '@/components/Sidebar_user'; // Import Sidebar
 import { useRouter } from "next/navigation"; // Import router untuk redirect
 import { useState } from "react";
+import Head from "next/head";
 
 
 export default function RootLayout({ children }) {
@@ -26,40 +33,35 @@ export default function RootLayout({ children }) {
     const router = useRouter();
 
     const [loading, setLoading] = useState(true); // Tambahkan state loading
+    const pageTitle = pathname ? pathname.split('/localhost:3000/')[0] : '';
 
     return (
         <main>
-            
-            <div id="app" >
+             <title>Heycow!</title>
+            <link rel="icon" href="hey_cow.svg" />
+            <div id="app">
                 <Navbar />
-                
-                <div id="sidebar" className="fixed left-0 z-50 justify-between d-flex bg-emerald-500" >
-                        <div className="w-auto overflow-hidden sidebar-wrapper active">
-                            <div className="sidebar-header w-[300px]" >
-                                <div className="d-flex justify-content-between align-items-center bg-emerald-600">
-                                    <div className="logo bg-emerald-600">
-                                        <a href="index.html">
-                                        </a>
-                                     </div>
-                                    <div className="sidebar-toggler x bg-emerald-600">
-                                        <a href="#" className="sidebar-hide d-xl-none d-block">
-                                            <i className="bi bi-x bi-middle" />
-                                        </a>
-                                    </div>
+                <div id="sidebar" className="fixed left-0 z-50 justify-between d-flex bg-emerald-500">
+                    <div className="w-auto overflow-hidden sidebar-wrapper active">
+                        <div className="sidebar-header w-[300px]">
+                            <div className="d-flex justify-content-between align-items-center bg-emerald-600">
+                                <div className="logo bg-emerald-600">
+                                    <a href="index.html"></a>
+                                </div>
+                                <div className="sidebar-toggler x bg-emerald-600">
+                                    <a href="#" className="sidebar-hide d-xl-none d-block">
+                                        <i className="bi bi-x bi-middle" />
+                                    </a>
                                 </div>
                             </div>
+                        </div>
                         <Sidebar />
                     </div>
-                    
-
                 </div>
-              
-                <div id="main" className="my-24 children"> 
+                <div id="main" className="my-24 children">
                     {children}
                 </div>
-                
             </div>
-            
         </main>
     );
 }

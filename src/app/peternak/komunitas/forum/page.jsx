@@ -3,7 +3,6 @@
 import { swal } from "@/public/assets/extensions/sweetalert2/sweetalert2.all";
 import axios from "axios";
 import Script from "next/script";
-import * as React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
@@ -36,8 +35,9 @@ import { useAuth } from "@/lib/hooks/auth";
 import Link from "next/link";
 export default function ForumPage() {
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
-    const [forumData, setForumData] = React.useState([]);
-    const [forum, setForum] = React.useState({
+    const [forumData, setForumData] = useState([]);
+    const [sortOrder, setSortOrder] = useState('asc');
+    const [forum, setForum] = useState({
         id: 0,
         title: '',
         content: '',
@@ -267,7 +267,7 @@ export default function ForumPage() {
       };
       const handleSort = (order) => {
         setSortOrder(order);
-        const sortedData = [...jualData].sort((a, b) => {
+        const sortedData = [...forumData].sort((a, b) => {
           if (order === 'asc') {
             return new Date(a.created_at) - new Date(b.created_at);
           } else {
@@ -289,7 +289,7 @@ export default function ForumPage() {
         setForum({ ...forum, category: event.target.value });
     };
     console.log(forumData);
-    React.useEffect(() => {
+    useEffect(() => {
         getForumData()
       }, [])
   return (
@@ -321,16 +321,19 @@ export default function ForumPage() {
                       </div>  
                       
                       <Divider orientation="vertical" color="black"/>
-                      <div className="gap-3 cursor-pointer d-flex" onClick={() => window.location.href = '/peternak/komunitas/forum'}>
-                        <i class="bi bi-question-circle text-black text-xl"></i>
-                        <p className="text-lg text-black">Tanyakan</p>
-                      </div>
-
+                      <Link href="/peternak/komunitas/forum">
+                        <div className="gap-3 cursor-pointer d-flex" >
+                          <i class="bi bi-question-circle text-black text-xl"></i>
+                          <p className="text-lg text-black">Tanyakan</p>
+                        </div>
+                      </Link>
                       <Divider orientation="vertical"/>
-                      <div className="gap-3 cursor-pointer d-flex" onClick={() => window.location.href = '/peternak/komunitas/jual'}>
-                        <i class="bi bi-currency-exchange  text-black text-xl"></i>
-                        <p className="text-lg text-black">Jual</p>
-                      </div>
+                      <Link href="/peternak/komunitas/jual">
+                        <div className="gap-3 cursor-pointer d-flex">
+                          <i class="bi bi-currency-exchange  text-black text-xl"></i>
+                          <p className="text-lg text-black">Jual</p>
+                        </div>
+                      </Link>
                   </div>
                 </div>
             </div>
@@ -370,8 +373,9 @@ export default function ForumPage() {
                                     <p className="text-black">
                                         {post.content}
                                     </p>
+                                    
                                     {/* <img src={post.image} alt="post" className="w-[100%] max-h-[400px] border" /> */}
-                                    <img src={post.full_image_url || 'https://icons.iconarchive.com/icons/fa-team/fontawesome/256/FontAwesome-Image-icon.png'} alt="post" className="w-[30rem]"/>
+                                    <img src={post.full_image_url || 'https://icons.iconarchive.com/icons/fa-team/fontawesome/256/FontAwesome-Image-icon.png'} alt="post" className="w-[40rem] mx-auto"/>
                                 </div>
                                 <div className="gap-4 mt-10 container-post-action d-flex justify-between">
                                   <div className="d-flex gap-4">
