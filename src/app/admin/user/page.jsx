@@ -189,7 +189,7 @@ export default function Home() {
       accessorKey: 'id',
       header: 'Actions',
       cell: info => (
-        <div>
+        <div className="flex items-center justify-center">
           <button className="text-xs text-white btn btn-warning" onClick={() => editUser(Number(info.getValue()))}>Edit</button>
           <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteUser(Number(info.getValue()))}>Delete</button>
         </div>
@@ -413,6 +413,7 @@ export default function Home() {
 
   const updateUser = async (e) => {
     e.preventDefault();
+  
     Swal.fire({
       title: 'Loading...',
       text: 'Mohon tunggu sebentar...',
@@ -421,67 +422,62 @@ export default function Home() {
         Swal.showLoading();
       }
     });
-
-    
-    const bodyFormData = new FormData();
-    if (selectedFile) {
-      bodyFormData.append('avatar', selectedFile);
-    }
-    bodyFormData.append('name', User.name);
-    bodyFormData.append('address', User.address);
-    bodyFormData.append('phone_number', User.phone_number);
-    bodyFormData.append('email', User.email);
-    bodyFormData.append('password', User.password);
-    bodyFormData.append('role', User.role);
-
-    var res = await axios.put(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${User.id}`,
-      bodyFormData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-
-        },
-      }
-    )
-      .then(function (response) {
-        getUserData();
-        setUser({
-          id: 0,
-          avatar: '',
-          name: '',
-          address: '',
-          phone_number: '',
-          email: '',
-          role: '',
-          password: '',
-
-        });
-        Swal.close()
-        setOpen(false);
-      }).catch(function (error) {
-        if (error.response && error.response.status === 401) {
-          Swal.fire({
-            icon: 'error',
-            title: error.response.data.message,
-            showConfirmButton: false,
-            timer: 1500
-          })
-
-          logout()
-
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'error terjadi',
-            text: 'mohon coba lagi nanti.',
-            showConfirmButton: false,
-            timer: 1500
-          });
+    const userData = {
+      name: User.name,
+      address: User.address,
+      phone_number: User.phone_number,
+      email: User.email,
+      password: User.password,
+      role: User.role,
+    };
+  
+    try {
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users/${User.id}`,
+        userData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         }
-      })
-  }
+      );
+  
+      // Assuming success
+      getUserData();
+      setUser({
+        id: 0,
+        avatar: '',
+        name: '',
+        address: '',
+        phone_number: '',
+        email: '',
+        role: '',
+        password: '',
+      });
+      Swal.close();
+      setOpen(false);
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        logout();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error terjadi',
+          text: 'Mohon coba lagi nanti.',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    }
+  };
+  
 
   const deleteUser = async (id) => {
     Swal.fire({
@@ -550,16 +546,6 @@ export default function Home() {
                     <DialogTitle className="mb-4">{User.id != 0 ? 'Update' : 'Create'} User</DialogTitle>
                     <DialogDescription>
                       <form method="dialog" onSubmit={User.id != 0 ? updateUser : createUser}>
-                        {/* untuk masukkan file, gunakan dropify */}
-                        <label className="mb-2 text-black float-start"> Avatar </label>
-                        <input
-                          className="file-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          // value={User.avatar}
-                          type="file"
-                          name="avatar"
-                          placeholder="Chose your avatar"
-                          onChange={handleFileSelect}
-                        />
                         <label className="mb-2 text-black float-start"> Name </label>
                         <input
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"

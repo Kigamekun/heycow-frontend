@@ -198,6 +198,7 @@ export default function Home() {
       }
     }
   };
+
   console.log(cattleData);
   useEffect(() => {
     getCattleData();

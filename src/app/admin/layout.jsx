@@ -17,30 +17,37 @@ export default function RootLayout({ children }) {
     // className="justify-between d-flex"
     return (
         <main>
-            <div id="app" className='mb-3'  >
+
+            <div id="app" >
                 <Navbar />
+
                 <div id="sidebar" className="fixed left-0 z-50 justify-between d-flex bg-emerald-500" >
-                        <div className="w-auto overflow-hidden sidebar-wrapper active">
-                            <div className="sidebar-header w-[300px]" >
-                                <div className="d-flex justify-content-between align-items-center bg-emerald-600">
-                                    <div className="logo bg-emerald-600">
-                                        <a href="index.html">
-                                        </a>
-                                     </div>
-                                    <div className="sidebar-toggler x bg-emerald-600">
-                                        <a href="#" className="sidebar-hide d-xl-none d-block">
-                                            <i className="bi bi-x bi-middle" />
-                                        </a>
-                                    </div>
+                    <div className="w-auto overflow-hidden sidebar-wrapper active">
+                        <div className="sidebar-header w-[300px]" >
+                            <div className="d-flex justify-content-between align-items-center bg-emerald-600">
+                                <div className="logo bg-emerald-600">
+                                    <a href="index.html">
+                                    </a>
+                                </div>
+                                <div className="sidebar-toggler x bg-emerald-600">
+                                    <a href="#" className="sidebar-hide d-xl-none d-block">
+                                        <i className="bi bi-x bi-middle" />
+                                    </a>
                                 </div>
                             </div>
+                        </div>
                         <Sidebar />
                     </div>
+
+
                 </div>
+
+                <div id="main" className="my-24 children">
+                    {children}
+                </div>
+
             </div>
-            <div id="main" className="mt-24">
-                {children}
-            </div>
+
         </main>
     );
 }

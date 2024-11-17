@@ -70,6 +70,7 @@ export default function Home() {
 
   const [selectedFile, setSelectedFile] = useState();
   const [UserData, setUserData] = useState([])
+  const [cattleData, setCattleData] = useState([]);
 
 
   const [BlogPostData, setBlogPostData] = useState([]);
@@ -334,13 +335,15 @@ export default function Home() {
     }
   }
 
-  const handleSelectChange = (event) => {
-    const name = event.target.name;
-    const { value } = event.target.selectedOptions[0];
-    console.log(value);
-    setBlogPost({ ...BlogPost, [name]: value });
+  const handleSelectChange = (e) => {
+    const { name, value } = e.target;
+    console.log(`Field: ${name}, Value: ${value}`); // Debugging
+    setBlogPost((prev) => ({
+      ...prev,
+      [name]: value, // Dynamically update the corresponding field in state
+    }));
+  };
 
-  }
 
   const handleFileSelect = (event) => {
     setSelectedFile(event.target.files ? event.target.files[0] : undefined);
@@ -415,6 +418,44 @@ export default function Home() {
         }
       })
   }
+
+  const getCattleData = async () => {
+
+
+    try {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/cattle`, {
+        headers: {
+          'content-type': 'text/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      });
+
+      if (res.data.data) {
+        setCattleData(res.data.data);
+        console.log('Ada datanya');
+        console.log(res.data.data);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+
+        logout();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'error terjadi',
+          text: 'mohon coba lagi nanti.',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    }
+  };
 
   const createBlogPost = async (e) => {
     e.preventDefault();
@@ -495,45 +536,6 @@ export default function Home() {
     }
   };
 
-  const editBlogPost = async (id) => {
-    const bp = BlogPostData.find((f) => f.id === id);
-    console.log(bp)
-    if (bp) {
-      setBlogPost({
-        id: bp.id,
-        user_id: bp.user_id,
-        title: bp.title,
-        content: bp.content,
-        category: bp.category,
-        image: bp.image,
-        price: bp.price,
-        cattle_id: bp.cattle_id,
-        published: bp.published,
-        published_at: bp.published_at,
-      });
-      setSelectedFile(null);
-      setOpen(true);
-    }
-  }
-
-
-  const createData = async () => {
-    setBlogPost({
-      id: 0,
-      user_id: '',
-      title: '',
-      content: '',
-      category: '',
-      image: '',
-      price: '',
-      cattle_id: '',
-      published: '',
-      published_at: ''
-
-    });
-    setOpen(true);
-  }
-
   const updateBlogPost = async (e) => {
     e.preventDefault();
     Swal.fire({
@@ -543,29 +545,28 @@ export default function Home() {
       didOpen: () => Swal.showLoading(),
     });
   
-    const bodyFormData = new FormData();
-    if (selectedFile) {
-      bodyFormData.append('image', selectedFile);
-    }
+    // Construct JSON object
+    const payload = {
+      user_id: BlogPost.user_id,
+      title: BlogPost.title,
+      content: BlogPost.content,
+      category: BlogPost.category,
+      price: BlogPost.price,
+      cattle_id: BlogPost.cattle_id,
+      published: BlogPost.published,
+      published_at: BlogPost.published_at,
+      image: selectedFile || BlogPost.image, // Optional: Include the current image if no new file is selected
+    };
   
-    bodyFormData.append('user_id', BlogPost.user_id);
-    bodyFormData.append('title', BlogPost.title);
-    bodyFormData.append('content', BlogPost.content);
-    bodyFormData.append('category', BlogPost.category);
-    bodyFormData.append('price', BlogPost.price);
-    bodyFormData.append('cattle_id', BlogPost.cattle_id);
-    bodyFormData.append('published', BlogPost.published);
-    bodyFormData.append('published_at', BlogPost.published_at);
-  
-    console.log('Data being sent:', Object.fromEntries(bodyFormData.entries())); // Debugging
+    console.log('Data being sent:', payload); // Debugging
   
     try {
       const response = await axios.put(
         `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/blog-posts/${BlogPost.id}`,
-        bodyFormData,
+        payload,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         }
@@ -599,6 +600,23 @@ export default function Home() {
     }
   };
   
+  const createData = async () => {
+    setBlogPost({
+      id: 0,
+      user_id: '',
+      title: '',
+      content: '',
+      category: '',
+      image: '',
+      price: '',
+      cattle_id: '',
+      published: '',
+      published_at: '',
+
+    });
+    setOpen(true);
+  }
+
     const deleteBlogPost = async (id) => {
       Swal.fire({
         title: 'Are you sure?',
@@ -645,6 +663,7 @@ export default function Home() {
   useEffect(() => {
     getBlogPostData();
     getUserData();
+    getCattleData();
   }, []);
 
   // Ini untuk Modal dialog ketika membuat data dengan form
@@ -660,7 +679,7 @@ export default function Home() {
           <div className="d-flex justify-content-between align-items-center">
             <h3>Community Blog Post</h3>
             <div>
-              <Button variant="outline" onClick={createBlogPost}>Create Blog Post</Button>
+              <Button variant="outline" onClick={createData}>Create Blog Post</Button>
 
 
               <Dialog open={open} onOpenChange={setOpen}>
@@ -691,8 +710,8 @@ export default function Home() {
                         >
                           <option value="">Pilih User</option>
                             {
-                              UserData && UserData.map((b) => {
-                                return <option key={b.id} value={b.id}>{b.name}</option>
+                              UserData && UserData.map((a) => {
+                                return <option key={a.id} value={a.id}>{a.name}</option>
                               })
                             }
                         </select>
@@ -734,17 +753,20 @@ export default function Home() {
                           placeholder="Masukkan Harga"
                           onChange={handleInputChange}
                         />
-                        <label className="mb-3 text-black float-start"> Publish Status </label>
-                          <select
-                            name="publish"
-                            value={BlogPost.published}
-                            onChange={handleSelectChange}
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
-                          >
-                            <option value="">Pilih Status Publish</option>
-                            <option value="draft">Draft</option>
-                            <option value="published">Published</option>
-                          </select>
+                        <label className="mb-3 text-black float-start"> Cattle </label>
+                        <select
+                          name="cattle_id"
+                          value={BlogPost.cattle_id}
+                          onChange={handleSelectChange}
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4"
+                        >
+                          <option value="">Pilih Cattle</option>
+                            {
+                              cattleData && cattleData.map((b) => {
+                                return <option key={b.id} value={b.id}>{b.name}</option>
+                              })
+                            }
+                        </select>
                         <div className="flex justify-end gap-3 mt-5">
                           <button type="submit" className="btn-modal">{BlogPost.id != 0 ? 'Update' : 'Create'} Blog Post</button>
                         </div>
