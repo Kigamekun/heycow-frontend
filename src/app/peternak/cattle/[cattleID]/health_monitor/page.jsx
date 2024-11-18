@@ -65,7 +65,6 @@ export default function Health({params}){
     }, [])
     return (
         <>
-            <h1>Health Monitor {params.cattleID}</h1>
             <div className="card w-[55rem] mx-auto">
                 <div className="card-body d-flex justify-around">
                     <div className="img">

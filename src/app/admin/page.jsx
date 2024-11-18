@@ -2,8 +2,13 @@
 import { useAuth } from "@/lib/hooks/auth"; // Hook untuk autentikasi
 import { Barn, Cow, Lasso, User } from "@phosphor-icons/react";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Swal from "sweetalert2";
+
+
+import Chart from 'chart.js/auto';
+import Link from "next/link";
+import Head from "next/head";
 
 export default function Home() {
   const { user, logout } = useAuth({ middleware: 'admin' })
@@ -63,7 +68,10 @@ export default function Home() {
   const [farmCount, setFarmCount] = useState([]);
   const [userCount, setUserCount] = useState([]);
 
-
+  const doughnutCanvas = useRef();
+  const barCanvas = useRef();
+  const [chartData, setChartData] = useState([])
+  const [contractData, setContractData] = useState([])
   const getUserData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/users`, {
       headers: {
@@ -99,7 +107,37 @@ export default function Home() {
         }
       })
   }
-
+  const getContract = async () => {
+    try {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/contract`, {
+        headers: {
+          'content-type': 'text/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      });
+      console.log(res.data.data);
+      setContractData(res.data.data);
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+  
+        logout();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'error terjadi',
+          text: 'mohon coba lagi nanti.',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    }
+  };
   const getFarmData = async () => {
     var res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/farms`, {
       headers: {
@@ -207,7 +245,112 @@ export default function Home() {
       }
     }
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch("https://dummyjson.com/users")
+      if(!response.ok){
+        console.error("Bad Response")
+      }
+      const data = await response.json()
+      // console.log(data)
+      const firstTen = data.users.splice(0,10);
+      setChartData(firstTen);
+    };
+    fetchData()
+    
+  }, [])
 
+  useEffect(() => {
+    getContract();
+    getCattleData();
+    let doughnutChart = Chart.getChart('myChart');
+    if (doughnutChart !== undefined) {
+      doughnutChart.destroy();
+    }
+
+    let barChart = Chart.getChart('dChart');
+    if (barChart !== undefined) {
+      barChart.destroy();
+    }
+    const sickCattle = cattleData.filter(cattle => cattle.status === 'sakit');
+    const soldCattle = cattleData.filter(cattle => cattle.status === 'dijual');
+    const deathCattle = cattleData.filter(cattle => cattle.status === 'mati');
+    const sehatCattle = cattleData.filter(cattle => cattle.status === 'sehat');
+    
+    const label = chartData.map((items) => items.firstName)
+    const data = chartData.map((items) => items.weight)
+  
+    new Chart(doughnutCanvas.current, {
+      type: 'doughnut',
+      data: {
+        labels:  ['Sehat', 'Sakit', 'Mati'],
+        datasets: [
+          {
+            label: 'Dataset Sapi',
+            data: [sehatCattle.length, sickCattle.length, deathCattle.length],
+            backgroundColor: [
+              'rgba(32, 165, 119, 1)',
+              'rgba(250, 204, 21, 1)',
+              'rgba(189, 25, 25, 1)',
+            ],
+            borderColor: 'rgba(255, 255, 255, 1)',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top' }
+        },
+      },
+    });
+
+    // const labels =  Array.from({ length: 9 }, (_, i) =>
+    //   new Date(0, i).toLocaleString('default', { month: 'long' })
+    // );
+    
+
+    new Chart(barCanvas.current, {
+      type: 'bar',
+      data: {
+        labels: label,
+        datasets: [
+          {
+            label: 'Data Penjualan Sapi',
+            data: data,
+            backgroundColor: [
+              'rgba(32, 165, 119, 1)',
+            ],
+            borderColor: 'rgba(255, 255, 255, 1)',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top' },
+        },
+        scales:{
+          x:{
+            grid:{
+              drawOnChartArea: false,
+              beginAtZero: true
+            }
+          },
+          y:{
+            grid:{
+              drawOnChartArea: false,
+              beginAtZero: true
+            }
+          }
+        },
+      },
+    });
+  }, [chartData]);
   useEffect(() => {
     getCattleData();
     getFarmData();
@@ -264,6 +407,34 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          
+      <div className="row">
+        <div className="mb-3 col-md-8">
+          <div className="card">
+            <div className="justify-center card-body">
+              <div className="justify-center">
+                <h5 className="mb-4">Data Penjualan Sapi</h5><hr></hr>
+                  <div className="container-bar">
+                    <canvas ref={barCanvas} id="dChart"></canvas>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="mb-3 col-md-4">
+          <div className="card">
+            <div className="card-body">
+              <div className="justify-center">
+                <h5 className="mb-4">Data Sapi</h5><hr></hr>
+                  <div className="container">
+                    <canvas ref={doughnutCanvas} id="myChart"></canvas>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   )
 }

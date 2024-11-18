@@ -276,7 +276,7 @@ export default function Home() {
       header: 'Actions',
       cell: info => (
         <div className="flex space-x-2">
-          <button className="text-xs text-white btn btn-warning" onClick={() => editBlogPost(Number(info.getValue()))}>Edit</button>
+          {/* <button className="text-xs text-white btn btn-warning" onClick={() => editBlogPost(Number(info.getValue()))}>Edit</button> */}
           <button className="ml-2 text-xs btn btn-danger" onClick={() => deleteBlogPost(Number(info.getValue()))}>Delete</button>
         </div>
       ),
