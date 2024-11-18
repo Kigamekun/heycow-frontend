@@ -81,7 +81,7 @@ export function Navbar() {
                             <PopoverTrigger>
                                 <div className="notification d-flex mt-[-2.7rem] align-items-center gap-1">
                                     <i className="bi bi-bell text-3xl text-black" />
-                                    <span className="badge bg-red-600 rounded-full text-white px-2">{notificationData.length}</span>
+                                    <span className="badge bg-red-600 rounded-pill text-white px-2">{notificationData.length}</span>
                                 </div>
                             </PopoverTrigger>
                             <PopoverContent className="bg-white p-2 mt-[-2rem]  cursor-pointer">

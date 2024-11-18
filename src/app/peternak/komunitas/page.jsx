@@ -414,7 +414,7 @@ export default function Page() {
 
                       <Divider orientation="vertical"/>
                       <Link href={'/peternak/komunitas/jual'}>
-                        <div className="gap-3 cursor-pointer d-flex" onClick={() => window.location.href = '/peternak/komunitas/jual'}>
+                        <div className="gap-3 cursor-pointer d-flex">
                           <i class="bi bi-currency-exchange  text-black text-xl"></i>
                           <p className="text-lg text-black">Jual</p>
                         </div>
@@ -465,7 +465,7 @@ export default function Page() {
                                     </div>
                                    
                                     {post.category === 'forum' && (
-                                      <div className="d-flex justify-between mt-5">
+                                      <div className="d-flex justify-end mt-5 ">
                                       <Link href={`/peternak/komunitas/forum/${post.id}`}>
                                         <Button className="text-white text-md font-bold bg-emerald-600">Lihat Detail</Button>
                                       </Link>
@@ -482,11 +482,11 @@ export default function Page() {
                                     )}
                                 </div>
                                 <div className="gap-4 mt-3 container-post-action d-flex">
-                                    <div className="gap-2 Likes-count d-flex text-md">
+                                    <div className="gap-2 Likes-count d-flex text-xl">
                                         <i class="bi bi-heart-fill text-red-600"></i>
                                         <p className="text-black">{post.likes_count}</p>
                                     </div>
-                                    <div className="gap-2 Likes-count d-flex text-md ">
+                                    <div className="gap-2 Likes-count d-flex text-xl ">
                                         <i class="bi bi-chat-dots-fill text-emerald-500"></i>
                                         <p className="text-black">{post.comments_count}</p>
                                     </div>

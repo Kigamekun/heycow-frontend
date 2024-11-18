@@ -378,11 +378,11 @@ export default function ForumPage() {
                                 </div>
                                 <div className="gap-4 mt-10 container-post-action d-flex justify-between">
                                   <div className="d-flex gap-4">
-                                    <div className="gap-2 Likes-count d-flex text-md">
+                                    <div className="gap-2 Likes-count d-flex text-xla">
                                           <i class="bi bi-heart-fill text-red-600"></i>
                                           <p className="text-black">{post.likes_count}</p>
                                       </div>
-                                      <div className="gap-2 Likes-count d-flex text-md ">
+                                      <div className="gap-2 Likes-count d-flex text-xla ">
                                           <i class="bi bi-chat-dots-fill text-emerald-500"></i>
                                           <p className="text-black">{post.comments_count}</p>
                                       </div>
