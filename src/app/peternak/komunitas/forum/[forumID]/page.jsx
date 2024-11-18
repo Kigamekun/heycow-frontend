@@ -248,7 +248,7 @@ export default function Page({params}) {
                                 <div className="gap-4 mt-3 container-post-action d-flex">
                                     <div className="gap-2 Likes-count d-flex text-2xl">
                                         <div
-                                            className="like-button" 
+                                            className="like-button text-2xl" 
                                             onClick={async () => {
                                                 if (forumDetail.isLiked) {
                                                     await unLikePosts(forumDetail.id);
@@ -260,7 +260,7 @@ export default function Page({params}) {
                                         >
                                             <i className={`bi ${forumDetail.isLiked ? ' bi-heart-fill text-red-600' : '  bi-heart text-red-600'}`}></i>
                                         </div>
-                                        <p className="text-black  ">{forumDetail.likes_count}</p>
+                                        <p className="text-black text-2xl">{forumDetail.likes_count}</p>
                                     </div>
                                     <div className="gap-3 Likes-count d-flex text-2xl ">
                                         <i class="bi bi-chat-dots-fill   text-emerald-500"></i>

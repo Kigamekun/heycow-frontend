@@ -217,7 +217,7 @@ export default function Home() {
 <div className="flex items-center justify-center">
   <img
     src={
-      row.getValue('qr_image')
+      row.getValue('ktp')
         ? `https://heycow.my.id/storage/${row.getValue('ktp')}`
         : 'https://th.bing.com/th/id/R.aece1145f2d3480e38bc9443a4998c04?rik=ey6pjfxR5wHPvQ&riu=http%3a%2f%2finstitutcommotions.com%2fwp-content%2fuploads%2f2018%2f05%2fblank-profile-picture-973460_960_720-1.png&ehk=cWQNlcoT06KT7deWxMnwK034GVCHVSXupbX4E5i1Psw%3d&risl=&pid=ImgRaw&r=0'
     }

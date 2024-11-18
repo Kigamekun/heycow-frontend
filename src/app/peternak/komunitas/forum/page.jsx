@@ -341,7 +341,6 @@ export default function ForumPage() {
             <div className="d-flex justify-center">
             <div className="grid grid-cols-1 container-post">
                     {forumData?.map((post, index) => (
-                      <Link href={`/peternak/komunitas/forum/${post.id}`}>
                         <div key={index} className="card mt-3 w-[800px] grid grid-cols-1 gap-6">
                             <div className="card-body">
                               <div className="settings post float-end">
@@ -379,11 +378,11 @@ export default function ForumPage() {
                                 </div>
                                 <div className="gap-4 mt-10 container-post-action d-flex justify-between">
                                   <div className="d-flex gap-4">
-                                    <div className="gap-2 Likes-count d-flex text-md">
+                                    <div className="gap-2 Likes-count d-flex text-xla">
                                           <i class="bi bi-heart-fill text-red-600"></i>
                                           <p className="text-black">{post.likes_count}</p>
                                       </div>
-                                      <div className="gap-2 Likes-count d-flex text-md ">
+                                      <div className="gap-2 Likes-count d-flex text-xla ">
                                           <i class="bi bi-chat-dots-fill text-emerald-500"></i>
                                           <p className="text-black">{post.comments_count}</p>
                                       </div>
@@ -397,8 +396,6 @@ export default function ForumPage() {
                                
                             </div>
                         </div>
-                      </Link>
-                       
                     ))}
                 </div>
             </div>

@@ -296,7 +296,7 @@ export default function Page({params}) {
                                     <Button className="bg-emerald-600 text-white text-xl rounded-lg">Beli</Button>
                                 </div>
                                 <div className="gap-4 mt-3 container-post-action d-flex">
-                                    <div className="gap-2 Likes-count d-flex text-md">
+                                    <div className="gap-2 Likes-count d-flex text-2xl">
                                         {/* <div 
                                             className="like-button" 
                                             onClick={() => {
@@ -327,7 +327,7 @@ export default function Page({params}) {
                                       
                                         <p className="text-black">{jualDetail.likes_count}</p>
                                     </div>
-                                    <div className="gap-2 Likes-count d-flex text-md ">
+                                    <div className="gap-3 Likes-count d-flex text-2xl ">
                                         <i class="bi bi-chat-dots-fill text-emerald-500"></i>
                                         <p className="text-black">{jualDetail.comments_count}</p>
                                     </div>
