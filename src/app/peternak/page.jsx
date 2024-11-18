@@ -142,7 +142,7 @@ export default function Home() {
         datasets: [
           {
             label: 'Dataset Sapi',
-            data: [sickCattle.length, soldCattle.length, deathCattle.length,sehatCattle.length],
+            data: [sehatCattle.length, sickCattle.length, deathCattle.length],
             backgroundColor: [
               'rgba(32, 165, 119, 1)',
               'rgba(250, 204, 21, 1)',

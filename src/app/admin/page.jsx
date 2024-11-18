@@ -351,6 +351,89 @@ export default function Home() {
       },
     });
   }, [chartData]);
+  // const getUserRegistrationData = async () => {
+  //   try {
+  //     const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/user`, {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${localStorage.getItem('token')}`,
+  //       },
+  //     });
+
+  //     if (response.data?.data) {
+  //       const monthlyRegistrations = response.data.data.reduce((acc, user) => {
+  //         const month = new Date(user.created_at).getMonth();
+  //         acc[month] = (acc[month] || 0) + 1;
+  //         return acc;
+  //       }, {});
+
+  //       const labels = Array.from({ length: 12 }, (_, i) =>
+  //         new Date(0, i).toLocaleString('default', { month: 'long' })
+  //       );
+
+  //       const data = labels.map((_, i) => monthlyRegistrations[i] || 0);
+
+  //       new Chart(barCanvas.current, {
+  //         type: 'bar',
+  //         data: {
+  //           labels: labels,
+  //           datasets: [
+  //             {
+  //               label: 'User Registrations per Month',
+  //               data: data,
+  //               backgroundColor: 'rgba(54, 162, 235, 0.2)',
+  //               borderColor: 'rgba(54, 162, 235, 1)',
+  //               borderWidth: 1,
+  //             },
+  //           ],
+  //         },
+  //         options: {
+  //           responsive: true,
+  //           maintainAspectRatio: false,
+  //           plugins: {
+  //             legend: { position: 'top' },
+  //           },
+  //           scales: {
+  //             x: {
+  //               grid: {
+  //                 drawOnChartArea: false,
+  //                 beginAtZero: true,
+  //               },
+  //             },
+  //             y: {
+  //               grid: {
+  //                 drawOnChartArea: false,
+  //                 beginAtZero: true,
+  //               },
+  //             },
+  //           },
+  //         },
+  //       });
+  //     }
+  //   } catch (error) {
+  //     if (error.response?.status === 401) {
+  //       Swal.fire({
+  //         icon: 'error',
+  //         title: error.response.data.message,
+  //         showConfirmButton: false,
+  //         timer: 1500,
+  //       });
+  //       logout();
+  //     } else {
+  //       Swal.fire({
+  //         icon: 'error',
+  //         title: 'Error occurred',
+  //         text: 'Please try again later.',
+  //         showConfirmButton: false,
+  //         timer: 1500,
+  //       });
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getUserRegistrationData();
+  // }, []);
   useEffect(() => {
     getCattleData();
     getFarmData();
