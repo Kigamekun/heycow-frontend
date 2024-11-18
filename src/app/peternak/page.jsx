@@ -112,9 +112,11 @@ export default function Home() {
       setChartData(firstTen);
     };
     fetchData()
+    
   }, [])
 
   useEffect(() => {
+    getContract();
     getCattleData();
     let doughnutChart = Chart.getChart('myChart');
     if (doughnutChart !== undefined) {
